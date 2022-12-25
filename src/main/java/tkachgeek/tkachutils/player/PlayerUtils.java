@@ -1,0 +1,101 @@
+package tkachgeek.tkachutils.player;
+
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.*;
+
+public class PlayerUtils {
+  public static void safeGive(Player player, ItemStack item) {
+    HashMap<Integer, ItemStack> noSpace = player.getInventory().addItem(item);
+    
+    for (ItemStack toDrop : noSpace.values()) {
+      player.getWorld().dropItem(player.getLocation(), toDrop);
+    }
+  }
+  
+  public static boolean removeItems(Player player, ItemStack itemStack, int amount) {
+    if (getItemAmount(player, itemStack) >= amount) {
+      clearItemsForce(player, itemStack, amount);
+      return true;
+    }
+    return false;
+  }
+  
+  public static int getItemAmount(Player p, ItemStack s) {
+    int count = 0;
+    for (int i = 0; i < p.getInventory().getSize(); i++) {
+      ItemStack stack = p.getInventory().getItem(i);
+      if (stack == null)
+        continue;
+      if (s.isSimilar(stack)) {
+        count += stack.getAmount();
+      }
+    }
+    return count;
+  }
+  
+  public static void clearItemsForce(Player player, ItemStack itemStack, int amount) {
+    for (int i = 0; i < player.getInventory().getSize(); i++) {
+      ItemStack stack = player.getInventory().getItem(i);
+      if (stack == null)
+        continue;
+      if (itemStack.isSimilar(stack)) {
+        if (stack.getAmount() == 0)
+          break;
+        if (stack.getAmount() <= amount) {
+          amount = amount - stack.getAmount();
+          stack.setAmount(-1);
+        }
+        if (stack.getAmount() > amount) {
+          stack.setAmount(stack.getAmount() - amount);
+          amount = 0;
+        }
+      }
+    }
+  }
+  
+  public static List<LivingEntity> getNearbyLivingEntities(Player player, double radius) {
+    List<LivingEntity> list = new ArrayList<>();
+    
+    for (LivingEntity x : player.getLocation().getNearbyLivingEntities(radius)) {
+      if (!x.equals(player)) {
+        list.add(x);
+      }
+    }
+    return list;
+  }
+  
+  public static Optional<LivingEntity> getNearbyLivingEntity(Player player, double radius) {
+    boolean seen = false;
+    LivingEntity best = null;
+    Comparator<LivingEntity> comparator = Comparator.comparingDouble(c -> player.getLocation().distance(c.getLocation()));
+    for (LivingEntity x : player
+       .getLocation()
+       .getNearbyLivingEntities(radius)) {
+      if (!x.equals(player)) {
+        if (!seen || comparator.compare(x, best) < 0) {
+          seen = true;
+          best = x;
+        }
+      }
+    }
+    return seen ? Optional.of(best) : Optional.empty();
+  }
+  
+  public static <T extends Entity> List<T> getNearbyEntities(Class<T> type, Player player, double radius) {
+    if (type == Player.class) {
+      List<T> list = new ArrayList<>();
+      for (T x : player.getWorld().getNearbyEntitiesByType(type, player.getLocation(), radius)) {
+        if (x != player) {
+          list.add(x);
+        }
+      }
+      return list;
+    } else {
+      return new ArrayList<>(player.getWorld().getNearbyEntitiesByType(type, player.getLocation(), radius));
+    }
+  }
+}
