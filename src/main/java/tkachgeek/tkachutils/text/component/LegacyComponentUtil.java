@@ -1,4 +1,4 @@
-package tkachgeek.tkachutils.text.component.miniMessage;
+package tkachgeek.tkachutils.text.component;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
