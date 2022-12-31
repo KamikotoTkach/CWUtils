@@ -39,9 +39,9 @@ public class Message {
         return PlaceholderSymbols.left.getSymbol() + placeholder + PlaceholderSymbols.right.getSymbol();
     }
 
-    public Message replacePlaceholders(String placeholder, String value) {
+    public Message replacePlaceholders(String placeholder, Object value) {
         placeholder = formatPlaceholder(placeholder);
-        this.message = this.message.replaceAll(placeholder, value);
+        this.message = this.message.replaceAll(placeholder, String.valueOf(value));
         return this;
     }
 
