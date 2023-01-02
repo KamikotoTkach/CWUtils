@@ -6,47 +6,18 @@ import org.bukkit.command.CommandSender;
 import tkachgeek.tkachutils.server.ServerUtils;
 
 public class Message {
-    private enum PlaceholderSymbols {
-        left("<"),
-        right(">");
-
-        private final String symbol;
-
-        PlaceholderSymbols(String symbol) {
-            this.symbol = symbol;
-        }
-
-        public String getSymbol() {
-            return this.symbol;
-        }
-    }
-    private String message;
+    private final String message;
 
     public Message(String message) {
         this.message = message;
     }
 
     public Message(Component message) {
-        this(LegacyComponentSerializer.legacySection().serialize(message).replaceAll("\\\\", ""));
+        this(LegacyComponentSerializer.legacySection().serialize(message));
     }
 
-    private String formatPlaceholder(String placeholder) {
-        if(placeholder.startsWith(PlaceholderSymbols.left.getSymbol())
-                && placeholder.endsWith(PlaceholderSymbols.right.getSymbol())) {
-            return placeholder;
-        }
-
-        return PlaceholderSymbols.left.getSymbol() + placeholder + PlaceholderSymbols.right.getSymbol();
-    }
-
-    public Message replacePlaceholders(String placeholder, Object value) {
-        placeholder = formatPlaceholder(placeholder);
-        this.message = this.message.replaceAll(placeholder, String.valueOf(value));
-        return this;
-    }
-
-    public Message replacePlaceholders(String placeholder, Component value) {
-        return replacePlaceholders(placeholder, LegacyComponentSerializer.legacySection().serialize(value).replaceAll("\\\\", ""));
+    public Builder builder() {
+        return new Builder(this.message);
     }
 
     public Component get() {
@@ -54,7 +25,7 @@ public class Message {
     }
 
     public void send(CommandSender sender) {
-        if(ServerUtils.isVersionBefore1_16_5()) {
+        if (ServerUtils.isVersionBefore1_16_5()) {
             sender.sendMessage(message);
             return;
         }
