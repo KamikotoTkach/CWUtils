@@ -1,7 +1,9 @@
 package tkachgeek.tkachutils.text;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class StringUtils {
   
@@ -67,5 +69,14 @@ public class StringUtils {
       list.add(key);
     }
     return list;
+  }
+  
+  public static List<String> splitEqually(String text, int size) {
+    List<String> ret = new ArrayList<String>((text.length() + size - 1) / size);
+    
+    for (int start = 0; start < text.length(); start += size) {
+      ret.add(text.substring(start, Math.min(text.length(), start + size)));
+    }
+    return ret;
   }
 }

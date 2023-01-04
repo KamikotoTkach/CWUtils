@@ -36,4 +36,20 @@ public class NumbersUtils {
     }
     return true;
   }
+  
+  public static double bound(double max, double value, double min) {
+    return Math.max(Math.min(value, max), min);
+  }
+  
+  public static double notGreater(double max, double value) {
+    return Math.min(value, max);
+  }
+  
+  public static double notLower(double value, double min) {
+    return Math.max(value, min);
+  }
+  
+  public static double random(double min, double max) {
+    return min + Math.random() * (max - min);
+  }
 }
