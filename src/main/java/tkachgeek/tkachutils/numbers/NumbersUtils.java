@@ -18,9 +18,11 @@ public class NumbersUtils {
     double scale = Math.pow(10, digits);
     return Math.ceil(value * scale) / scale;
   }
+  
   public static boolean isNumber(String str) {
     return str.matches("^-?\\d+(?:\\.\\d+)?$");
   }
+  
   public static boolean isInteger(String str) {
     if (str == null)
       return false;
@@ -51,5 +53,13 @@ public class NumbersUtils {
   
   public static double random(double min, double max) {
     return min + Math.random() * (max - min);
+  }
+  
+  public double absolute(double min, double max, double current) {
+    return (current - min) / (max - min);
+  }
+  
+  public double absolute(double max, double current) {
+    return current / max;
   }
 }
