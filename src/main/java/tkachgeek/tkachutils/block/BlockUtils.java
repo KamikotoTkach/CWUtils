@@ -1,4 +1,4 @@
-package tkachgeek.tkachutils;
+package tkachgeek.tkachutils.block;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 
 public class BlockUtils {
   static List<Vector> directions = Arrays.stream(BlockFace.values())
+                                         .filter(BlockFace::isCartesian)
                                          .map(BlockFace::getDirection)
-                                         .filter(x -> Math.abs(x.getBlockX()) + Math.abs(x.getBlockY()) + Math.abs(x.getBlockZ()) == 1)
                                          .collect(Collectors.toList());
   
-  static List<Location> neighboringLocations(Location location) {
+  public static List<Location> neighboringLocations(Location location) {
     List<Location> ret = new ArrayList<>();
     for (Vector direction : directions) {
       ret.add(location.clone().add(direction));
@@ -24,7 +24,7 @@ public class BlockUtils {
     return ret;
   }
   
-  static List<Block> neighboringBlocks(Block block) {
+  public static List<Block> neighboringBlocks(Block block) {
     List<Block> ret = new ArrayList<>();
     for (Vector direction : directions) {
       ret.add(block.getLocation().add(direction).getBlock());
