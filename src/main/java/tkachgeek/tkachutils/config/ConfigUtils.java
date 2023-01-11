@@ -20,7 +20,19 @@ import tkachgeek.tkachutils.messages.Message;
 import java.util.Arrays;
 import java.util.List;
 
+import static tkachgeek.tkachutils.config.ItemStackConstituents.*;
+
 public class ConfigUtils {
+   public static String getPath(String root, String... keys) {
+      StringBuilder path = new StringBuilder(root);
+      for (String key : keys) {
+         path.append(".");
+         path.append(key);
+      }
+
+      return path.toString();
+   }
+
    public static Component getComponent(String json) {
       Component component;
       if (json.isEmpty()) {
@@ -66,7 +78,7 @@ public class ConfigUtils {
    }
 
    public static ItemStack loadItemStack(YamlConfiguration config, String path) {
-      String item_type_name = config.getString(path + ".type", "dirt").toUpperCase();
+      String item_type_name = config.getString(ConfigUtils.getPath(path, type.name()), "dirt").toUpperCase();
       Material item_type = Material.getMaterial(item_type_name);
       if (item_type == null || item_type.isAir()) {
          item_type = Material.DIRT;
@@ -74,10 +86,10 @@ public class ConfigUtils {
                .send(Bukkit.getConsoleSender());
       }
 
-      int item_amount = Math.max(Math.min(config.getInt(path + ".amount", 1), 64), 1);
+      int item_amount = Math.max(Math.min(config.getInt(ConfigUtils.getPath(path, amount.name()), 1), 64), 1);
 
-      Component item_name = ConfigUtils.getComponent(path + ".name");
-      Component[] item_lore = ConfigUtils.getComponents(config.getStringList(path + ".lore"));
+      Component item_name = ConfigUtils.getComponent(ConfigUtils.getPath(path, name.name()));
+      Component[] item_lore = ConfigUtils.getComponents(config.getStringList(ConfigUtils.getPath(path, lore.name())));
 
       ItemStack item = new ItemStack(item_type, item_amount);
 
@@ -87,12 +99,12 @@ public class ConfigUtils {
       item_meta.lore(Arrays.asList(item_lore));
 
       if (item_meta instanceof PotionMeta) {
-         if (config.contains(path + ".effects")) {
-            for (String potion_effect : config.getConfigurationSection(path + ".effects").getKeys(false)) {
+         if (config.contains(ConfigUtils.getPath(path, effects.name()))) {
+            for (String potion_effect : config.getConfigurationSection(ConfigUtils.getPath(path, effects.name())).getKeys(false)) {
                PotionEffectType effect_type = PotionEffectType.getByName(potion_effect.toUpperCase());
                if (effect_type != null) {
-                  int duration = Math.max(config.getInt(path + ".effects." + potion_effect + ".duration", 1), 1) * 20;
-                  int level = Math.max(config.getInt(path + ".effects." + potion_effect + ".level", 1), 1) - 1;
+                  int duration = Math.max(config.getInt(ConfigUtils.getPath(path, effects.name(), potion_effect, "duration"), 1), 1) * 20;
+                  int level = Math.max(config.getInt(ConfigUtils.getPath(path, effects.name(), potion_effect, "level"), 1), 1) - 1;
                   ((PotionMeta) item_meta).addCustomEffect(new PotionEffect(effect_type, duration, level), false);
                } else {
                   new Message("§c[§4" + path + "§c]: эффект §4" + potion_effect + "§c не существует!")
@@ -102,11 +114,11 @@ public class ConfigUtils {
          }
       }
 
-      if (config.contains(path + ".enchantments")) {
-         for (String enchantment_name : config.getConfigurationSection(path + ".enchantments").getKeys(false)) {
+      if (config.contains(ConfigUtils.getPath(path, enchantments.name()))) {
+         for (String enchantment_name : config.getConfigurationSection(ConfigUtils.getPath(path, enchantments.name())).getKeys(false)) {
             Enchantment enchantment = Enchantment.getByName(enchantment_name);
             if (enchantment != null) {
-               int level = Math.max(config.getInt(path + ".enchantments." + enchantment_name, 1), 1);
+               int level = Math.max(config.getInt(ConfigUtils.getPath(path, enchantments.name(), enchantment_name), 1), 1);
                if (!item_meta.addEnchant(enchantment, level, true)) {
                   new Message("§c[§4" + path + "§c]: уровень зачарования §4" + enchantment_name + "§c задан некорректно!")
                         .send(Bukkit.getConsoleSender());
