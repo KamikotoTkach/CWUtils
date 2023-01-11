@@ -35,7 +35,7 @@ public class ConfigUtils {
 
    public static Component getComponent(String json) {
       Component component;
-      if (json.isEmpty()) {
+      if (json == null || json.isEmpty()) {
          component = Component.text("Предмет");
       } else {
          try {
@@ -88,7 +88,7 @@ public class ConfigUtils {
 
       int item_amount = Math.max(Math.min(config.getInt(ConfigUtils.getPath(path, amount.name()), 1), 64), 1);
 
-      Component item_name = ConfigUtils.getComponent(ConfigUtils.getPath(path, name.name()));
+      Component item_name = ConfigUtils.getComponent(config.getString(ConfigUtils.getPath(path, name.name())));
       Component[] item_lore = ConfigUtils.getComponents(config.getStringList(ConfigUtils.getPath(path, lore.name())));
 
       ItemStack item = new ItemStack(item_type, item_amount);
