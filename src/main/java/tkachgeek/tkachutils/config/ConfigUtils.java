@@ -10,7 +10,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import java.util.List;
 
 public class ConfigUtils {
-   public Component getComponent(String json) {
+   public static Component getComponent(String json) {
       Component component;
       if (json.isEmpty()) {
          component = Component.text("Предмет");
@@ -28,7 +28,7 @@ public class ConfigUtils {
       return component.decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
    }
 
-   public Component[] getComponents(List<String> json) {
+   public static Component[] getComponents(List<String> json) {
       Component[] components;
       if (json.isEmpty()) {
          components = new Component[1];
