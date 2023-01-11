@@ -32,6 +32,11 @@ public class Message {
       return LegacyComponentSerializer.legacySection().deserialize(this.message);
    }
 
+   @Override
+   public String toString() {
+      return this.message;
+   }
+
    public void send(CommandSender sender) {
       if (ServerUtils.isVersionBefore1_16_5()) {
          sender.sendMessage(this.message);
