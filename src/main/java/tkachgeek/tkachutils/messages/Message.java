@@ -36,6 +36,10 @@ public class Message {
    }
 
    public Message placeholder(String placeholder, Object value) {
+      if (value instanceof Component) {
+         return this.placeholder(placeholder, (Component) value);
+      }
+
       return this.placeholder(placeholder, String.valueOf(value));
    }
 
