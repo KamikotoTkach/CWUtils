@@ -7,7 +7,21 @@ import org.bukkit.command.CommandSender;
 import tkachgeek.tkachutils.server.ServerUtils;
 
 public class Message {
-   private final String message;
+   private String message;
+
+   private static Message instance;
+
+   public static Message getInstance(String message) {
+      if (instance == null) {
+         instance = new Message(message);
+      }
+
+      return instance;
+   }
+
+   public static Message getInstance(Component message) {
+      return Message.getInstance(LegacyComponentSerializer.legacySection().serialize(message));
+   }
 
    public Message(String message) {
       this.message = message;
@@ -31,7 +45,7 @@ public class Message {
 
    public Component get() {
       return LegacyComponentSerializer.legacySection().deserialize(this.message)
-            .decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
+                                      .decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
    }
 
    @Override
