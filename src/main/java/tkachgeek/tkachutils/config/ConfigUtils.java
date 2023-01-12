@@ -92,15 +92,21 @@ public class ConfigUtils {
       ItemMeta item_meta = item.getItemMeta();
 
       full_path = ConfigUtils.getPath(path, name.name());
-      if(config.contains(full_path)) {
+      if (config.contains(full_path)) {
          Component item_name = ConfigUtils.getComponent(config.getString(full_path));
          item_meta.displayName(item_name);
       }
 
       full_path = ConfigUtils.getPath(path, lore.name());
-      if(config.contains(full_path)) {
+      if (config.contains(full_path)) {
          Component[] item_lore = ConfigUtils.getComponents(config.getStringList(full_path));
          item_meta.lore(Arrays.asList(item_lore));
+      }
+
+      full_path = ConfigUtils.getPath(path, model.name());
+      if (config.contains(full_path)) {
+         int model = Math.max(config.getInt(full_path, 0), 0);
+         item_meta.setCustomModelData(model);
       }
 
       if (item_meta instanceof PotionMeta) {

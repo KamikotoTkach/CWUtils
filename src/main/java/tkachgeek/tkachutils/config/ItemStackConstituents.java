@@ -5,6 +5,7 @@ public enum ItemStackConstituents {
    amount,
    name,
    lore,
+   model,
    effects,
    enchantments
 }

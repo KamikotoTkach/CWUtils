@@ -16,6 +16,7 @@ public class Message {
          instance = new Message(message);
       }
 
+      instance.message = message;
       return instance;
    }
 
