@@ -78,7 +78,9 @@ public class ConfigUtils {
    }
 
    public static ItemStack loadItemStack(YamlConfiguration config, String path) {
-      String item_type_name = config.getString(ConfigUtils.getPath(path, type.name()), "dirt").toUpperCase();
+      String full_path;
+      full_path = ConfigUtils.getPath(path, type.name());
+      String item_type_name = config.getString(full_path, "dirt").toUpperCase();
       Material item_type = Material.getMaterial(item_type_name);
       if (item_type == null || item_type.isAir()) {
          item_type = Material.DIRT;
@@ -86,17 +88,23 @@ public class ConfigUtils {
                .send(Bukkit.getConsoleSender());
       }
 
-      int item_amount = Math.max(Math.min(config.getInt(ConfigUtils.getPath(path, amount.name()), 1), 64), 1);
-
-      Component item_name = ConfigUtils.getComponent(config.getString(ConfigUtils.getPath(path, name.name())));
-      Component[] item_lore = ConfigUtils.getComponents(config.getStringList(ConfigUtils.getPath(path, lore.name())));
+      full_path = ConfigUtils.getPath(path, amount.name());
+      int item_amount = Math.max(Math.min(config.getInt(full_path, 1), 64), 1);
 
       ItemStack item = new ItemStack(item_type, item_amount);
+      ItemMeta item_meta = item.getItemMeta();
 
-      ItemMeta item_meta;
-      item_meta = item.getItemMeta();
-      item_meta.displayName(item_name);
-      item_meta.lore(Arrays.asList(item_lore));
+      full_path = ConfigUtils.getPath(path, name.name());
+      if(config.contains(full_path)) {
+         Component item_name = ConfigUtils.getComponent(config.getString(full_path));
+         item_meta.displayName(item_name);
+      }
+
+      full_path = ConfigUtils.getPath(path, lore.name());
+      if(config.contains(full_path)) {
+         Component[] item_lore = ConfigUtils.getComponents(config.getStringList(full_path));
+         item_meta.lore(Arrays.asList(item_lore));
+      }
 
       if (item_meta instanceof PotionMeta) {
          if (config.contains(ConfigUtils.getPath(path, effects.name()))) {
