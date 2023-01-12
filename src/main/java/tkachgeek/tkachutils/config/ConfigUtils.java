@@ -63,14 +63,11 @@ public class ConfigUtils {
             try {
                if (json.get(i).matches("^\\{.*}$")) {
                   components[i] = GsonComponentSerializer.gson().deserialize(json.get(i)).decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
-                  ;
                } else {
                   components[i] = LegacyComponentSerializer.legacyAmpersand().deserialize(json.get(i).replace("§", "&")).decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
-                  ;
                }
             } catch (Exception exception) {
                components[i] = Component.text(json.get(i)).style(Style.style(TextColor.color(255, 255, 255))).decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
-               ;
             }
          }
       }

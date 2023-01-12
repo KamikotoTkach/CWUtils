@@ -1,6 +1,7 @@
 package tkachgeek.tkachutils.messages;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.CommandSender;
 import tkachgeek.tkachutils.server.ServerUtils;
@@ -29,7 +30,8 @@ public class Message {
    }
 
    public Component get() {
-      return LegacyComponentSerializer.legacySection().deserialize(this.message);
+      return LegacyComponentSerializer.legacySection().deserialize(this.message)
+            .decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
    }
 
    @Override
