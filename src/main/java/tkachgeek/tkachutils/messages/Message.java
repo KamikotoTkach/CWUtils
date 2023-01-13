@@ -49,8 +49,13 @@ public class Message {
    }
 
    public Component get() {
-      return LegacyComponentSerializer.legacySection().deserialize(this.message)
-                                      .decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
+      Component component;
+      if (this.message.contains("§")) {
+         component = LegacyComponentSerializer.legacySection().deserialize(this.message);
+      } else {
+         component = LegacyComponentSerializer.legacyAmpersand().deserialize(this.message);
+      }
+      return component.decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
    }
 
    @Override
