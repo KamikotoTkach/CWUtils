@@ -7,5 +7,7 @@ public enum ItemStackConstituents {
    lore,
    model,
    effects,
+   head_base64,
+   head_uuid,
    enchantments
 }

@@ -1,5 +1,7 @@
 package tkachgeek.tkachutils.config;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
@@ -13,12 +15,16 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import tkachgeek.tkachutils.messages.Message;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static tkachgeek.tkachutils.config.ItemStackConstituents.*;
 
@@ -74,7 +80,7 @@ public class ConfigUtils {
       return components;
    }
 
-   public static ItemStack loadItemStack(YamlConfiguration config, String path) {
+   public static ItemStack loadItemStack(File file, YamlConfiguration config, String path) {
       String full_path;
       full_path = ConfigUtils.getPath(path, type.name());
       String item_type_name = config.getString(full_path, "dirt").toUpperCase();
@@ -125,6 +131,34 @@ public class ConfigUtils {
          }
       }
 
+      if (item_meta instanceof SkullMeta) {
+         full_path = ConfigUtils.getPath(path, head_base64.name());
+         if (config.contains(full_path)) {
+            String base64 = config.getString(full_path, "null");
+
+            full_path = ConfigUtils.getPath(path, head_uuid.name());
+
+            UUID uuid = null;
+            if (config.contains(full_path)) {
+               try {
+                  uuid = UUID.fromString(config.getString(full_path, "null"));
+               } catch (Exception ignored) {
+
+               }
+            }
+
+            if (uuid == null) {
+               uuid = UUID.randomUUID();
+               config.set(full_path, uuid.toString());
+               ConfigUtils.saveConfig(file, config);
+            }
+
+            PlayerProfile profile = Bukkit.createProfile(uuid, "Head");
+            profile.getProperties().add(new ProfileProperty("textures", base64));
+            ((SkullMeta) item_meta).setPlayerProfile(profile);
+         }
+      }
+
       if (config.contains(ConfigUtils.getPath(path, enchantments.name()))) {
          for (String enchantment_name : config.getConfigurationSection(ConfigUtils.getPath(path, enchantments.name())).getKeys(false)) {
             Enchantment enchantment = Enchantment.getByName(enchantment_name);
@@ -145,5 +179,15 @@ public class ConfigUtils {
       item.setItemMeta(item_meta);
 
       return item;
+   }
+
+   public static boolean saveConfig(File file, YamlConfiguration config) {
+      try {
+         config.save(file);
+         return true;
+      } catch (IOException e) {
+         e.printStackTrace();
+         return false;
+      }
    }
 }
