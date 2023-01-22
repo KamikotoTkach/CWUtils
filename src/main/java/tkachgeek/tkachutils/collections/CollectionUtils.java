@@ -2,6 +2,7 @@ package tkachgeek.tkachutils.collections;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -30,5 +31,18 @@ public class CollectionUtils {
       ar[index] = ar[i];
       ar[i] = a;
     }
+  }
+  
+  @SafeVarargs
+  public static <T> List<T> combine(List<T>... lists) {
+    int size = 0;
+    for (List<T> list : lists) {
+      size += list.size();
+    }
+    List<T> combined = new ArrayList<>(size);
+    for (List<T> list : lists) {
+      combined.addAll(list);
+    }
+    return combined;
   }
 }
