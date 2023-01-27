@@ -18,13 +18,13 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import tkachgeek.tkachutils.collections.EnumUtils;
 import tkachgeek.tkachutils.messages.Message;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.lang.reflect.Field;
+import java.util.*;
 
 import static tkachgeek.tkachutils.config.ItemStackConstituents.*;
 
@@ -188,6 +188,60 @@ public class ConfigUtils {
       } catch (IOException e) {
          e.printStackTrace();
          return false;
+      }
+   }
+
+   public static Map<String, Object> serialize(Object instance) {
+      Map<String, Object> map = new LinkedHashMap<>();
+      for (Field field : instance.getClass().getFields()) {
+         String key = field.getName();
+         try {
+            if (!field.canAccess(instance)) {
+               field.setAccessible(true);
+            }
+
+            Object value = field.get(instance);
+            map.put(key, value);
+         } catch (Exception ex) {
+            Message.getInstance("§cНе удалось сохранить поле §4" + key)
+                   .send(Bukkit.getConsoleSender());
+         }
+      }
+
+      return map;
+   }
+
+   public static void deserialize(Object instance, Map<String, Object> map) {
+      for (Field field : instance.getClass().getFields()) {
+         String key = field.getName();
+
+         if (!map.containsKey(key)) {
+            continue;
+         }
+         ConfigUtils.setField(instance, key, map.get(key));
+      }
+   }
+
+   public static void setField(Object instance, String key, Object value) {
+      try {
+         Field field = instance.getClass().getDeclaredField(key);
+
+         if (!field.canAccess(instance)) {
+            field.setAccessible(true);
+         }
+
+         if (field.getType().isEnum()) {
+            value = EnumUtils.getEnumInstance(EnumUtils.getEnumValues(field.getType()), String.valueOf(value)).orElse(null);
+         }
+
+         if (field.getType().equals(Message.class)) {
+            value = new Message(String.valueOf(value));
+         }
+
+         field.set(instance, value);
+      } catch (Exception ex) {
+         Message.getInstance("§cНе удалось загрузить поле §4" + key)
+                .send(Bukkit.getConsoleSender());
       }
    }
 }

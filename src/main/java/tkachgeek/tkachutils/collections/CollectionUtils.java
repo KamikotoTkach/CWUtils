@@ -17,10 +17,10 @@ public class CollectionUtils {
   }
   
   @SafeVarargs
-  public static <T> T getRandomArrayEntry(T... colors) {
-    if (colors.length == 0) return null;
-    if (colors.length == 1) return colors[0];
-    return colors[rand.nextInt(colors.length)];
+  public static <T> T getRandomArrayEntry(T... values) {
+    if (values.length == 0) return null;
+    if (values.length == 1) return values[0];
+    return values[rand.nextInt(values.length)];
   }
   
   public static void shuffleArray(int[] ar) {
