@@ -34,6 +34,6 @@ class Placeholder {
    Message replacePlaceholders(String placeholder, String value) {
       placeholder = formatPlaceholder(placeholder);
       this.message = this.message.replaceAll(placeholder, value);
-      return new Message(this.message);
+      return Message.getInstance(this.message);
    }
 }

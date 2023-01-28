@@ -6,6 +6,8 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.CommandSender;
 import tkachgeek.tkachutils.server.ServerUtils;
 
+import java.util.Map;
+
 public class Message {
    private String message;
 
@@ -46,6 +48,15 @@ public class Message {
 
    public Message placeholder(String placeholder, Component value) {
       return this.placeholder(placeholder, LegacyComponentSerializer.legacySection().serialize(value).replaceAll("\\\\", ""));
+   }
+
+   public Message placeholders(Map<String, String> placeholders) {
+      Message message = Message.getInstance(this.message);
+      for (String placeholder : placeholders.keySet()) {
+         message = message.placeholder(placeholder, placeholders.get(placeholder));
+      }
+
+      return message;
    }
 
    public Component get() {
