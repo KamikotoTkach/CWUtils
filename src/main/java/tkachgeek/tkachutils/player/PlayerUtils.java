@@ -8,6 +8,10 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 public class PlayerUtils {
+  
+  /**
+   * Выдаёт предмет игроку. Если нет места - спавнит под ногами.
+   */
   public static void safeGive(Player player, ItemStack item) {
     HashMap<Integer, ItemStack> noSpace = player.getInventory().addItem(item);
     
@@ -16,6 +20,9 @@ public class PlayerUtils {
     }
   }
   
+  /**
+   * Удаляет нужное количество предметов у игрока, если у него столько есть и возвращает true, иначе false и не удаляет.
+   */
   public static boolean removeItems(Player player, ItemStack itemStack, int amount) {
     if (getItemAmount(player, itemStack) >= amount) {
       clearItemsForce(player, itemStack, amount);
@@ -24,6 +31,9 @@ public class PlayerUtils {
     return false;
   }
   
+  /**
+   * Считает количество предметов у игрока
+   */
   public static int getItemAmount(Player p, ItemStack s) {
     int count = 0;
     for (int i = 0; i < p.getInventory().getSize(); i++) {
@@ -37,6 +47,9 @@ public class PlayerUtils {
     return count;
   }
   
+  /**
+   * Очищает определённое количество предметов у игрока, не взирая на наличие
+   */
   public static void clearItemsForce(Player player, ItemStack itemStack, int amount) {
     for (int i = 0; i < player.getInventory().getSize(); i++) {
       ItemStack stack = player.getInventory().getItem(i);
@@ -57,6 +70,9 @@ public class PlayerUtils {
     }
   }
   
+  /**
+   * Возвращает ближайших энтити, не считая игрока
+   */
   public static List<LivingEntity> getNearbyLivingEntities(Player player, double radius) {
     List<LivingEntity> list = new ArrayList<>();
     
@@ -68,6 +84,9 @@ public class PlayerUtils {
     return list;
   }
   
+  /**
+   * Возвращает ближайшего энтити, не считая игрока
+   */
   public static Optional<LivingEntity> getNearbyLivingEntity(Player player, double radius) {
     boolean seen = false;
     LivingEntity best = null;
@@ -85,6 +104,9 @@ public class PlayerUtils {
     return seen ? Optional.of(best) : Optional.empty();
   }
   
+  /**
+   * Возвращает ближайших энтити, не считая игрока
+   */
   public static <T extends Entity> List<T> getNearbyEntities(Class<T> type, Player player, double radius) {
     if (type == Player.class) {
       List<T> list = new ArrayList<>();
