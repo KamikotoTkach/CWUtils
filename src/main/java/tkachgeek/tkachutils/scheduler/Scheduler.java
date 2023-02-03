@@ -43,7 +43,7 @@ public class Scheduler<T> {
   }
   
   /**
-   * Действие каждый таск
+   * Действие
    */
   public Scheduler<T> perform(Consumer<T> action) {
     this.action = action;
@@ -67,7 +67,7 @@ public class Scheduler<T> {
   }
   
   /**
-   * Не останавливать выполнение, если условие не соблюдено. В таком случае действие не будет выполняться если условие false
+   * Не останавливать выполнение, если условие не соблюдено. В таком случае действие не будет выполняться, если условие false
    */
   public Scheduler<T> infinite() {
     this.infinite = true;
@@ -75,7 +75,7 @@ public class Scheduler<T> {
   }
   
   /**
-   * Действие, выполняющееся вместо основного, когда условие выполнения false
+   * Действие, выполняющееся вместо основного, когда условие false
    */
   public Scheduler<T> otherwise(Consumer<T> lastlyAction) {
     this.lastlyAction = lastlyAction;

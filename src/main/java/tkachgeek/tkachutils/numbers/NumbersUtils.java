@@ -79,13 +79,6 @@ public class NumbersUtils {
   }
   
   /**
-   * Случайное число от min до max
-   */
-  public static double random(double min, double max) {
-    return min + Math.random() * (max - min);
-  }
-  
-  /**
    * Возвращает абсолютное значение current относительно min и max
    */
   public double absolute(double min, double max, double current) {
