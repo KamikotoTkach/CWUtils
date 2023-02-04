@@ -60,7 +60,6 @@ public class ConfigUtils {
       if (json.isEmpty()) {
          components = new Component[1];
          components[0] = Component.text("Предмет").decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
-         ;
       } else {
          components = new Component[json.size()];
          for (int i = 0; i < json.size(); i++) {

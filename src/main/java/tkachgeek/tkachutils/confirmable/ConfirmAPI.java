@@ -49,6 +49,7 @@ public class ConfirmAPI {
     public void register(JavaPlugin plugin) {
       requests.put(request.sender, request);
       request.startTimer(plugin);
+  
       if (!ChatOutListener.IS_REGISTERED) {
         Bukkit.getPluginManager().registerEvents(new ChatOutListener(), plugin);
         ChatOutListener.IS_REGISTERED = true;

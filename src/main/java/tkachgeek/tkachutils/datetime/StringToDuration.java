@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StringToDuration {
-  public static final HashMap<Character, TemporalUnit> units = new HashMap<>();//нужно добавлять ещё в свитчи
+  public static final HashMap<Character, TemporalUnit> units = new HashMap<>();
   public static final char tickChar = 't';
   private static final char empty = '╪';
   

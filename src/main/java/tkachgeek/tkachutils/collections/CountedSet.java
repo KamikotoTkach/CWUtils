@@ -11,19 +11,23 @@ public class CountedSet<T> {
   HashMap<T, Integer> map = new HashMap<>();
   
   public CountedSet(Collection<T> items) {
-    items.forEach(x -> {
+    for (T x : items) {
       map.put(x, map.getOrDefault(x, 0) + 1);
-    });
+    }
   }
   
-  public Set<T> getItems() {
+  public Set<T> items() {
     return map.keySet();
+  }
+  
+  public Collection<Integer> values() {
+    return map.values();
   }
   
   /**
    * @return 0, если объекта нет в коллекции
    */
-  public int getQuantity(T item) {
+  public int quantity(T item) {
     return map.getOrDefault(item, 0);
   }
   
@@ -36,7 +40,45 @@ public class CountedSet<T> {
     return map.get(item);
   }
   
-  public HashMap<T, Integer> getEntries() {
+  public int max() {
+    int best = 0;
+    for (int value : map.values()) {
+      if (value > best) {
+        best = value;
+      }
+    }
+    return best;
+  }
+  
+  public int min() {
+    int min = 0;
+    for (int value : map.values()) {
+      if (value < min) {
+        min = value;
+      }
+    }
+    return min;
+  }
+  
+  public int sum() {
+    int sum = 0;
+    for (int value : map.values()) {
+      sum += value;
+    }
+    return sum;
+  }
+  
+  public double avg() {
+    long sum = 0;
+    long count = 0;
+    for (int x : map.values()) {
+      sum += x;
+      count++;
+    }
+    return count > 0 ? (double) sum / count : 0;
+  }
+  
+  public HashMap<T, Integer> entries() {
     return map;
   }
 }
