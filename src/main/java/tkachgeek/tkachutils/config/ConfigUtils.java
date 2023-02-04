@@ -13,13 +13,11 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import tkachgeek.tkachutils.collections.EnumUtils;
+import tkachgeek.tkachutils.items.ItemFactory;
 import tkachgeek.tkachutils.messages.Message;
+import tkachgeek.tkachutils.server.ServerUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,7 +83,11 @@ public class ConfigUtils {
       full_path = ConfigUtils.getPath(path, type.name());
       String item_type_name = config.getString(full_path, "dirt").toUpperCase();
       Material item_type = Material.getMaterial(item_type_name);
-      if (item_type == null || item_type.isAir()) {
+
+      if (item_type == null
+            || (!ServerUtils.isVersionBefore1_16_5()
+            && item_type.isAir())
+            || item_type.equals(Material.AIR)) {
          item_type = Material.DIRT;
          new Message("§c[§4" + path + "§c]: предмет §4" + item_type_name + "§c не существует!")
                .send(Bukkit.getConsoleSender());
@@ -95,34 +97,34 @@ public class ConfigUtils {
       int item_amount = Math.max(Math.min(config.getInt(full_path, 1), 64), 1);
 
       ItemStack item = new ItemStack(item_type, item_amount);
-      ItemMeta item_meta = item.getItemMeta();
+      ItemFactory itemFactory = ItemFactory.of(item);
 
       full_path = ConfigUtils.getPath(path, name.name());
       if (config.contains(full_path)) {
          Component item_name = ConfigUtils.getComponent(config.getString(full_path));
-         item_meta.displayName(item_name);
+         itemFactory.name(item_name);
       }
 
       full_path = ConfigUtils.getPath(path, lore.name());
       if (config.contains(full_path)) {
          Component[] item_lore = ConfigUtils.getComponents(config.getStringList(full_path));
-         item_meta.lore(Arrays.asList(item_lore));
+         itemFactory.description(Arrays.asList(item_lore));
       }
 
       full_path = ConfigUtils.getPath(path, model.name());
       if (config.contains(full_path)) {
          int model = Math.max(config.getInt(full_path, 0), 0);
-         item_meta.setCustomModelData(model);
+         itemFactory.model(model);
       }
 
-      if (item_meta instanceof PotionMeta) {
+      if (itemFactory.isPotionMeta()) {
          if (config.contains(ConfigUtils.getPath(path, effects.name()))) {
             for (String potion_effect : config.getConfigurationSection(ConfigUtils.getPath(path, effects.name())).getKeys(false)) {
                PotionEffectType effect_type = PotionEffectType.getByName(potion_effect.toUpperCase());
                if (effect_type != null) {
                   int duration = Math.max(config.getInt(ConfigUtils.getPath(path, effects.name(), potion_effect, "duration"), 1), 1) * 20;
                   int level = Math.max(config.getInt(ConfigUtils.getPath(path, effects.name(), potion_effect, "level"), 1), 1) - 1;
-                  ((PotionMeta) item_meta).addCustomEffect(new PotionEffect(effect_type, duration, level), false);
+                  itemFactory.customEffect(effect_type, duration, level);
                } else {
                   new Message("§c[§4" + path + "§c]: эффект §4" + potion_effect + "§c не существует!")
                         .send(Bukkit.getConsoleSender());
@@ -131,7 +133,7 @@ public class ConfigUtils {
          }
       }
 
-      if (item_meta instanceof SkullMeta) {
+      if (itemFactory.isSkullMeta()) {
          full_path = ConfigUtils.getPath(path, head_base64.name());
          if (config.contains(full_path)) {
             String base64 = config.getString(full_path, "null");
@@ -155,7 +157,7 @@ public class ConfigUtils {
 
             PlayerProfile profile = Bukkit.createProfile(uuid, "Head");
             profile.getProperties().add(new ProfileProperty("textures", base64));
-            ((SkullMeta) item_meta).setPlayerProfile(profile);
+            itemFactory.playerProfile(profile);
          }
       }
 
@@ -164,11 +166,12 @@ public class ConfigUtils {
             Enchantment enchantment = Enchantment.getByName(enchantment_name);
             if (enchantment != null) {
                int level = Math.max(config.getInt(ConfigUtils.getPath(path, enchantments.name(), enchantment_name), 1), 1);
-               if (!item_meta.addEnchant(enchantment, level, true)) {
-                  new Message("§c[§4" + path + "§c]: уровень зачарования §4" + enchantment_name + "§c задан некорректно!")
-                        .send(Bukkit.getConsoleSender());
-                  new Message("§cЕсли проблема не разрешаема, обратитесь к разработчику -> §dcwcode.ru/vk")
-                        .send(Bukkit.getConsoleSender());
+               itemFactory.enchantment(enchantment, level);
+               if (false) {
+                  Message.getInstance("§c[§4" + path + "§c]: уровень зачарования §4" + enchantment_name + "§c задан некорректно!")
+                         .send(Bukkit.getConsoleSender());
+                  Message.getInstance("§cЕсли проблема не разрешаема, обратитесь к разработчику -> §dcwcode.ru/vk")
+                         .send(Bukkit.getConsoleSender());
                }
             } else {
                new Message("§c[§4" + path + "§c]: зачарование §4" + enchantment_name + "§c не существует!");
@@ -176,9 +179,7 @@ public class ConfigUtils {
          }
       }
 
-      item.setItemMeta(item_meta);
-
-      return item;
+      return itemFactory.build();
    }
 
    public static boolean saveConfig(File file, YamlConfiguration config) {
