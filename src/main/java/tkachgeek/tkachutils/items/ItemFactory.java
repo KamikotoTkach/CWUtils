@@ -182,7 +182,7 @@ public class ItemFactory {
    }
 
    public ItemFactory customEffect(PotionEffect effect) {
-      if (meta instanceof PotionMeta) {
+      if (isPotionMeta()) {
          ((PotionMeta) meta).addCustomEffect(effect, false);
       }
       return this;
@@ -197,7 +197,7 @@ public class ItemFactory {
    }
 
    public ItemFactory playerProfile(PlayerProfile profile) {
-      if (meta instanceof SkullMeta) {
+      if (isSkullMeta()) {
          ((SkullMeta) meta).setPlayerProfile(profile);
       }
       return this;
