@@ -1,7 +1,7 @@
 package tkachgeek.tkachutils.animation.timingFunction;
 
-import tkachgeek.minemation.animation.timingFunction.cubicBezier.CubicBezierInst;
-import tkachgeek.minemation.animation.timingFunction.cubicBezier.Point;
+import tkachgeek.tkachutils.animation.timingFunction.cubicBezier.CubicBezierInst;
+import tkachgeek.tkachutils.animation.timingFunction.cubicBezier.Point;
 
 public class CubicBezier implements TimingFunction {
   CubicBezierInst inst;

@@ -1,8 +1,8 @@
 package tkachgeek.tkachutils.animation;
 
 import org.bukkit.Bukkit;
-import tkachgeek.minemation.animation.timingFunction.TimingFunction;
-import tkachgeek.minemation.animation.timingFunction.TimingFunctions;
+import tkachgeek.tkachutils.animation.timingFunction.TimingFunction;
+import tkachgeek.tkachutils.animation.timingFunction.TimingFunctions;
 
 import java.time.Duration;
 
