@@ -45,11 +45,14 @@ public class LocationUtils {
     );
   }
   
+  /**
+   * Возвращает локацию последнего блока воздуха под заданной локацией. Если все блоки снизу это воздух, то возвращает самый нижний блок
+   */
   private static Location getHighestLocationUnder(Location location) {
     double minHeight = location.getWorld().getMinHeight();
     
-    while (location.getBlock().getType().isAir() || location.getY() < minHeight) {
-      location = location.subtract(0, 1, 0);
+    while (location.getY() < minHeight || location.getBlock().getType().isAir()) {
+      location.subtract(0, 1, 0);
     }
     return location.add(0, 1, 0);
   }
