@@ -36,12 +36,21 @@ public class LocationUtils {
     int x2 = Math.max(pos1.getBlockX(), pos2.getBlockX());
     int y2 = Math.max(pos1.getBlockY(), pos2.getBlockY());
     int z2 = Math.max(pos1.getBlockZ(), pos2.getBlockZ());
-    
+  
     return new Location(
        pos1.getWorld(),
        Rand.ofInt(x2 - x1 + 1) + x1,
        Rand.ofInt(y2 - y1 + 1) + y1,
        Rand.ofInt(z2 - z1 + 1) + z1
     );
+  }
+  
+  private static Location getHighestLocationUnder(Location location) {
+    double minHeight = location.getWorld().getMinHeight();
+    
+    while (location.getBlock().getType().isAir() || location.getY() < minHeight) {
+      location = location.subtract(0, 1, 0);
+    }
+    return location.add(0, 1, 0);
   }
 }

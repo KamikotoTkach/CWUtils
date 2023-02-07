@@ -15,7 +15,6 @@ public class RepeatAPI {
     try {
       for (ClassPath.ClassInfo clazz : ClassPath.from(plugin.getClass().getClassLoader()).getTopLevelClassesRecursive(packageName)) {
         //++;
-      
         handle(clazz, plugin);
       }
       //Bukkit.broadcastMessage("Scanned " + i + " classes, took " + (System.currentTimeMillis() - start) + "ms");
