@@ -22,6 +22,7 @@ import tkachgeek.tkachutils.server.ServerUtils;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 import static tkachgeek.tkachutils.config.ItemStackConstituents.*;
@@ -194,6 +195,10 @@ public class ConfigUtils {
    public static Map<String, Object> serialize(Object instance) {
       Map<String, Object> map = new LinkedHashMap<>();
       for (Field field : instance.getClass().getFields()) {
+         if (Modifier.isTransient(field.getModifiers())) {
+            continue;
+         }
+
          String key = field.getName();
          try {
             if (!field.canAccess(instance)) {
@@ -213,6 +218,10 @@ public class ConfigUtils {
 
    public static void deserialize(Object instance, Map<String, Object> map) {
       for (Field field : instance.getClass().getFields()) {
+         if (Modifier.isTransient(field.getModifiers())) {
+            continue;
+         }
+
          String key = field.getName();
 
          if (!map.containsKey(key)) {
@@ -224,7 +233,7 @@ public class ConfigUtils {
 
    public static void setField(Object instance, String key, Object value) {
       try {
-         Field field = instance.getClass().getDeclaredField(key);
+         Field field = instance.getClass().getField(key);
 
          if (!field.canAccess(instance)) {
             field.setAccessible(true);
