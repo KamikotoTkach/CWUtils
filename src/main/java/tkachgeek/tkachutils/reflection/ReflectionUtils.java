@@ -1,5 +1,6 @@
 package tkachgeek.tkachutils.reflection;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 public class ReflectionUtils {
@@ -15,5 +16,16 @@ public class ReflectionUtils {
       e.printStackTrace();
     }
     return null;
+  }
+  
+  public static <T> T getFieldValue(Object object, String fieldName, Class<T> fieldType) {
+    try {
+      Field field = object.getClass().getDeclaredField(fieldName);
+      field.setAccessible(true);
+      return fieldType.cast(field.get(object));
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 }
