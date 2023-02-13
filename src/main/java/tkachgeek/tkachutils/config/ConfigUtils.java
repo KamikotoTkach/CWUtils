@@ -15,7 +15,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import tkachgeek.tkachutils.collections.EnumUtils;
-import tkachgeek.tkachutils.items.ItemFactory;
+import tkachgeek.tkachutils.items.ItemBuilder;
+import tkachgeek.tkachutils.items.ItemBuilderFactory;
 import tkachgeek.tkachutils.messages.Message;
 import tkachgeek.tkachutils.server.ServerUtils;
 
@@ -95,9 +96,9 @@ public class ConfigUtils {
 
       full_path = ConfigUtils.getPath(path, amount.name());
       int item_amount = Math.max(Math.min(config.getInt(full_path, 1), 64), 1);
-
+   
       ItemStack item = new ItemStack(item_type, item_amount);
-      ItemFactory itemFactory = ItemFactory.of(item);
+      ItemBuilder itemFactory = ItemBuilderFactory.of(item);
 
       full_path = ConfigUtils.getPath(path, name.name());
       if (config.contains(full_path)) {

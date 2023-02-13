@@ -1,7 +1,5 @@
 package tkachgeek.tkachutils.location;
 
-import org.bukkit.Bukkit;
-
 public enum YawDirection {
   NORTH,
   NORTH_EAST(0, 2),
@@ -23,8 +21,6 @@ public enum YawDirection {
     this.from = normalize(-SEGMENT_SIZE + (ordinal() * 2) * SEGMENT_SIZE);
     this.to = normalize(from + SEGMENT_SIZE * 2);
     this.middle = from + SEGMENT_SIZE;
-    
-    Bukkit.broadcastMessage(name() + " from " + from + " to " + to + ", middle is " + middle);
   }
   
   YawDirection(int prima1, int prima2) {
