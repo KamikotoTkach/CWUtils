@@ -55,15 +55,17 @@ public class StringUtils {
   
     List<AbstractMap.SimpleImmutableEntry<String, Integer>> toSort = new ArrayList<>();
     for (String x : variants) {
-      AbstractMap.SimpleImmutableEntry<String, Integer> stringIntegerSimpleImmutableEntry = new AbstractMap.SimpleImmutableEntry<>(x, searchSimilarity(x, written, true));
+      var stringIntegerSimpleImmutableEntry = new AbstractMap.SimpleImmutableEntry<>(x, searchSimilarity(x, written, true));
       if (stringIntegerSimpleImmutableEntry.getValue() > 0) {
         toSort.add(stringIntegerSimpleImmutableEntry);
       }
     }
+  
     toSort.sort(COMPARATOR.reversed());
+  
     List<String> list = new ArrayList<>();
     long limit1 = limit;
-    for (AbstractMap.SimpleImmutableEntry<String, Integer> stringIntegerSimpleImmutableEntry : toSort) {
+    for (var stringIntegerSimpleImmutableEntry : toSort) {
       if (limit1-- == 0) break;
       String key = stringIntegerSimpleImmutableEntry.getKey();
       list.add(key);
@@ -72,7 +74,7 @@ public class StringUtils {
   }
   
   public static List<String> splitEqually(String text, int size) {
-    List<String> ret = new ArrayList<String>((text.length() + size - 1) / size);
+    List<String> ret = new ArrayList<>((text.length() + size - 1) / size);
     
     for (int start = 0; start < text.length(); start += size) {
       ret.add(text.substring(start, Math.min(text.length(), start + size)));

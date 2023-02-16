@@ -10,8 +10,6 @@ import java.util.Map;
 
 public class StringToDuration {
   public static final HashMap<Character, TemporalUnit> units = new HashMap<>();
-  public static final char tickChar = 't';
-  private static final char empty = '╪';
   
   static {
     {

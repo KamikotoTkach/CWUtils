@@ -13,7 +13,7 @@ public class Conditions {
   
   /**
    * @param values значения для проверки
-   * @return первый не-null-евой объект
+   * @return первый не-null-евой объект, иначе null
    */
   public static <T> T selectNotNull(T[] values) {
     for (T value : values) {
@@ -21,6 +21,6 @@ public class Conditions {
         return value;
       }
     }
-    return values[values.length - 1];
+    return null;
   }
 }
