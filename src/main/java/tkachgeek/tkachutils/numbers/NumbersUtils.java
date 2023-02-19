@@ -60,14 +60,14 @@ public class NumbersUtils {
   /**
    * Устанавливает рамки числу (min и max)
    */
-  public static double bound(double max, double value, double min) {
+  public static double bound(double value, double min, double max) {
     return Math.max(Math.min(value, max), min);
   }
   
   /**
    * Устанавливает рамки числу (max)
    */
-  public static double notGreater(double max, double value) {
+  public static double notGreater(double value, double max) {
     return Math.min(value, max);
   }
   

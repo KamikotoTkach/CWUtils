@@ -83,7 +83,7 @@ public class ConfigUtils {
       String full_path;
       full_path = ConfigUtils.getPath(path, type.name());
       String item_type_name = config.getString(full_path, "dirt").toUpperCase();
-      Material item_type = Material.getMaterial(item_type_name);
+      Material item_type = Material.matchMaterial(item_type_name);
 
       if (item_type == null
             || (!ServerUtils.isVersionBefore1_16_5()
@@ -96,7 +96,7 @@ public class ConfigUtils {
 
       full_path = ConfigUtils.getPath(path, amount.name());
       int item_amount = Math.max(Math.min(config.getInt(full_path, 1), 64), 1);
-   
+
       ItemStack item = new ItemStack(item_type, item_amount);
       ItemBuilder itemFactory = ItemBuilderFactory.of(item);
 
