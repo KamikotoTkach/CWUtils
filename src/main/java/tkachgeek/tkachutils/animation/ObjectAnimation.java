@@ -34,32 +34,58 @@ public class ObjectAnimation<T> {
   }
   
   public void start(JavaPlugin plugin, ExecutionMode mode) {
-    if (before != null) {
-      if (mode == ExecutionMode.ASYNC) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> object = before.get());
-      } else if (mode == ExecutionMode.SYNC) {
-        Bukkit.getScheduler().runTask(plugin, () -> object = before.get());
-      } else if (mode == ExecutionMode.INSTANT_SYNC || mode == ExecutionMode.INSTANT_ASYNC) {
-        object = before.get();
-      }
-    }
+    runBefore(plugin, mode);
+    runMain(plugin, mode);
+    runAfter(plugin, mode);
+  }
+  
+  private void runAfter(JavaPlugin plugin, ExecutionMode mode) {
+    if (after == null) return;
     
+    switch (mode) {
+      case ASYNC:
+      case INSTANT_ASYNC:
+        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> after.accept(object), properties.frameDelayInTicks() + 1);
+        break;
+      case SYNC:
+      case INSTANT_SYNC:
+        Bukkit.getScheduler().runTaskLater(plugin, () -> after.accept(object), properties.frameDelayInTicks() + 1);
+        break;
+    }
+  }
+  
+  private void runMain(JavaPlugin plugin, ExecutionMode mode) {
     while (properties.hasNextFrame()) {
       double finalCurrent = properties.nextFrame();
       //properties.debug();
-      if (mode == ExecutionMode.ASYNC || mode == ExecutionMode.INSTANT_ASYNC) {
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> action.accept(finalCurrent, object), properties.frameDelayInTicks());
-      } else if (mode == ExecutionMode.SYNC || mode == ExecutionMode.INSTANT_SYNC) {
-        Bukkit.getScheduler().runTaskLater(plugin, () -> action.accept(finalCurrent, object), properties.frameDelayInTicks());
+      switch (mode) {
+        case ASYNC:
+        case INSTANT_ASYNC:
+          Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> action.accept(finalCurrent, object), properties.frameDelayInTicks());
+          break;
+        case SYNC:
+        case INSTANT_SYNC:
+          Bukkit.getScheduler().runTaskLater(plugin, () -> action.accept(finalCurrent, object), properties.frameDelayInTicks());
+          break;
       }
     }
+  }
+  
+  private void runBefore(JavaPlugin plugin, ExecutionMode mode) {
+    if (before == null) return;
     
-    if (after != null)
-      if (mode == ExecutionMode.ASYNC || mode == ExecutionMode.INSTANT_ASYNC) {
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> after.accept(object), properties.frameDelayInTicks() + 1);
-      } else if (mode == ExecutionMode.SYNC || mode == ExecutionMode.INSTANT_SYNC) {
-        Bukkit.getScheduler().runTaskLater(plugin, () -> after.accept(object), properties.frameDelayInTicks() + 1);
-      }
+    switch (mode) {
+      case ASYNC:
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> object = before.get());
+        break;
+      case SYNC:
+        Bukkit.getScheduler().runTask(plugin, () -> object = before.get());
+        break;
+      case INSTANT_SYNC:
+      case INSTANT_ASYNC:
+        object = before.get();
+        break;
+    }
   }
   
   public ObjectAnimation<T> after(Consumer<T> after) {

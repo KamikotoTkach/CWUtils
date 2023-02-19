@@ -9,6 +9,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -104,6 +106,14 @@ public class PlayerFaceResolver {
   }
   
   File resolveFile(String name) {
-    return plugin.getDataFolder().toPath().resolve(name + ".png").toFile();
+    Path path = plugin.getDataFolder().toPath().resolve("heads").resolve(name + ".png");
+    if (!Files.exists(path)) {
+      try {
+        com.google.common.io.Files.createParentDirs(path.toFile());
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    return path.toFile();
   }
 }
