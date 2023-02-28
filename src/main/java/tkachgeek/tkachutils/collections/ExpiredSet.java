@@ -5,15 +5,15 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Set;
 
-public class Expired<T> {
+public class ExpiredSet<T> {
    public enum Status {
       ACTIVE,
       EXPIRED,
       NO_ELEMENT
    }
-
+   
    private final HashMap<T, LocalDateTime> expired = new HashMap<>();
-
+   
    public void setExpired(T element, Duration duration) {
       this.expired.put(element, LocalDateTime.now().plusSeconds(duration.getSeconds()));
    }
