@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 import tkachgeek.tkachutils.numbers.Rand;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class CollectionUtils {
@@ -66,13 +67,27 @@ public class CollectionUtils {
   
   public static <T> String toString(List<T> values, String prefix, String suffix, boolean removeLastSuffix) {
     if (values.size() == 0) return "";
-    
+  
     StringBuilder sb = new StringBuilder();
     for (T value : values) {
       sb.append(prefix).append(value).append(suffix);
     }
-    
+  
     if (removeLastSuffix) sb.setLength(sb.length() - suffix.length());
     return sb.toString();
+  }
+  
+  public static <T> int add(T item, int toAdd, HashMap<T, Integer> map) {
+    int newValue = map.getOrDefault(item, 0) + toAdd;
+    map.put(item, newValue);
+    return newValue;
+  }
+  
+  public static <T> int increment(T item, HashMap<T, Integer> map) {
+    return add(item, 1, map);
+  }
+  
+  public static <T> int decrement(T item, HashMap<T, Integer> map) {
+    return add(item, -1, map);
   }
 }

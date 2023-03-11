@@ -1,15 +1,11 @@
 package tkachgeek.tkachutils.text;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class StringUtils {
-  private static final Pattern pattern = Pattern.compile("^[a-zA-Zа-яА-Я]+[\\wа-яА-Я]*$");
-
   public static final Comparator<AbstractMap.SimpleImmutableEntry<String, Integer>> COMPARATOR = Comparator.comparingInt(AbstractMap.SimpleImmutableEntry::getValue);
+  private static final Pattern pattern = Pattern.compile("^[a-zA-Zа-яА-Я]+[\\wа-яА-Я]*$");
   
   public static int searchSimilarity(String string, String written) {
     
@@ -62,9 +58,9 @@ public class StringUtils {
         toSort.add(stringIntegerSimpleImmutableEntry);
       }
     }
-
+  
     toSort.sort(COMPARATOR.reversed());
-
+  
     List<String> list = new ArrayList<>();
     long limit1 = limit;
     for (var stringIntegerSimpleImmutableEntry : toSort) {
@@ -74,7 +70,7 @@ public class StringUtils {
     }
     return list;
   }
-
+  
   public static List<String> splitEqually(String text, int size) {
     List<String> ret = new ArrayList<>((text.length() + size - 1) / size);
     
@@ -83,8 +79,12 @@ public class StringUtils {
     }
     return ret;
   }
-
+  
   public static boolean isValidName(String name) {
     return pattern.matcher(name).find();
+  }
+  
+  public static boolean containsIgnoreCase(String source, String toSearch) {
+    return Objects.equals(source, toSearch) || source.toLowerCase().contains(toSearch.toLowerCase());
   }
 }

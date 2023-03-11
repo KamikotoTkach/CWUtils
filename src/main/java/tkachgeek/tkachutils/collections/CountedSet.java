@@ -8,12 +8,17 @@ import java.util.Set;
  * Структура данных для подсчёта дублей в коллекции. Хранит данные в HashMap (T, Integer)
  */
 public class CountedSet<T> {
-  HashMap<T, Integer> map = new HashMap<>();
+  HashMap<T, Integer> map;
   
   public CountedSet(Collection<T> items) {
+    map = new HashMap<>();
     for (T x : items) {
       map.put(x, map.getOrDefault(x, 0) + 1);
     }
+  }
+  
+  public CountedSet(HashMap<T, Integer> map) {
+    this.map = map;
   }
   
   public Set<T> items() {
