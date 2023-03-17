@@ -42,12 +42,33 @@ public class InventorySerializer {
       for (ItemStack item : items) {
         dataOutput.writeObject(item);
       }
-      
+  
       dataOutput.close();
       return Base64Coder.encodeLines(outputStream.toByteArray());
     } catch (Exception e) {
       throw new IllegalStateException("Unable to save item stacks.", e);
     }
+  }
+  
+  public static ItemStack[] itemStackArrayFromBase64(String base) {
+    try {
+      ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(base));
+      BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
+      
+      int len = dataInput.readInt();
+      ItemStack[] itemStacks = new ItemStack[len];
+      
+      for (int i = 0; i < len; i++) {
+        itemStacks[i] = (ItemStack) dataInput.readObject();
+      }
+      
+      dataInput.close();
+      return itemStacks;
+    } catch (ClassNotFoundException ignored) {
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return new ItemStack[0];
   }
   
   /**
