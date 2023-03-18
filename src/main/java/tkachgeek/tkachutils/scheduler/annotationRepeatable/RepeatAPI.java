@@ -1,35 +1,35 @@
 package tkachgeek.tkachutils.scheduler.annotationRepeatable;
 
-import com.google.common.reflect.ClassPath;
 import org.bukkit.plugin.java.JavaPlugin;
+import tkachgeek.tkachutils.reflection.ReflectionUtils;
 
-import java.io.IOException;
+import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 public class RepeatAPI {
-  public static void init(JavaPlugin plugin) {
+  public static void init(JavaPlugin plugin, File file) {
     String packageName = plugin.getClass().getPackage().getName();
-  
+    
     int i = 0;
     int registered = 0;
     long start = System.currentTimeMillis();
-  
+    
     try {
-      for (ClassPath.ClassInfo clazz : ClassPath.from(plugin.getClass().getClassLoader()).getTopLevelClassesRecursive(packageName)) {
+      for (var clazz : ReflectionUtils.getClasses(file, packageName)) {
         i++;
         registered += handle(clazz, plugin);
       }
-    
+      
       plugin.getLogger().info("Scanned " + i + " classes, took " + (System.currentTimeMillis() - start) + "ms, registered " + registered + " tasks");
-    } catch (IOException | ClassNotFoundException e) {
+    } catch (ClassNotFoundException e) {
       e.printStackTrace();
     }
   }
   
-  private static int handle(ClassPath.ClassInfo classInfo, JavaPlugin plugin) throws ClassNotFoundException {
+  private static int handle(Class<?> classInfo, JavaPlugin plugin) throws ClassNotFoundException {
     int registered = 0;
-    for (Method method : classInfo.load().getDeclaredMethods()) {
+    for (Method method : classInfo.getDeclaredMethods()) {
       
       if (Modifier.isStatic(method.getModifiers()) && method.getParameterCount() == 0) {
         Repeat annotation = method.getAnnotation(Repeat.class);
