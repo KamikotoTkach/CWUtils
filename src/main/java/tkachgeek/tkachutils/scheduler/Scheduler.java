@@ -11,12 +11,15 @@ public class Scheduler<T> {
   
   private final T anything;
   private final int id = increment++;
-  private volatile int taskId = -1;
+  int taskId = -1;
+  
   private volatile boolean asyncTask = false;
   private volatile boolean infinite = false;
   
   private volatile Consumer<T> action = (x) -> {};
   private volatile Consumer<T> lastlyAction = (x) -> {};
+  private volatile boolean blocked = false;
+  private volatile boolean running = false;
   
   private volatile Predicate<T> condition = null;
   
@@ -27,19 +30,6 @@ public class Scheduler<T> {
   public static <T> Scheduler<T> create(T anything) {
     return new Scheduler<T>(anything);
   }
-  
-  /**
-   * Отменяет такс
-   */
-  public static boolean cancelTask(int id) {
-    if (Tasks.has(id) && (Tasks.get(id).taskId != -1)) {
-      Bukkit.getScheduler().cancelTask(Tasks.get(id).taskId);
-      Tasks.remove(id);
-      return true;
-    }
-    return false;
-  }
-  
   /**
    * Действие
    */
@@ -61,6 +51,13 @@ public class Scheduler<T> {
    */
   public Scheduler<T> async() {
     this.asyncTask = true;
+    this.blocked = true;
+    return this;
+  }
+  
+  public Scheduler<T> async(boolean async) {
+    this.asyncTask = async;
+    this.blocked = async || blocked;
     return this;
   }
   
@@ -69,6 +66,11 @@ public class Scheduler<T> {
    */
   public Scheduler<T> infinite() {
     this.infinite = true;
+    return this;
+  }
+  
+  public Scheduler<T> infinite(boolean infinite) {
+    this.infinite = infinite;
     return this;
   }
   
@@ -93,18 +95,24 @@ public class Scheduler<T> {
     return id;
   }
   
-  protected void tick() {
-    if (condition == null) {
-      action.accept(anything);
-      if (!infinite) cancelTask(id);
-      return;
-    }
+  private void tick() {
+    if (blocked && running) return;
     
-    if (condition.test(anything)) {
-      action.accept(anything);
+    if (condition == null) {
+      run(action);
+    } else if (condition.test(anything)) {
+      run(action);
     } else {
-      lastlyAction.accept(anything);
-      if (!infinite) cancelTask(id);
+      run(lastlyAction);
     }
+  }
+  
+  private void run(Consumer<T> action) {
+    running = true;
+    
+    action.accept(anything);
+    if (!infinite) Tasks.cancelTask(id);
+    
+    running = false;
   }
 }
