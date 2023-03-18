@@ -30,6 +30,7 @@ public class Scheduler<T> {
   public static <T> Scheduler<T> create(T anything) {
     return new Scheduler<T>(anything);
   }
+  
   /**
    * Действие
    */
@@ -99,15 +100,23 @@ public class Scheduler<T> {
     if (blocked && running) return;
     
     if (condition == null) {
-      run(action);
+      runWithCancelling(action);
     } else if (condition.test(anything)) {
       run(action);
     } else {
-      run(lastlyAction);
+      runWithCancelling(lastlyAction);
     }
   }
   
   private void run(Consumer<T> action) {
+    running = true;
+    
+    action.accept(anything);
+    
+    running = false;
+  }
+  
+  private void runWithCancelling(Consumer<T> action) {
     running = true;
     
     action.accept(anything);
