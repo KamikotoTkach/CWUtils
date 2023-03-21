@@ -1,36 +1,46 @@
 package tkachgeek.tkachutils.scheduler.annotationRepeatable;
 
-import com.google.common.reflect.ClassPath;
 import org.bukkit.plugin.java.JavaPlugin;
+import tkachgeek.tkachutils.reflection.ReflectionUtils;
 
-import java.io.IOException;
+import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 public class RepeatAPI {
-  public static void init(JavaPlugin plugin) {
+  public static void init(JavaPlugin plugin, File file) {
     String packageName = plugin.getClass().getPackage().getName();
-    //int i = 0;
-    //long start = System.currentTimeMillis();
+    
+    int i = 0;
+    int registered = 0;
+    long start = System.currentTimeMillis();
+    
     try {
-      for (ClassPath.ClassInfo clazz : ClassPath.from(plugin.getClass().getClassLoader()).getTopLevelClassesRecursive(packageName)) {
-        //++;
-        handle(clazz, plugin);
+      for (var clazz : ReflectionUtils.getClasses(file, packageName)) {
+        i++;
+        registered += handle(clazz, plugin);
       }
-      //Bukkit.broadcastMessage("Scanned " + i + " classes, took " + (System.currentTimeMillis() - start) + "ms");
-    } catch (IOException | ClassNotFoundException e) {
-      throw new RuntimeException(e);
+      
+      plugin.getLogger().info("Scanned " + i + " classes, took " + (System.currentTimeMillis() - start) + "ms, registered " + registered + " tasks");
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
     }
   }
   
-  private static void handle(ClassPath.ClassInfo classInfo, JavaPlugin plugin) throws ClassNotFoundException {
-    for (Method method : classInfo.load().getDeclaredMethods()) {
-    
+  private static int handle(Class<?> classInfo, JavaPlugin plugin) throws ClassNotFoundException {
+    int registered = 0;
+    for (Method method : classInfo.getDeclaredMethods()) {
+      
       if (Modifier.isStatic(method.getModifiers()) && method.getParameterCount() == 0) {
         Repeat annotation = method.getAnnotation(Repeat.class);
-      
-        if (annotation != null) new RepeatEntry(method, annotation).run(plugin);
+        
+        if (annotation != null) {
+          plugin.getLogger().info("Registered task " + classInfo.getName() + "/" + method);
+          new RepeatEntry(method, annotation).run(plugin);
+          registered++;
+        }
       }
     }
+    return registered;
   }
 }

@@ -42,12 +42,35 @@ public class InventorySerializer {
       for (ItemStack item : items) {
         dataOutput.writeObject(item);
       }
-      
+  
       dataOutput.close();
+  
       return Base64Coder.encodeLines(outputStream.toByteArray());
     } catch (Exception e) {
       throw new IllegalStateException("Unable to save item stacks.", e);
     }
+  }
+  
+  public static ItemStack[] itemStackArrayFromBase64(String base) {
+    try {
+      ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(base));
+      BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
+      
+      int len = dataInput.readInt();
+      ItemStack[] itemStacks = new ItemStack[len];
+      
+      for (int i = 0; i < len; i++) {
+        itemStacks[i] = (ItemStack) dataInput.readObject();
+      }
+      
+      dataInput.close();
+  
+      return itemStacks;
+    } catch (ClassNotFoundException ignored) {
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return new ItemStack[0];
   }
   
   /**
@@ -68,6 +91,7 @@ public class InventorySerializer {
       }
       
       dataOutput.close();
+  
       return Base64Coder.encodeLines(outputStream.toByteArray());
     } catch (Exception e) {
       throw new IllegalStateException("Unable to save item stacks.", e);
@@ -84,6 +108,7 @@ public class InventorySerializer {
     try {
       ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
       BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
+  
       Inventory inventory = Bukkit.getServer().createInventory(null, dataInput.readInt());
       
       for (int i = 0; i < inventory.getSize(); i++) {
@@ -91,6 +116,7 @@ public class InventorySerializer {
       }
       
       dataInput.close();
+  
       return inventory;
     } catch (ClassNotFoundException e) {
       throw new IOException("Unable to decode class type.", e);

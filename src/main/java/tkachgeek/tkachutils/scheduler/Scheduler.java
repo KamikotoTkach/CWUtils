@@ -3,24 +3,25 @@ package tkachgeek.tkachutils.scheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class Scheduler<T> {
-  private static final HashMap<Integer, Scheduler> tasks = new HashMap<>();
   private static int increment = 0;
   
   private final T anything;
   private final int id = increment++;
-  private int taskId = -1;
-  private boolean asyncTask = false;
-  private boolean infinite = false;
+  int taskId = -1;
   
-  private Consumer<T> action = (x) -> {};
-  private Consumer<T> lastlyAction = (x) -> {};
+  private volatile boolean asyncTask = false;
+  private volatile boolean infinite = false;
   
-  private Predicate<T> condition = null;
+  private volatile Consumer<T> action = (x) -> {};
+  private volatile Consumer<T> lastlyAction = (x) -> {};
+  private volatile boolean blocked = false;
+  private volatile boolean running = false;
+  
+  private volatile Predicate<T> condition = null;
   
   protected Scheduler(T anything) {
     this.anything = anything;
@@ -28,18 +29,6 @@ public class Scheduler<T> {
   
   public static <T> Scheduler<T> create(T anything) {
     return new Scheduler<T>(anything);
-  }
-  
-  /**
-   * Отменяет такс
-   */
-  public static boolean cancelTask(int id) {
-    if (tasks.containsKey(id) && (tasks.get(id).taskId != -1)) {
-      Bukkit.getScheduler().cancelTask(tasks.get(id).taskId);
-      tasks.remove(id);
-      return true;
-    }
-    return false;
   }
   
   /**
@@ -63,6 +52,13 @@ public class Scheduler<T> {
    */
   public Scheduler<T> async() {
     this.asyncTask = true;
+    this.blocked = true;
+    return this;
+  }
+  
+  public Scheduler<T> async(boolean async) {
+    this.asyncTask = async;
+    this.blocked = async || blocked;
     return this;
   }
   
@@ -71,6 +67,11 @@ public class Scheduler<T> {
    */
   public Scheduler<T> infinite() {
     this.infinite = true;
+    return this;
+  }
+  
+  public Scheduler<T> infinite(boolean infinite) {
+    this.infinite = infinite;
     return this;
   }
   
@@ -91,22 +92,36 @@ public class Scheduler<T> {
     } else {
       taskId = Bukkit.getScheduler().runTaskTimer(plugin, this::tick, delay, delay).getTaskId();
     }
-    tasks.put(id, this);
+    Tasks.put(id, this);
     return id;
   }
   
-  protected void tick() {
-    if (condition == null) {
-      action.accept(anything);
-      if (!infinite) cancelTask(id);
-      return;
-    }
+  private void tick() {
+    if (blocked && running) return;
     
-    if (condition.test(anything)) {
-      action.accept(anything);
+    if (condition == null) {
+      runWithCancelling(action);
+    } else if (condition.test(anything)) {
+      run(action);
     } else {
-      lastlyAction.accept(anything);
-      if (!infinite) cancelTask(id);
+      runWithCancelling(lastlyAction);
     }
+  }
+  
+  private void run(Consumer<T> action) {
+    running = true;
+    
+    action.accept(anything);
+    
+    running = false;
+  }
+  
+  private void runWithCancelling(Consumer<T> action) {
+    running = true;
+    
+    action.accept(anything);
+    if (!infinite) Tasks.cancelTask(id);
+    
+    running = false;
   }
 }

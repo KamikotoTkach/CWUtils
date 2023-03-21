@@ -1,5 +1,7 @@
 package tkachgeek.tkachutils.animation.timingFunction;
 
+import tkachgeek.tkachutils.animation.timingFunction.cubicBezier.CubicBezier;
+
 public class TimingFunctions {
   public static TimingFunction ease = new CubicBezier(0.25, 0.1, 0.25, 1.0);
   public static TimingFunction linear = new Linear();
