@@ -60,6 +60,27 @@ public class NumbersUtils {
   /**
    * Устанавливает рамки числу (min и max)
    */
+  public static int bound(int value, int min, int max) {
+    return Math.max(Math.min(value, max), min);
+  }
+  
+  /**
+   * Устанавливает рамки числу (max)
+   */
+  public static int notGreater(int value, int max) {
+    return Math.min(value, max);
+  }
+  
+  /**
+   * Устанавливает рамки числу (min)
+   */
+  public static int notLower(int value, int min) {
+    return Math.max(value, min);
+  }
+  
+  /**
+   * Устанавливает рамки числу (min и max)
+   */
   public static double bound(double value, double min, double max) {
     return Math.max(Math.min(value, max), min);
   }
