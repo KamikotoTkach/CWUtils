@@ -3,7 +3,9 @@ package tkachgeek.tkachutils.messages;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import tkachgeek.tkachutils.server.ServerUtils;
 
 import java.util.Map;
@@ -81,5 +83,14 @@ public class Message {
       }
 
       sender.sendMessage(this::get);
+   }
+
+   public void send(String name) {
+      for (Player player : Bukkit.getOnlinePlayers()) {
+         if (player.getName().equals(name)) {
+            this.send(player);
+            return;
+         }
+      }
    }
 }
