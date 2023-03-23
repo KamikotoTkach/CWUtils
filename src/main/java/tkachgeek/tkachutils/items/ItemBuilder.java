@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ItemBuilder {
   
@@ -62,7 +63,7 @@ public class ItemBuilder {
   }
   
   public ItemBuilder name(Component name) {
-    meta.displayName(name);
+    meta.displayName(name.decoration(TextDecoration.ITALIC, false));
     return this;
   }
   
@@ -82,7 +83,7 @@ public class ItemBuilder {
   }
   
   public ItemBuilder description(List<Component> description) {
-    meta.lore(description);
+    meta.lore(description.stream().map(x -> x.decoration(TextDecoration.ITALIC, false)).collect(Collectors.toList()));
     return this;
   }
   
