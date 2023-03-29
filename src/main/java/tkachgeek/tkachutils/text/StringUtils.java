@@ -16,7 +16,7 @@ public class StringUtils {
     
     if (string.equals(written)) return Integer.MAX_VALUE;
     if (string.startsWith(written)) return Integer.MAX_VALUE;
-    if (string.contains(written)) return (int) Math.pow(written.length(), 2);
+    if (string.contains(written)) return written.length() * written.length();
     
     int score = 0;
     
