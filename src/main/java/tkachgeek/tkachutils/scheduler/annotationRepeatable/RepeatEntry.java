@@ -17,7 +17,7 @@ public class RepeatEntry {
     this.async = annotation.async();
   }
   
-  public void run(JavaPlugin plugin) {
+  public int schedule(JavaPlugin plugin) {
     Scheduler<Method> scheduler = Scheduler.create(method).infinite();
     if (async) scheduler.async();
     scheduler.perform(x -> {
@@ -27,6 +27,6 @@ public class RepeatEntry {
         e.printStackTrace();
       }
     });
-    scheduler.register(plugin, (int) delay);
+    return scheduler.register(plugin, (int) delay);
   }
 }

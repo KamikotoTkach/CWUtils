@@ -1,6 +1,7 @@
 package tkachgeek.tkachutils.scheduler;
 
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,5 +32,12 @@ public class Tasks {
       return true;
     }
     return false;
+  }
+  
+  public static void cancelTasks(JavaPlugin plugin) {
+    tasks.values().
+         stream()
+         .filter(x -> x.registered.equals(plugin))
+         .forEach(x -> cancelTask(x.taskId));
   }
 }

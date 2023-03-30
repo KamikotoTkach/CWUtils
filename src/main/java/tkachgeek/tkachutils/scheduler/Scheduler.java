@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 
 public class Scheduler<T> {
   private static int increment = 0;
-  
+  JavaPlugin registered = null;
   private final T anything;
   private final int id = increment++;
   int taskId = -1;
@@ -92,6 +92,7 @@ public class Scheduler<T> {
     } else {
       taskId = Bukkit.getScheduler().runTaskTimer(plugin, this::tick, delay, delay).getTaskId();
     }
+    registered = plugin;
     Tasks.put(id, this);
     return id;
   }
