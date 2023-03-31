@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 import tkachgeek.tkachutils.numbers.Rand;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,16 +34,30 @@ public class CollectionUtils {
   }
   
   @SafeVarargs
-  public static <T> List<T> combine(List<T>... lists) {
+  public static <T> Collection<T> combine(Collection<T>... lists) {
     int size = 0;
-    for (List<T> list : lists) {
+    for (Collection<T> list : lists) {
       size += list.size();
     }
     List<T> combined = new ArrayList<>(size);
-    for (List<T> list : lists) {
+    for (Collection<T> list : lists) {
       combined.addAll(list);
     }
     return combined;
+  }
+  
+  public static <T> boolean intersect(Collection<T> one, Collection<T> two) {
+    for (T t : one) {
+      if (two.contains(t)) return true;
+    }
+    return false;
+  }
+  
+  public static <T> boolean hasAllElements(Collection<T> toCheck, Collection<T> elements) {
+    for (T t : elements) {
+      if (!toCheck.contains(t)) return false;
+    }
+    return true;
   }
   
   public static String getStringOfArray(Object[] values) {
