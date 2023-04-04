@@ -46,7 +46,7 @@ public class CollectionUtils {
     return combined;
   }
   
-  public static <T> boolean intersect(Collection<T> one, Collection<T> two) {
+  public static <T> boolean containsAny(Collection<T> one, Collection<T> two) {
     for (T t : one) {
       if (two.contains(t)) return true;
     }
