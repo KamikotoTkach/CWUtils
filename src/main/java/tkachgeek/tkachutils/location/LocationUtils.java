@@ -9,6 +9,7 @@ import org.bukkit.util.Vector;
 import tkachgeek.tkachutils.numbers.Rand;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -114,5 +115,13 @@ public class LocationUtils {
       if (entity.getBoundingBox().contains(location.toVector())) return true;
     }
     return false;
+  }
+  
+  public static <T extends Entity> Optional<T> getEntityAtLocation(Location location, Class<T> entityClass) {
+    for (Entity entity : location.getChunk().getEntities()) {
+      if (!entity.getClass().isAssignableFrom(entityClass)) continue;
+      if (entity.getBoundingBox().contains(location.toVector())) return Optional.of((T) entity);
+    }
+    return Optional.empty();
   }
 }
