@@ -93,4 +93,34 @@ public class Message {
          }
       }
    }
+
+   public void broadcast() {
+      for (Player player : Bukkit.getOnlinePlayers()) {
+         this.send(player);
+      }
+   }
+
+   public void sendActionBar(Player player) {
+      if (ServerUtils.isVersionBefore1_16_5()) {
+         player.sendActionBar(this.message);
+         return;
+      }
+
+      player.sendActionBar(this::get);
+   }
+
+   public void sendActionBar(String name) {
+      for (Player player : Bukkit.getOnlinePlayers()) {
+         if (player.getName().equals(name)) {
+            this.sendActionBar(player);
+            return;
+         }
+      }
+   }
+
+   public void broadcastActionBar() {
+      for (Player player : Bukkit.getOnlinePlayers()) {
+         this.sendActionBar(player);
+      }
+   }
 }

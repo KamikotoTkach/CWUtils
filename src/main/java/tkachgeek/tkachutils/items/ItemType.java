@@ -63,4 +63,22 @@ public enum ItemType {
       Material material = item.getType();
       return material.equals(Material.TRIDENT);
    }
+
+   public static boolean isUsable(ItemStack item) {
+      if (item == null) {
+         return false;
+      }
+
+      Material material = item.getType();
+      return material.isEdible()
+            || material.equals(Material.POTION)
+            || material.equals(Material.LINGERING_POTION)
+            || material.equals(Material.SPLASH_POTION)
+            || material.equals(Material.WRITABLE_BOOK)
+            || material.equals(Material.WRITTEN_BOOK)
+            || material.equals(Material.ENDER_EYE)
+            || material.equals(Material.ENDER_PEARL)
+            || material.equals(Material.BOW)
+            || material.equals(Material.CROSSBOW);
+   }
 }
