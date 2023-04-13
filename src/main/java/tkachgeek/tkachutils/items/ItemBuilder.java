@@ -177,6 +177,11 @@ public class ItemBuilder {
     return this;
   }
   
+  public ItemBuilder customModelData(int data) {
+    meta.setCustomModelData(data);
+    return this;
+  }
+  
   public ItemStack build() {
     return this.generateItem();
   }

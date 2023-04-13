@@ -2,6 +2,7 @@ package tkachgeek.tkachutils.collections;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -15,7 +16,7 @@ public class ExpiredSet<T> {
    private final HashMap<T, LocalDateTime> expired = new HashMap<>();
    
    public void setExpired(T element, Duration duration) {
-      this.expired.put(element, LocalDateTime.now().plusSeconds(duration.getSeconds()));
+      this.expired.put(element, LocalDateTime.now().plus(duration.toMillis(), ChronoUnit.MILLIS));
    }
 
    public Status getStatus(T element) {
