@@ -75,7 +75,7 @@ public class ItemTypes {
     final Set<Material> values = new HashSet<>();
     
     Instruments() {
-      Arrays.stream(Material.values()).filter(x -> x.name().endsWith("_" + name())).forEach(e -> {
+      Arrays.stream(Material.values()).filter(x -> x.name().endsWith("_" + this.name())).forEach(e -> {
         values.add(e);
         mappedInstruments.put(e, this);
       });
@@ -100,7 +100,7 @@ public class ItemTypes {
     
     ItemType(boolean shouldTryToFoundItems) {
       if (shouldTryToFoundItems) {
-        Arrays.stream(Material.values()).filter(x -> x.name().startsWith(name() + "_")).forEach(x -> matchingMaterials.put(x, this));
+        Arrays.stream(Material.values()).filter(x -> x.name().startsWith(this.name() + "_")).forEach(x -> matchingMaterials.put(x, this));
       }
     }
   }
