@@ -91,4 +91,12 @@ public class StringUtils {
   public static boolean containsIgnoreCase(String source, String toSearch) {
     return Objects.equals(source, toSearch) || source.toLowerCase().contains(toSearch.toLowerCase());
   }
+  
+  public static boolean startWithIgnoreCase(String original, String startWith) {
+    return original.equals(startWith) || original.toLowerCase().startsWith(startWith.toLowerCase());
+  }
+  
+  public static boolean endsWithIgnoreCase(String original, String endsWith) {
+    return original.equals(endsWith) || original.toLowerCase().endsWith(endsWith.toLowerCase());
+  }
 }

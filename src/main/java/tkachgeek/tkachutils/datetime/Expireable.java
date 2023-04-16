@@ -4,6 +4,9 @@ public class Expireable {
   long time = 0;
   long expires = 0;
   
+  public Expireable() {
+  }
+  
   public Expireable(long ms) {
     expires = ms;
   }
