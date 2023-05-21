@@ -23,7 +23,7 @@ public class ServerUtils {
                                .replaceAll("\\.", "");
         
         if (NumbersUtils.isInteger(version)) {
-            return Integer.parseInt(version) < 1122;
+            return Integer.parseInt(version) <= 1122;
         }
         
         return true;
