@@ -1,5 +1,6 @@
 package tkachgeek.tkachutils.location;
 
+import org.bukkit.Chunk;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -14,32 +15,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class LocationUtils {
-  
-  /**
-   * Проверяет наличие локации между двумя точками
-   */
-  public static boolean isInRegion(Location tested, Location pos1, Location pos2) {
-    if (!tested.getWorld().equals(pos1.getWorld()) || !tested.getWorld().equals(pos2.getWorld())) {
-      return false;
-    }
-    
-    double x1 = Math.min(pos1.getX(), pos2.getX());
-    double y1 = Math.min(pos1.getY(), pos2.getY());
-    double z1 = Math.min(pos1.getZ(), pos2.getZ());
-    
-    double x2 = Math.max(pos1.getX(), pos2.getX());
-    double y2 = Math.max(pos1.getY(), pos2.getY());
-    double z2 = Math.max(pos1.getZ(), pos2.getZ());
-    
-    double x = tested.getX();
-    double y = tested.getY();
-    double z = tested.getZ();
-    
-    return
-       x > x1 && x < x2
-          && y > y1 && y < y2
-          && z > z1 && z < z2;
-  }
   
   /**
    * Возвращает случайнул локацию между двумя точками
@@ -123,5 +98,41 @@ public class LocationUtils {
       if (entity.getBoundingBox().contains(location.toVector())) return Optional.of((T) entity);
     }
     return Optional.empty();
+  }
+  
+  public static boolean isIn(Location locationToTest, Chunk chunk) {
+    int zMax = chunk.getZ() * 16 + 16;
+    int xMax = chunk.getX() * 16 + 16;
+    
+    int zMin = chunk.getZ() * 16;
+    int xMin = chunk.getX() * 16;
+    
+    return isInRegion(locationToTest, new Location(chunk.getWorld(), xMax, chunk.getWorld().getMaxHeight(), zMax), new Location(chunk.getWorld(), xMin, chunk.getWorld().getMinHeight(), zMin));
+  }
+  
+  /**
+   * Проверяет наличие локации между двумя точками
+   */
+  public static boolean isInRegion(Location tested, Location pos1, Location pos2) {
+    if (!tested.getWorld().equals(pos1.getWorld()) || !tested.getWorld().equals(pos2.getWorld())) {
+      return false;
+    }
+    
+    double x1 = Math.min(pos1.getX(), pos2.getX());
+    double y1 = Math.min(pos1.getY(), pos2.getY());
+    double z1 = Math.min(pos1.getZ(), pos2.getZ());
+    
+    double x2 = Math.max(pos1.getX(), pos2.getX());
+    double y2 = Math.max(pos1.getY(), pos2.getY());
+    double z2 = Math.max(pos1.getZ(), pos2.getZ());
+    
+    double x = tested.getX();
+    double y = tested.getY();
+    double z = tested.getZ();
+    
+    return
+       x > x1 && x < x2
+          && y > y1 && y < y2
+          && z > z1 && z < z2;
   }
 }
