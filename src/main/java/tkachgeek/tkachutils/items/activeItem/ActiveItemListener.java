@@ -23,6 +23,8 @@ public class ActiveItemListener implements Listener {
   
   @EventHandler
   void onInteract(PlayerInteractEvent event) {
+    if (event.getItem() == null || event.getItem().getType().isAir()) return;
+    
     Optional<ItemAction> action = EnumUtils.getEnumInstance(ItemAction.values(), event.getAction().name());
     if (action.isEmpty()) return;
     
@@ -31,6 +33,7 @@ public class ActiveItemListener implements Listener {
   
   @EventHandler
   void onInventoryClick(InventoryClickEvent event) {
+    if (event.getCurrentItem() == null || event.getCurrentItem().getType().isAir()) return;
     Optional<ItemAction> action = EnumUtils.getEnumInstance(ItemAction.values(), event.getAction().name());
     if (action.isEmpty()) return;
     
