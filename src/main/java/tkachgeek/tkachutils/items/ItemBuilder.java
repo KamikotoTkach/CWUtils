@@ -4,6 +4,7 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
@@ -12,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -179,6 +181,21 @@ public class ItemBuilder {
   
   public ItemBuilder customModelData(int data) {
     meta.setCustomModelData(data);
+    return this;
+  }
+  
+  public ItemBuilder tag(NamespacedKey key, String value) {
+    meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, value);
+    return this;
+  }
+  
+  public ItemBuilder tag(NamespacedKey key, int value) {
+    meta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, value);
+    return this;
+  }
+  
+  public ItemBuilder tag(NamespacedKey key, double value) {
+    meta.getPersistentDataContainer().set(key, PersistentDataType.DOUBLE, value);
     return this;
   }
   
