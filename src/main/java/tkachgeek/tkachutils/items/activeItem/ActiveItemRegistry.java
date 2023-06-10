@@ -11,7 +11,9 @@ public class ActiveItemRegistry {
   static HashMap<JavaPlugin, PluginEntry> activeItems = new HashMap<>();
   
   public static void register(ActiveItem activeItem) {
-    activeItems.putIfAbsent(activeItem.getPlugin(), new PluginEntry(activeItem.getPlugin()));
+    if (!activeItems.containsKey(activeItem.getPlugin())) {
+      activeItems.put(activeItem.getPlugin(), new PluginEntry(activeItem.getPlugin()));
+    }
     
     activeItems.get(activeItem.getPlugin()).addItem(activeItem);
   }
