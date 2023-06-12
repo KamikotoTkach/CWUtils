@@ -79,14 +79,18 @@ public class CollectionUtils {
   
   public static <T> String toString(List<T> values, String prefix, String suffix, boolean removeLastSuffix) {
     if (values.size() == 0) return "";
-  
+    
     StringBuilder sb = new StringBuilder();
     for (T value : values) {
       sb.append(prefix).append(value).append(suffix);
     }
-  
+    
     if (removeLastSuffix) sb.setLength(sb.length() - suffix.length());
     return sb.toString();
+  }
+  
+  public static <T> int increment(T item, HashMap<T, Integer> map) {
+    return add(item, 1, map);
   }
   
   public static <T> int add(T item, int toAdd, HashMap<T, Integer> map) {
@@ -95,19 +99,15 @@ public class CollectionUtils {
     return newValue;
   }
   
-  public static <T> int increment(T item, HashMap<T, Integer> map) {
-    return add(item, 1, map);
-  }
-  
   public static <T> int decrement(T item, HashMap<T, Integer> map) {
     return add(item, -1, map);
   }
   
-  public static <T> T getRandomWeightedElement(Map<T, Number> map) {
+  public static <T> T getRandomWeightedElement(Map<T, ? extends Number> map) {
     double totalWeight = map.values().stream().mapToDouble(Number::doubleValue).sum();
     double randomWeight = Rand.ofDouble(totalWeight);
     
-    for (Map.Entry<T, Number> entry : map.entrySet()) {
+    for (Map.Entry<T, ? extends Number> entry : map.entrySet()) {
       randomWeight -= entry.getValue().doubleValue();
       if (randomWeight < 0) {
         return entry.getKey();
