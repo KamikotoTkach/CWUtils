@@ -1,15 +1,17 @@
 package tkachgeek.tkachutils.location;
 
-import org.bukkit.Chunk;
-import org.bukkit.FluidCollisionMode;
-import org.bukkit.Location;
+import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import tkachgeek.tkachutils.numbers.Rand;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,7 +19,7 @@ import java.util.stream.Stream;
 public class LocationUtils {
   
   /**
-   * Возвращает случайнул локацию между двумя точками
+   * Возвращает случайную локацию между двумя точками
    */
   public static Location randomLocation(Location pos1, Location pos2) {
     int x1 = Math.min(pos1.getBlockX(), pos2.getBlockX());
@@ -34,6 +36,37 @@ public class LocationUtils {
        Rand.ofInt(y2 - y1 + 1) + y1,
        Rand.ofInt(z2 - z1 + 1) + z1
     );
+  }
+  
+  public static List<Block> getAllBlocksBetween(Location pos1, Location pos2) {
+    if (pos1.getWorld() != pos2.getWorld()) {
+      Bukkit.getLogger().warning("getAllBlocksBetween(Location pos1, Location pos2) got positions in different dimensions");
+      return List.of();
+    }
+    
+    int xMin = Math.min(pos1.getBlockX(), pos2.getBlockX());
+    int yMin = Math.min(pos1.getBlockY(), pos2.getBlockY());
+    int zMin = Math.min(pos1.getBlockZ(), pos2.getBlockZ());
+    
+    int xMax = Math.max(pos1.getBlockX(), pos2.getBlockX());
+    int yMax = Math.max(pos1.getBlockY(), pos2.getBlockY());
+    int zMax = Math.max(pos1.getBlockZ(), pos2.getBlockZ());
+    
+    World world = pos1.getWorld();
+    
+    List<Block> blocks = new ArrayList<>((Math.abs(xMin) - Math.abs(xMax))
+                                            * (Math.abs(yMin) - Math.abs(yMax))
+                                            * (Math.abs(zMin) - Math.abs(zMax)));
+    
+    for (int y = yMin; y <= yMax; y++) {
+      for (int z = zMin; z <= zMax; z++) {
+        for (int x = xMin; x <= xMax; x++) {
+          blocks.add(world.getBlockAt(x, y, z));
+        }
+      }
+    }
+    
+    return blocks;
   }
   
   /**
@@ -66,11 +99,16 @@ public class LocationUtils {
   /**
    * Проверяет наличие твёрдых блков между двумя точками (прямая)
    */
-  public static boolean hasBlockBetweenLocations(Location loc1, Location loc2) {
-    Vector direction = loc2.toVector().subtract(loc1.toVector()).normalize();
-    double distance = loc1.distance(loc2);
+  public static boolean hasBlockBetweenLocations(Location pos1, Location pos2) {
+    if (!pos1.getWorld().equals(pos2.getWorld())) {
+      Bukkit.getLogger().warning("hasBlockBetweenLocations(Location pos1, Location pos2) got positions in different dimensions");
+      return true;
+    }
     
-    RayTraceResult result = loc1.getWorld().rayTraceBlocks(loc1, direction, distance, FluidCollisionMode.NEVER, true);
+    Vector direction = pos2.toVector().subtract(pos1.toVector()).normalize();
+    double distance = pos1.distance(pos2);
+    
+    RayTraceResult result = pos1.getWorld().rayTraceBlocks(pos1, direction, distance, FluidCollisionMode.NEVER, true);
     
     if (result == null) {
       return false;
@@ -98,6 +136,18 @@ public class LocationUtils {
       if (entity.getBoundingBox().contains(location.toVector())) return Optional.of((T) entity);
     }
     return Optional.empty();
+  }
+  
+  public static Collection<Entity> getEntitiesBetween(Location pos1, Location pos2) {
+    if (!pos1.getWorld().equals(pos2.getWorld())) {
+      Bukkit.getLogger().warning("getEntitiesBetween(Location pos1, Location pos2) got positions in different dimensions");
+      return List.of();
+    }
+    
+    BoundingBox boundingBox = new BoundingBox(pos1.getBlockX(), pos1.getBlockY(), pos1.getBlockZ(),
+                                              pos2.getBlockX(), pos2.getBlockY(), pos2.getBlockZ());
+    
+    return pos1.getWorld().getNearbyEntities(boundingBox);
   }
   
   public static boolean isIn(Location locationToTest, Chunk chunk) {

@@ -104,6 +104,8 @@ public class CollectionUtils {
   }
   
   public static <T> T getRandomWeightedElement(Map<T, ? extends Number> map) {
+    if (map.size() == 0) return null;
+    
     double totalWeight = map.values().stream().mapToDouble(Number::doubleValue).sum();
     double randomWeight = Rand.ofDouble(totalWeight);
     
