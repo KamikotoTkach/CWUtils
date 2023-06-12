@@ -3,10 +3,7 @@ package tkachgeek.tkachutils.collections;
 import org.jetbrains.annotations.Nullable;
 import tkachgeek.tkachutils.numbers.Rand;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class CollectionUtils {
   public static <T> @Nullable T getRandomListEntry(List<T> list) {
@@ -104,5 +101,19 @@ public class CollectionUtils {
   
   public static <T> int decrement(T item, HashMap<T, Integer> map) {
     return add(item, -1, map);
+  }
+  
+  public static <T> T getRandomWeightedElement(Map<T, Number> map) {
+    double totalWeight = map.values().stream().mapToDouble(Number::doubleValue).sum();
+    double randomWeight = Rand.ofDouble(totalWeight);
+    
+    for (Map.Entry<T, Number> entry : map.entrySet()) {
+      randomWeight -= entry.getValue().doubleValue();
+      if (randomWeight < 0) {
+        return entry.getKey();
+      }
+    }
+    
+    return null;
   }
 }
