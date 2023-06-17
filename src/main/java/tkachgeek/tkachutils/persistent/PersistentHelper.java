@@ -1,4 +1,4 @@
-package tkachgeek.tkachutils.items;
+package tkachgeek.tkachutils.persistent;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataHolder;
@@ -7,14 +7,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Set;
 
-/**
- * @deprecated Используйте <code>PersistentHelper</code, этот оставлен для совместимости
- */
-@Deprecated
-public class ItemTagHelper {
+public class PersistentHelper {
   JavaPlugin plugin;
   
-  public ItemTagHelper(JavaPlugin plugin) {
+  public PersistentHelper(JavaPlugin plugin) {
     this.plugin = plugin;
   }
   
