@@ -18,23 +18,23 @@ public class ItemTypes {
   }
   
   public static boolean isSword(ItemStack item) {
-    return item != null && Instruments.SWORDS.contains(item.getType());
+    return item != null && Instruments.SWORD.contains(item.getType());
   }
   
   public static boolean isAxe(ItemStack item) {
-    return item != null && Instruments.AXES.contains(item.getType());
+    return item != null && Instruments.AXE.contains(item.getType());
   }
   
   public static boolean isHoe(ItemStack item) {
-    return item != null && Instruments.HOES.contains(item.getType());
+    return item != null && Instruments.HOE.contains(item.getType());
   }
   
   public static boolean isShovel(ItemStack item) {
-    return item != null && Instruments.SHOVELS.contains(item.getType());
+    return item != null && Instruments.SHOVEL.contains(item.getType());
   }
   
   public static boolean isPickaxe(ItemStack item) {
-    return item != null && Instruments.PICKAXES.contains(item.getType());
+    return item != null && Instruments.PICKAXE.contains(item.getType());
   }
   
   public static boolean isTool(ItemStack item) {
@@ -67,11 +67,11 @@ public class ItemTypes {
   }
   
   public enum Instruments {
-    SWORDS,
-    HOES,
-    PICKAXES,
-    SHOVELS,
-    AXES;
+    SWORD,
+    HOE,
+    PICKAXE,
+    SHOVEL,
+    AXE;
     final Set<Material> values = new HashSet<>();
     
     Instruments() {

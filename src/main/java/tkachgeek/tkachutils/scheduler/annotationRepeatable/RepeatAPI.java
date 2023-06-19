@@ -35,12 +35,6 @@ public class RepeatAPI {
     }
   }
   
-  public static void unregisterAll(JavaPlugin plugin) {
-    for (Integer id : tasks.get(plugin)) {
-      Tasks.cancelTask(id);
-    }
-  }
-  
   private static int handle(Class<?> classInfo, JavaPlugin plugin) throws ClassNotFoundException {
     int registered = 0;
     for (Method method : classInfo.getDeclaredMethods()) {
@@ -49,7 +43,7 @@ public class RepeatAPI {
         Repeat annotation = method.getAnnotation(Repeat.class);
         
         if (annotation != null) {
-          plugin.getLogger().info("Registered task " + classInfo.getName() + "/" + method);
+          plugin.getLogger().info("Registered task " + classInfo.getName() + "." + method.getName() + "()");
           int id = new RepeatEntry(method, annotation).schedule(plugin);
           tasks.get(plugin).add(id);
           registered++;
@@ -57,5 +51,11 @@ public class RepeatAPI {
       }
     }
     return registered;
+  }
+  
+  public static void unregisterAll(JavaPlugin plugin) {
+    for (Integer id : tasks.get(plugin)) {
+      Tasks.cancelTask(id);
+    }
   }
 }
