@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
+import tkachgeek.tkachutils.collections.CollectionUtils;
 import tkachgeek.tkachutils.numbers.Rand;
 
 public class FireworkUtils {
@@ -14,7 +15,13 @@ public class FireworkUtils {
   public static void spawnRandomFirework(final Location loc) {
     final Firework firework = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
     final FireworkMeta fireworkMeta = firework.getFireworkMeta();
-    final FireworkEffect effect = FireworkEffect.builder().flicker(Rand.bool()).withColor(getColor(Rand.ofInt(17) + 1)).withFade(getColor(Rand.ofInt(17) + 1)).with(Type.values()[Rand.ofInt(Type.values().length)]).trail(Rand.bool()).build();
+    final FireworkEffect effect = FireworkEffect.builder()
+                                                .with(CollectionUtils.getRandomArrayEntry(Type.values()))
+                                                .withColor(getColor(Rand.ofInt(17) + 1))
+                                                .withFade(getColor(Rand.ofInt(17) + 1))
+                                                .flicker(Rand.bool())
+                                                .trail(Rand.bool())
+                                                .build();
     fireworkMeta.addEffect(effect);
     fireworkMeta.setPower(Rand.ofInt(2) + 1);
     firework.setFireworkMeta(fireworkMeta);
