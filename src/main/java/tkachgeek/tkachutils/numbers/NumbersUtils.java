@@ -112,4 +112,20 @@ public class NumbersUtils {
   public double absolute(double max, double current) {
     return current / max;
   }
+  
+  public String shortNumberFormat(double number) {
+    String[] suffix = new String[]{"", "k", "m", "b", "t"};
+    int index = 0;
+    
+    while (number >= 1000) {
+      number /= 1000;
+      index++;
+    }
+    
+    String formatted = String.format("%.1f", number).replace(',', '.');
+    if (formatted.endsWith(".0")) {
+      formatted = formatted.substring(0, formatted.length() - 2);
+    }
+    return formatted + suffix[index];
+  }
 }
