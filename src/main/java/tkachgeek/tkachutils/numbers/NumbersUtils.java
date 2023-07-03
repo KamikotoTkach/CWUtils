@@ -2,6 +2,8 @@ package tkachgeek.tkachutils.numbers;
 
 public class NumbersUtils {
   
+  public static final String[] suffix = new String[]{"", "k", "m", "b", "t"};
+  
   /**
    * Округляет в меньшую сторону, но с шагом 0.5
    */
@@ -99,6 +101,24 @@ public class NumbersUtils {
     return Math.max(value, min);
   }
   
+  public static String shortNumberFormat(double number) {
+    int index = 0;
+    
+    while (number >= 1000) {
+      number /= 1000;
+      index++;
+    }
+    
+    String formatted = String.format("%.1f", number).replace(',', '.');
+    if (formatted.endsWith(".0")) {
+      formatted = formatted.substring(0, formatted.length() - 2);
+    }
+    
+    if (suffix.length <= index) return formatted + "?";
+    
+    return formatted + suffix[index];
+  }
+  
   /**
    * Возвращает абсолютное значение current относительно min и max
    */
@@ -111,21 +131,5 @@ public class NumbersUtils {
    */
   public double absolute(double max, double current) {
     return current / max;
-  }
-  
-  public String shortNumberFormat(double number) {
-    String[] suffix = new String[]{"", "k", "m", "b", "t"};
-    int index = 0;
-    
-    while (number >= 1000) {
-      number /= 1000;
-      index++;
-    }
-    
-    String formatted = String.format("%.1f", number).replace(',', '.');
-    if (formatted.endsWith(".0")) {
-      formatted = formatted.substring(0, formatted.length() - 2);
-    }
-    return formatted + suffix[index];
   }
 }
