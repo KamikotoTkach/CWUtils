@@ -7,17 +7,13 @@ public class Expireable {
   public Expireable() {
   }
   
-  public Expireable(long ms) {
-    expires = ms;
-  }
-  
   public Expireable(long ms, long lastTime) {
     this(ms);
     time = lastTime;
   }
   
-  public boolean isExpired() {
-    return time + expires < System.currentTimeMillis();
+  public Expireable(long ms) {
+    expires = ms;
   }
   
   public boolean isExpiredAndReset() {
@@ -28,11 +24,27 @@ public class Expireable {
     return false;
   }
   
+  public boolean isExpired() {
+    return time + expires < System.currentTimeMillis();
+  }
+  
   public void reset() {
     time = System.currentTimeMillis();
   }
   
   public void expireAfter(long ms) {
     expires = ms;
+  }
+  
+  public long getLastTime() {
+    return time;
+  }
+  
+  public long getExpiresTime() {
+    return expires;
+  }
+  
+  public long getExpireAfterTime() {
+    return System.currentTimeMillis() - (time + expires);
   }
 }
