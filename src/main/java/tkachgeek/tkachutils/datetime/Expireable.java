@@ -45,6 +45,6 @@ public class Expireable {
   }
   
   public long getExpireAfterTime() {
-    return System.currentTimeMillis() - (time + expires);
+    return (time + expires) - System.currentTimeMillis();
   }
 }
