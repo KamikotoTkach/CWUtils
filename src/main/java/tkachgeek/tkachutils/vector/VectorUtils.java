@@ -29,4 +29,13 @@ public class VectorUtils {
     
     return new Vector(x, y, z);
   }
+  
+  public static Vector getClosestPointOnLine(Vector point, Vector startPoint, Vector endPoint) {
+    Vector segmentDir = endPoint.clone().subtract(startPoint);
+    Vector pointDir = point.clone().subtract(startPoint);
+    double projectedLength = pointDir.dot(segmentDir) / segmentDir.length();
+    if (projectedLength < 0 || projectedLength > segmentDir.length()) return null;
+    
+    return startPoint.clone().add(segmentDir.clone().normalize().multiply(projectedLength));
+  }
 }
