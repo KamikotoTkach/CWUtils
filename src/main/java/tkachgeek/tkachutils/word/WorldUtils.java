@@ -24,6 +24,7 @@ public class WorldUtils {
          world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
          world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
          world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
+         world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
 
          world.setTime(6000);
          world.setClearWeatherDuration(1000);
