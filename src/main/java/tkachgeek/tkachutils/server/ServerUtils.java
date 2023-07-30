@@ -31,12 +31,12 @@ public class ServerUtils {
    public static boolean isVersionBefore1_16_5() {
       int version = getVersionWeight(Bukkit.getBukkitVersion());
 
-      return version < 1165;
+      return version < getVersionWeight("1.16.5");
    }
 
    public static boolean isVersionBeforeOrEqual1_12_2() {
       int version = getVersionWeight(Bukkit.getBukkitVersion());
 
-      return version <= 1122;
+      return version <= getVersionWeight("1.12.2");
    }
 }
