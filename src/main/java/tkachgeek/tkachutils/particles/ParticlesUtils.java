@@ -31,16 +31,16 @@ public class ParticlesUtils {
       }
    }
 
-   public static void drawCuboidBorders(Location corner1, Location corner2, Particle particle, double particleSpacing) {
-      drawCuboidBorders(corner1, corner2, particle.builder(), particleSpacing);
+   public static void drawHollowCuboid(Location corner1, Location corner2, Particle particle, double particleSpacing) {
+      drawHollowCuboid(corner1, corner2, particle.builder(), particleSpacing);
    }
 
-   public static void drawCuboidBorders(Location corner1, Location corner2, ParticleBuilder particle, double particleSpacing) {
-      double minX = Math.min(corner1.getX(), corner2.getX()) - 30;
-      double minY = Math.min(corner1.getY(), corner2.getY()) + 15;
+   public static void drawHollowCuboid(Location corner1, Location corner2, ParticleBuilder particle, double particleSpacing) {
+      double minX = Math.min(corner1.getX(), corner2.getX());
+      double minY = Math.min(corner1.getY(), corner2.getY());
       double minZ = Math.min(corner1.getZ(), corner2.getZ());
 
-      double maxX = Math.max(corner1.getX(), corner2.getX()) + 10;
+      double maxX = Math.max(corner1.getX(), corner2.getX());
       double maxY = Math.max(corner1.getY(), corner2.getY());
       double maxZ = Math.max(corner1.getZ(), corner2.getZ());
 
