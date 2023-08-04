@@ -38,6 +38,9 @@ public class LocationUtils {
     );
   }
   
+  /**
+   * Возвращает список блоков, ограниченный кубоидом
+   */
   public static List<Block> getAllBlocksBetween(Location pos1, Location pos2) {
     if (pos1.getWorld() != pos2.getWorld()) {
       Bukkit.getLogger().warning("getAllBlocksBetween(Location pos1, Location pos2) got positions in different dimensions");
@@ -75,9 +78,10 @@ public class LocationUtils {
   public static Location getHighestLocationUnder(Location location) {
     double minHeight = location.getWorld().getMinHeight();
     
-    while (location.getY() < minHeight || location.getBlock().getType().isAir()) {
+    while (location.getY() >= minHeight && location.getBlock().getType().isAir()) {
       location.subtract(0, 1, 0);
     }
+    
     return location.add(0, 1, 0);
   }
   
@@ -130,6 +134,11 @@ public class LocationUtils {
     return false;
   }
   
+  /**
+   * Проверяет есть ли энтити в заданной локации
+   *
+   * @param entityClass учитывать только entityClass
+   */
   public static <T extends Entity> Optional<T> getEntityAtLocation(Location location, Class<T> entityClass) {
     for (Entity entity : location.getChunk().getEntities()) {
       if (!entity.getClass().isAssignableFrom(entityClass)) continue;
@@ -138,6 +147,9 @@ public class LocationUtils {
     return Optional.empty();
   }
   
+  /**
+   * Получает энтити, ограниченные кубоидом
+   */
   public static Collection<Entity> getEntitiesBetween(Location pos1, Location pos2) {
     if (!pos1.getWorld().equals(pos2.getWorld())) {
       Bukkit.getLogger().warning("getEntitiesBetween(Location pos1, Location pos2) got positions in different dimensions");
@@ -150,18 +162,15 @@ public class LocationUtils {
     return pos1.getWorld().getNearbyEntities(boundingBox);
   }
   
+  /**
+   * Проверяет, находится ли локация в чанке
+   */
   public static boolean isIn(Location locationToTest, Chunk chunk) {
-    int zMax = chunk.getZ() * 16 + 16;
-    int xMax = chunk.getX() * 16 + 16;
-    
-    int zMin = chunk.getZ() * 16;
-    int xMin = chunk.getX() * 16;
-    
-    return isInRegion(locationToTest, new Location(chunk.getWorld(), xMax, chunk.getWorld().getMaxHeight(), zMax), new Location(chunk.getWorld(), xMin, chunk.getWorld().getMinHeight(), zMin));
+    return Chunk.getChunkKey(locationToTest) == chunk.getChunkKey();
   }
   
   /**
-   * Проверяет наличие локации между двумя точками
+   * Проверяет наличие локации между двумя точками (кубоид)
    */
   public static boolean isInRegion(Location tested, Location pos1, Location pos2) {
     if (!tested.getWorld().equals(pos1.getWorld()) || !tested.getWorld().equals(pos2.getWorld())) {

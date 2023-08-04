@@ -128,11 +128,11 @@ public enum ItemAction {
    */
   DOUBLE_CLICK,
   /**
-   * The "Drop" key (defaults to Q).
+   * The "Drop" key (defaults to Q) in inventory.
    */
   DROP,
   /**
-   * Holding Ctrl while pressing the "Drop" key (defaults to Q).
+   * Holding Ctrl while pressing the "Drop" key (defaults to Q) in inventory.
    */
   CONTROL_DROP,
   /**
@@ -143,4 +143,8 @@ public enum ItemAction {
    * The "swap item with offhand" key (defaults to F).
    */
   SWAP_OFFHAND,
+  /**
+   * Drop item in world (with closed inventory press the "Drop" key (defaults to Q)
+   */
+  DROP_ITEM_EVENT,
 }

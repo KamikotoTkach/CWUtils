@@ -1,6 +1,8 @@
 package tkachgeek.tkachutils.datetime;
 
-public class Expireable {
+import java.io.Serializable;
+
+public class Expireable implements Serializable {
   long time = 0;
   long expires = 0;
   
@@ -46,5 +48,9 @@ public class Expireable {
   
   public long getExpireAfterTime() {
     return (time + expires) - System.currentTimeMillis();
+  }
+  
+  public double getPercent() {
+    return System.currentTimeMillis() / ((double) time + expires);
   }
 }
