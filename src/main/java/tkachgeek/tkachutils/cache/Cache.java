@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 public class Cache<T> {
   T value = null;
   long lastUpdateTime = 0;
-  
   final Supplier<T> supplier;
   final Duration timeToUpdate;
   

@@ -17,12 +17,6 @@ public enum YawDirection {
   float middle;
   private boolean isPrimary = true;
   
-  YawDirection() {
-    this.from = normalize(-SEGMENT_SIZE + (ordinal() * 2) * SEGMENT_SIZE);
-    this.to = normalize(from + SEGMENT_SIZE * 2);
-    this.middle = from + SEGMENT_SIZE;
-  }
-  
   YawDirection(int prima1, int prima2) {
     this();
     isPrimary = false;
@@ -30,14 +24,17 @@ public enum YawDirection {
     primary[1] = prima2;
   }
   
-  public static YawDirection parse(float yaw) {
-    yaw = normalize(yaw);
-    for (YawDirection direction : values()) {
-      if (Math.abs(direction.middle - yaw) <= SEGMENT_SIZE || direction.middle == 360 && yaw <= SEGMENT_SIZE) {
-        return direction;
-      }
-    }
-    return null;
+  YawDirection() {
+    this.from = normalize(-SEGMENT_SIZE + (ordinal() * 2) * SEGMENT_SIZE);
+    this.to = normalize(from + SEGMENT_SIZE * 2);
+    this.middle = from + SEGMENT_SIZE;
+  }
+  
+  public static float normalize(float yaw) {
+    yaw %= 360;
+    
+    if (yaw < 0) yaw = 360 + yaw;
+    return yaw;
   }
   
   public static YawDirection parseToPrimaries(float yaw) {
@@ -56,10 +53,13 @@ public enum YawDirection {
     return best;
   }
   
-  public static float normalize(float yaw) {
-    yaw %= 360;
-    
-    if (yaw < 0) yaw = 360 + yaw;
-    return yaw;
+  public static YawDirection parse(float yaw) {
+    yaw = normalize(yaw);
+    for (YawDirection direction : values()) {
+      if (Math.abs(direction.middle - yaw) <= SEGMENT_SIZE || direction.middle == 360 && yaw <= SEGMENT_SIZE) {
+        return direction;
+      }
+    }
+    return null;
   }
 }
