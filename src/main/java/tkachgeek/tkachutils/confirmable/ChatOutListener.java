@@ -7,15 +7,15 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 public class ChatOutListener implements Listener {
-    public static boolean IS_REGISTERED = false;
-    
-    @EventHandler(priority = EventPriority.LOWEST)
-    void onChatOut(AsyncChatEvent event) {
-        if (ConfirmAPI.senderAffected(event.getPlayer())) {
-            if (ConfirmAPI.getString(event.getPlayer()).equals((((TextComponent) event.message()).content()))) {
-                ConfirmAPI.onSuccess(event.getPlayer());
-                event.setCancelled(true);
-            }
-        }
+  public static boolean IS_REGISTERED = false;
+  
+  @EventHandler(priority = EventPriority.LOWEST)
+  void onChatOut(AsyncChatEvent event) {
+    if (ConfirmAPI.senderAffected(event.getPlayer())) {
+      if (ConfirmAPI.getString(event.getPlayer()).equals((((TextComponent) event.message()).content()))) {
+        ConfirmAPI.onSuccess(event.getPlayer());
+        event.setCancelled(true);
+      }
     }
+  }
 }
