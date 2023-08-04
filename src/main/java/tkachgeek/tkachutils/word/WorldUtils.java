@@ -1,34 +1,50 @@
 package tkachgeek.tkachutils.word;
 
 import org.bukkit.*;
+import org.bukkit.generator.ChunkGenerator;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Random;
 
 public class WorldUtils {
-  public static World createFlatWorld(String name) {
-    World world = createWorld(name, WorldType.FLAT);
-    if (world != null) {
-      world.getPopulators().clear();
+   private static final ChunkGenerator emptyGenerator = new ChunkGenerator() {
+      @Override
+      public @NotNull ChunkData generateChunkData(@NotNull World world, @NotNull Random random, int x, int z, @NotNull BiomeGrid biome) {
+         return createChunkData(world);
+      }
+   };
 
-      world.setGameRule(GameRule.RANDOM_TICK_SPEED, 0);
-      world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
-      world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-      world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
+   public static World createEmptyWorld(String name) {
+      if (Bukkit.getWorld(name) != null) {
+         return null;
+      }
 
-      world.setTime(6000);
-      world.setClearWeatherDuration(1000);
-    }
+      World world = WorldCreator.name(name)
+                                .type(WorldType.FLAT)
+                                .generator(emptyGenerator)
+                                .createWorld();
+      if (world != null) {
+         world.setGameRule(GameRule.RANDOM_TICK_SPEED, 0);
+         world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
+         world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+         world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
 
-    return world;
-  }
+         world.setTime(6000);
+         world.setClearWeatherDuration(1000);
+      }
 
-  public static World createWorld(String name, WorldType worldType) {
-    if (Bukkit.getWorld(name) != null) {
-      return null;
-    }
+      return world;
+   }
 
-    World world = WorldCreator.name(name)
-                              .type(worldType)
-                              .createWorld();
+   public static World createWorld(String name, WorldType worldType) {
+      if (Bukkit.getWorld(name) != null) {
+         return null;
+      }
 
-    return world;
-  }
+      World world = WorldCreator.name(name)
+                                .type(worldType)
+                                .createWorld();
+
+      return world;
+   }
 }
