@@ -8,11 +8,11 @@ import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 public class ParticlesUtils {
-   public static ParticleBuilder getRedstoneParticle(Color color, int view_size) {
+   public static ParticleBuilder getRedstoneParticle(Color color, int size) {
       return Particle.REDSTONE.builder()
                               .count(0)
                               .extra(1)
-                              .color(color, view_size);
+                              .color(color, size);
    }
 
    public static void drawLineParticles(Location start, Location end, Particle particle, double particleSpacing) {

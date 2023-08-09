@@ -1,16 +1,16 @@
 package tkachgeek.tkachutils.collections;
 
+import tkachgeek.tkachutils.datetime.Expireable;
+
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Set;
 
 public class ExpiredSet<T> {
-  private final HashMap<T, LocalDateTime> expired = new HashMap<>();
+  private final HashMap<T, Expireable> expired = new HashMap<>();
   
   public void setExpired(T element, Duration duration) {
-    this.expired.put(element, LocalDateTime.now().plus(duration.toMillis(), ChronoUnit.MILLIS));
+    this.expired.put(element, new Expireable(duration.toMillis(), System.currentTimeMillis()));
   }
   
   public boolean isActive(T element) {
@@ -18,13 +18,21 @@ public class ExpiredSet<T> {
   }
   
   public Status getStatus(T element) {
-    LocalDateTime timeToExpired = this.expired.get(element);
+    Expireable expireable = this.expired.get(element);
     
-    if (timeToExpired == null) {
+    if (expireable == null) {
       return Status.NO_ELEMENT;
     }
     
-    return LocalDateTime.now().isBefore(timeToExpired) ? Status.ACTIVE : Status.EXPIRED;
+    return expireable.isExpired() ? Status.ACTIVE : Status.EXPIRED;
+  }
+  
+  public double getPercent(T element) {
+    Expireable expireable = this.expired.get(element);
+    
+    if (expireable == null) return -1;
+    
+    return expireable.getPercent();
   }
   
   public boolean has(T expired) {
@@ -35,7 +43,7 @@ public class ExpiredSet<T> {
     return this.expired.keySet();
   }
   
-  public HashMap<T, LocalDateTime> entries() {
+  public HashMap<T, Expireable> entries() {
     return this.expired;
   }
   
