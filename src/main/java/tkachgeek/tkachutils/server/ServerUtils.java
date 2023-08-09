@@ -1,7 +1,6 @@
 package tkachgeek.tkachutils.server;
 
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
 import tkachgeek.tkachutils.numbers.NumbersUtils;
 
 import java.util.regex.Matcher;
@@ -9,8 +8,7 @@ import java.util.regex.Pattern;
 
 public class ServerUtils {
    private static final Pattern pattern = Pattern.compile("([\\d.]+)");
-
-   @NotNull
+   
    public static int getVersionWeight(String version) {
       Matcher matcher = pattern.matcher(version);
       if (!matcher.find()) return 0;

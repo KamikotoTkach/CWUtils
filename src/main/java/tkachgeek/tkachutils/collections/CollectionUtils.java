@@ -120,24 +120,14 @@ public class CollectionUtils {
   }
   
   public static int getFirstAvailableID(Collection<Integer> set, int minID) {
-    if (set == null || set.isEmpty()) {
-      return minID;
+    HashSet<Integer> idSet = new HashSet<>(set);
+    
+    int availableId = minID;
+    
+    while (idSet.contains(availableId)) {
+      availableId++;
     }
     
-    List<Integer> ids = new ArrayList<>(set);
-    Collections.sort(ids);
-    
-    int firstID = ids.get(0);
-    if (firstID > minID) {
-      return minID;
-    }
-    
-    for (int i = 1; i < ids.size(); i++) {
-      if (ids.get(i) - ids.get(i - 1) > 1) {
-        return ids.get(i - 1) + 1;
-      }
-    }
-    
-    return ids.get(ids.size() - 1) + 1;
+    return availableId;
   }
 }

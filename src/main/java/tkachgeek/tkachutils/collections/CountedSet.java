@@ -2,6 +2,7 @@ package tkachgeek.tkachutils.collections;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -63,6 +64,30 @@ public class CountedSet<T> {
       }
     }
     return min;
+  }
+  
+  public Map.Entry<T, Integer> minEntry() {
+    Map.Entry<T, Integer> min = null;
+    
+    for (Map.Entry<T, Integer> value : map.entrySet()) {
+      if (min == null || value.getValue() < min.getValue()) {
+        min = value;
+      }
+    }
+    
+    return min;
+  }
+  
+  public Map.Entry<T, Integer> maxEntry() {
+    Map.Entry<T, Integer> max = null;
+    
+    for (Map.Entry<T, Integer> value : map.entrySet()) {
+      if (max == null || value.getValue() > max.getValue()) {
+        max = value;
+      }
+    }
+    
+    return max;
   }
   
   public int sum() {
