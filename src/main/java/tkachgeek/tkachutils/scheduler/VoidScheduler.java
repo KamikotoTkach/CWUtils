@@ -3,31 +3,26 @@ package tkachgeek.tkachutils.scheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.function.Supplier;
 
-public class Scheduler<T> extends AbstractScheduler {
-  private final T anything;
-  private volatile Consumer<T> action = (x) -> {};
-  private volatile Consumer<T> lastlyAction = (x) -> {};
-  private volatile Predicate<T> condition = null;
+public class VoidScheduler extends AbstractScheduler {
+  JavaPlugin registrant = null;
   
-  protected Scheduler(T anything) {
-    this.anything = anything;
-  }
+  private volatile Runnable action = () -> {};
+  private volatile Runnable lastlyAction = () -> {};
+  private volatile Supplier<Boolean> condition = null;
   
-  public static <T> Scheduler<T> create(T anything) {
-    return new Scheduler<T>(anything);
+  private VoidScheduler() {
   }
   
   public static VoidScheduler create() {
-    return VoidScheduler.create();
+    return new VoidScheduler();
   }
   
   /**
    * Действие
    */
-  public Scheduler<T> perform(Consumer<T> action) {
+  public VoidScheduler perform(Runnable action) {
     this.action = action;
     return this;
   }
@@ -35,7 +30,7 @@ public class Scheduler<T> extends AbstractScheduler {
   /**
    * Условие, при котором будет совершаться действие
    */
-  public Scheduler<T> until(Predicate<T> condition) {
+  public VoidScheduler until(Supplier<Boolean> condition) {
     this.condition = condition;
     return this;
   }
@@ -43,13 +38,13 @@ public class Scheduler<T> extends AbstractScheduler {
   /**
    * Совершать действие асинхронно
    */
-  public Scheduler<T> async() {
+  public VoidScheduler async() {
     this.asyncTask = true;
     this.blocked = true;
     return this;
   }
   
-  public Scheduler<T> async(boolean async) {
+  public VoidScheduler async(boolean async) {
     this.asyncTask = async;
     this.blocked = async || blocked;
     return this;
@@ -58,12 +53,12 @@ public class Scheduler<T> extends AbstractScheduler {
   /**
    * Не останавливать выполнение, если условие не соблюдено. В таком случае действие не будет выполняться, если условие false
    */
-  public Scheduler<T> infinite() {
+  public VoidScheduler infinite() {
     this.infinite = true;
     return this;
   }
   
-  public Scheduler<T> infinite(boolean infinite) {
+  public VoidScheduler infinite(boolean infinite) {
     this.infinite = infinite;
     return this;
   }
@@ -71,7 +66,7 @@ public class Scheduler<T> extends AbstractScheduler {
   /**
    * Действие, выполняющееся вместо основного, когда условие false
    */
-  public Scheduler<T> otherwise(Consumer<T> lastlyAction) {
+  public VoidScheduler otherwise(Runnable lastlyAction) {
     this.lastlyAction = lastlyAction;
     return this;
   }
@@ -98,26 +93,26 @@ public class Scheduler<T> extends AbstractScheduler {
     
     if (condition == null) {
       runWithCancelling(action);
-    } else if (condition.test(anything)) {
+    } else if (condition.get()) {
       run(action);
     } else {
       runWithCancelling(lastlyAction);
     }
   }
   
-  private void run(Consumer<T> action) {
+  private void runWithCancelling(Runnable action) {
     running = true;
     
-    action.accept(anything);
+    action.run();
+    if (!infinite) Tasks.cancelTask(id);
     
     running = false;
   }
   
-  private void runWithCancelling(Consumer<T> action) {
+  private void run(Runnable action) {
     running = true;
     
-    action.accept(anything);
-    if (!infinite) Tasks.cancelTask(id);
+    action.run();
     
     running = false;
   }

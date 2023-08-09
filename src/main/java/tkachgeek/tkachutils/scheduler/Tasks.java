@@ -6,14 +6,31 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Tasks {
-  private static final ConcurrentHashMap<Integer, Scheduler> tasks = new ConcurrentHashMap<>();
+  private static final ConcurrentHashMap<Integer, AbstractScheduler> tasks = new ConcurrentHashMap<>();
   
-  public static Scheduler get(int id) {
-    return tasks.get(id);
+  public static void put(int id, AbstractScheduler AbstractScheduler) {
+    tasks.put(id, AbstractScheduler);
   }
   
-  public static void put(int id, Scheduler scheduler) {
-    tasks.put(id, scheduler);
+  public static void cancelTasks(JavaPlugin plugin) {
+    tasks.values()
+         .stream()
+         .filter(x -> x.registrant.equals(plugin))
+         .forEach(x -> cancelTask(x.taskId));
+  }
+  
+  public static boolean cancelTask(int id) {
+    AbstractScheduler AbstractScheduler = get(id);
+    if (has(id) && AbstractScheduler.taskId != -1) {
+      Bukkit.getScheduler().cancelTask(AbstractScheduler.taskId);
+      remove(id);
+      return true;
+    }
+    return false;
+  }
+  
+  public static AbstractScheduler get(int id) {
+    return tasks.get(id);
   }
   
   public static boolean has(int id) {
@@ -22,22 +39,5 @@ public class Tasks {
   
   public static void remove(int id) {
     tasks.remove(id);
-  }
-  
-  public static boolean cancelTask(int id) {
-    Scheduler scheduler = get(id);
-    if (has(id) && scheduler.taskId != -1) {
-      Bukkit.getScheduler().cancelTask(scheduler.taskId);
-      remove(id);
-      return true;
-    }
-    return false;
-  }
-  
-  public static void cancelTasks(JavaPlugin plugin) {
-    tasks.values().
-         stream()
-         .filter(x -> x.registered.equals(plugin))
-         .forEach(x -> cancelTask(x.taskId));
   }
 }
