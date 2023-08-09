@@ -51,6 +51,6 @@ public class Expireable implements Serializable {
   }
   
   public double getPercent() {
-    return System.currentTimeMillis() / ((double) time + expires);
+    return (System.currentTimeMillis() - time) / (double) expires;
   }
 }
