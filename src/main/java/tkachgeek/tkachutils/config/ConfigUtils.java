@@ -81,7 +81,9 @@ public class ConfigUtils {
 
    public static ItemStack loadItemStack(File file, YamlConfiguration config, String path) {
       String full_path;
+      
       full_path = ConfigUtils.getPath(path, type.name());
+      
       String item_type_name = config.getString(full_path, "dirt").toUpperCase();
       Material item_type = Material.matchMaterial(item_type_name);
 

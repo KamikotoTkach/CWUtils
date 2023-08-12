@@ -9,12 +9,6 @@ public class ToggleSet<T> extends HashSet<T> {
    * return false, if element has not been in collection, true if been
    */
   public boolean toggle(T element) {
-    if (contains(element)) {
-      remove(element);
-      return true;
-    } else {
-      add(element);
-      return false;
-    }
+    return remove(element) || !add(element);
   }
 }

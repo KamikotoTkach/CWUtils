@@ -5,11 +5,11 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class TimeFormatter {
-  private static final SimpleDateFormat MM_SS_TIME_FORMAT = new SimpleDateFormat("mm:ss");
-  private static final SimpleDateFormat HH_MM_SS_TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
-  private static final SimpleDateFormat MM_SS_TIME_FORMAT_UTC = new SimpleDateFormat("mm:ss");
-  private static final SimpleDateFormat HH_MM_SS_TIME_FORMAT_UTC = new SimpleDateFormat("HH:mm:ss");
-  private static final SimpleDateFormat FULL_DATE_FORMAT = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+  public static final SimpleDateFormat MM_SS_TIME_FORMAT = new SimpleDateFormat("mm:ss");
+  public static final SimpleDateFormat HH_MM_SS_TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
+  public static final SimpleDateFormat MM_SS_TIME_FORMAT_UTC = new SimpleDateFormat("mm:ss");
+  public static final SimpleDateFormat HH_MM_SS_TIME_FORMAT_UTC = new SimpleDateFormat("HH:mm:ss");
+  public static final SimpleDateFormat FULL_DATE_FORMAT = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
   
   static {
     MM_SS_TIME_FORMAT_UTC.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -61,14 +61,17 @@ public class TimeFormatter {
     return format(millis, MM_SS_TIME_FORMAT_UTC);
   }
   
+  @Deprecated
   public static long unix() {
     return System.currentTimeMillis() / 1000;
   }
   
+  @Deprecated
   public static boolean isBefore(long millis) {
     return System.currentTimeMillis() < millis;
   }
   
+  @Deprecated
   public static boolean isAfter(long millis) {
     return System.currentTimeMillis() > millis;
   }

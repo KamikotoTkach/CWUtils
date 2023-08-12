@@ -43,6 +43,9 @@ public class CollectionUtils {
     return combined;
   }
   
+  /**
+   * Используйте HashSet для параметров, если коллекции достаточно большие, чтобы накладные расходы создания HashMap были меньше кучи contains
+   */
   public static <T> boolean containsAny(Collection<T> one, Collection<T> two) {
     for (T t : one) {
       if (two.contains(t)) return true;
@@ -50,6 +53,9 @@ public class CollectionUtils {
     return false;
   }
   
+  /**
+   * Используйте HashSet для параметров, если коллекции достаточно большие, чтобы накладные расходы создания HashMap были меньше кучи contains
+   */
   public static <T> boolean hasAllElements(Collection<T> toCheck, Collection<T> elements) {
     for (T t : elements) {
       if (!toCheck.contains(t)) return false;
@@ -62,15 +68,7 @@ public class CollectionUtils {
   }
   
   public static String toString(Object[] values, String prefix, String suffix, boolean removeLastSuffix) {
-    if (values.length == 0) return "";
-    
-    StringBuilder sb = new StringBuilder();
-    for (Object value : values) {
-      sb.append(prefix).append(value).append(suffix);
-    }
-    
-    if (removeLastSuffix) sb.setLength(sb.length() - suffix.length());
-    return sb.toString();
+    return toString(Arrays.asList(values), prefix, suffix, removeLastSuffix);
   }
   
   public static <T> String toString(List<T> values) {
