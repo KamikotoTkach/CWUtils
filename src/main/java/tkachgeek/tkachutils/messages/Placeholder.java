@@ -1,5 +1,9 @@
 package tkachgeek.tkachutils.messages;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TextReplacementConfig;
+
 class Placeholder {
    private enum PlaceholderSymbols {
       left("<"),
@@ -16,10 +20,17 @@ class Placeholder {
       }
    }
 
-   private String message;
+   private static Placeholder instance;
 
-   Placeholder(String message) {
-      this.message = message;
+   private Message message;
+
+   private Placeholder() {
+   }
+
+   protected static Placeholder getInstance(Message message) {
+      message = message.clone();
+      if (instance == null) instance = new Placeholder();
+      return instance;
    }
 
    private String formatPlaceholder(String placeholder) {
@@ -31,9 +42,14 @@ class Placeholder {
       return PlaceholderSymbols.left.getSymbol() + placeholder + PlaceholderSymbols.right.getSymbol();
    }
 
-   Message replacePlaceholders(String placeholder, String value) {
-      placeholder = formatPlaceholder(placeholder);
-      this.message = this.message.replaceAll(placeholder, value);
-      return Message.getInstance(this.message);
+   Message replacePlaceholders(String placeholder, Component value) {
+      placeholder = this.formatPlaceholder(placeholder);
+      TextReplacementConfig config = TextReplacementConfig.builder()
+                                                          .matchLiteral(placeholder)
+                                                          .replacement(value)
+                                                          .build();
+
+      this.message.message = (TextComponent) this.message.message.replaceText(config);
+      return this.message;
    }
 }

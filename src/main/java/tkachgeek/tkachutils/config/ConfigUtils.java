@@ -18,6 +18,7 @@ import tkachgeek.tkachutils.collections.EnumUtils;
 import tkachgeek.tkachutils.items.ItemBuilder;
 import tkachgeek.tkachutils.items.ItemBuilderFactory;
 import tkachgeek.tkachutils.messages.Message;
+import tkachgeek.tkachutils.messages.PaperMessage;
 import tkachgeek.tkachutils.server.ServerUtils;
 
 import java.io.File;
@@ -81,9 +82,9 @@ public class ConfigUtils {
 
    public static ItemStack loadItemStack(File file, YamlConfiguration config, String path) {
       String full_path;
-      
+
       full_path = ConfigUtils.getPath(path, type.name());
-      
+
       String item_type_name = config.getString(full_path, "dirt").toUpperCase();
       Material item_type = Material.matchMaterial(item_type_name);
 
@@ -92,8 +93,8 @@ public class ConfigUtils {
             && item_type.isAir())
             || item_type.equals(Material.AIR)) {
          item_type = Material.DIRT;
-         new Message("§c[§4" + path + "§c]: предмет §4" + item_type_name + "§c не существует!")
-               .send(Bukkit.getConsoleSender());
+         PaperMessage.getInstance("§c[§4" + path + "§c]: предмет §4" + item_type_name + "§c не существует!")
+                     .send(Bukkit.getConsoleSender());
       }
 
       full_path = ConfigUtils.getPath(path, amount.name());
@@ -129,8 +130,8 @@ public class ConfigUtils {
                   int level = Math.max(config.getInt(ConfigUtils.getPath(path, effects.name(), potion_effect, "level"), 1), 1) - 1;
                   itemFactory.customEffect(effect_type, duration, level);
                } else {
-                  new Message("§c[§4" + path + "§c]: эффект §4" + potion_effect + "§c не существует!")
-                        .send(Bukkit.getConsoleSender());
+                  PaperMessage.getInstance("§c[§4" + path + "§c]: эффект §4" + potion_effect + "§c не существует!")
+                              .send(Bukkit.getConsoleSender());
                }
             }
          }
@@ -171,13 +172,13 @@ public class ConfigUtils {
                int level = Math.max(config.getInt(ConfigUtils.getPath(path, enchantments.name(), enchantment_name), 1), 1);
                itemFactory.enchantment(enchantment, level);
                if (false) {
-                  Message.getInstance("§c[§4" + path + "§c]: уровень зачарования §4" + enchantment_name + "§c задан некорректно!")
-                         .send(Bukkit.getConsoleSender());
-                  Message.getInstance("§cЕсли проблема не разрешаема, обратитесь к разработчику -> §dcwcode.ru/vk")
-                         .send(Bukkit.getConsoleSender());
+                  PaperMessage.getInstance("§c[§4" + path + "§c]: уровень зачарования §4" + enchantment_name + "§c задан некорректно!")
+                              .send(Bukkit.getConsoleSender());
+                  PaperMessage.getInstance("§cЕсли проблема не разрешаема, обратитесь к разработчику -> §dcwcode.ru/vk")
+                              .send(Bukkit.getConsoleSender());
                }
             } else {
-               new Message("§c[§4" + path + "§c]: зачарование §4" + enchantment_name + "§c не существует!");
+               PaperMessage.getInstance("§c[§4" + path + "§c]: зачарование §4" + enchantment_name + "§c не существует!");
             }
          }
       }
@@ -211,8 +212,8 @@ public class ConfigUtils {
             Object value = field.get(instance);
             map.put(key, value);
          } catch (Exception ex) {
-            Message.getInstance("§cНе удалось сохранить поле §4" + key)
-                   .send(Bukkit.getConsoleSender());
+            PaperMessage.getInstance("§cНе удалось сохранить поле §4" + key)
+                        .send(Bukkit.getConsoleSender());
          }
       }
 
@@ -247,13 +248,13 @@ public class ConfigUtils {
          }
 
          if (field.getType().equals(Message.class)) {
-            value = new Message(String.valueOf(value));
+            value = PaperMessage.getInstance(String.valueOf(value));
          }
 
          field.set(instance, value);
       } catch (Exception ex) {
-         Message.getInstance("§cНе удалось загрузить поле §4" + key)
-                .send(Bukkit.getConsoleSender());
+         PaperMessage.getInstance("§cНе удалось загрузить поле §4" + key)
+                     .send(Bukkit.getConsoleSender());
       }
    }
 }

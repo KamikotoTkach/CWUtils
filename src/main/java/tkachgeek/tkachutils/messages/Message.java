@@ -1,59 +1,43 @@
 package tkachgeek.tkachutils.messages;
 
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import tkachgeek.tkachutils.server.ServerUtils;
 
+import java.util.Collection;
 import java.util.Map;
 
-public class Message {
-   private String message;
+public abstract class Message {
+   protected TextComponent message;
 
-   private static Message instance;
-
-   public static Message getInstance(String message) {
-      if (instance == null) {
-         instance = new Message(message);
-      }
-
-      instance.message = message;
-      return instance;
-   }
-
-   public static Message getInstance(Component message) {
-      return Message.getInstance(LegacyComponentSerializer.legacySection().serialize(message));
-   }
-
-   public Message(String message) {
+   public Message(TextComponent message) {
       this.message = message;
    }
 
-   public Message(Component message) {
-      this(LegacyComponentSerializer.legacySection().serialize(message));
+   public Message(String message) {
+      this(Message.from(message));
    }
 
-   private Message placeholder(String placeholder, String value) {
-      return new Placeholder(this.message).replacePlaceholders(placeholder, value);
+   public Message placeholder(String placeholder, TextComponent value) {
+      return Placeholder.getInstance(this).replacePlaceholders(placeholder, value);
+   }
+
+   public Message placeholder(String placeholder, String value) {
+      return this.placeholder(placeholder, Message.from(value));
    }
 
    public Message placeholder(String placeholder, Object value) {
-      if (value instanceof Component) {
-         return this.placeholder(placeholder, (Component) value);
+      if (value instanceof TextComponent) {
+         return this.placeholder(placeholder, (TextComponent) value);
       }
 
       return this.placeholder(placeholder, String.valueOf(value));
    }
 
-   public Message placeholder(String placeholder, Component value) {
-      return this.placeholder(placeholder, LegacyComponentSerializer.legacySection().serialize(value).replaceAll("\\\\", ""));
-   }
-
    public Message placeholders(Map<String, String> placeholders) {
-      Message message = Message.getInstance(this.message);
+      Message message = this.clone();
       for (String placeholder : placeholders.keySet()) {
          message = message.placeholder(placeholder, placeholders.get(placeholder));
       }
@@ -62,65 +46,41 @@ public class Message {
    }
 
    public Component get() {
-      Component component;
-      if (this.message.contains("§")) {
-         component = LegacyComponentSerializer.legacySection().deserialize(this.message);
-      } else {
-         component = LegacyComponentSerializer.legacyAmpersand().deserialize(this.message);
-      }
-      return component.decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
+      return this.message.decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
    }
+
+   public abstract void send(Audience player);
+
+   public abstract void send(String name, Collection<Audience> receivers);
+
+   public void broadcast(Collection<Audience> receivers) {
+      for (Audience audience : receivers) {
+         this.send(audience);
+      }
+   }
+
+   public abstract void sendActionBar(Audience player);
+
+   public abstract void sendActionBar(String name, Collection<Audience> audiences);
+
+   public void broadcastActionBar(Collection<Audience> receivers) {
+      for (Audience audience : receivers) {
+         this.sendActionBar(audience);
+      }
+   }
+
+   protected abstract Message clone();
 
    @Override
    public String toString() {
-      return this.message;
+      return this.message.content();
    }
 
-   public void send(CommandSender sender) {
-      if (ServerUtils.isVersionBefore1_16_5()) {
-         sender.sendMessage(this.message);
-         return;
-      }
-
-      sender.sendMessage(this::get);
+   public static TextComponent from(String message) {
+      return LegacyComponentSerializer.legacySection().deserialize(message);
    }
 
-   public void send(String name) {
-      for (Player player : Bukkit.getOnlinePlayers()) {
-         if (player.getName().equals(name)) {
-            this.send(player);
-            return;
-         }
-      }
-   }
-
-   public void broadcast() {
-      for (Player player : Bukkit.getOnlinePlayers()) {
-         this.send(player);
-      }
-   }
-
-   public void sendActionBar(Player player) {
-      if (ServerUtils.isVersionBefore1_16_5()) {
-         player.sendActionBar(this.message);
-         return;
-      }
-
-      player.sendActionBar(this::get);
-   }
-
-   public void sendActionBar(String name) {
-      for (Player player : Bukkit.getOnlinePlayers()) {
-         if (player.getName().equals(name)) {
-            this.sendActionBar(player);
-            return;
-         }
-      }
-   }
-
-   public void broadcastActionBar() {
-      for (Player player : Bukkit.getOnlinePlayers()) {
-         this.sendActionBar(player);
-      }
+   public static String from(Component message) {
+      return LegacyComponentSerializer.legacySection().serialize(message);
    }
 }
