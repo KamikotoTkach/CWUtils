@@ -3,13 +3,12 @@ package tkachgeek.tkachutils.confirmable.velocity;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 
-import java.time.Duration;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConfirmAPI {
    static ConcurrentHashMap<Player, ConfirmRequest> requests = new ConcurrentHashMap<>();
 
-   public static ConfirmableBuilder requestBuilder(Player sender, String confirmableString, Duration timeToConfirm) {
+   public static ConfirmableBuilder requestBuilder(Player sender, String confirmableString, long timeToConfirm) {
       return new ConfirmableBuilder(sender, confirmableString, timeToConfirm);
    }
 
@@ -31,7 +30,7 @@ public class ConfirmAPI {
    public static class ConfirmableBuilder {
       ConfirmRequest request;
 
-      public ConfirmableBuilder(Player sender, String confirmableString, Duration timeToRequest) {
+      public ConfirmableBuilder(Player sender, String confirmableString, long timeToRequest) {
          request = new ConfirmRequest(sender, confirmableString, timeToRequest);
       }
 
