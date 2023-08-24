@@ -2,10 +2,7 @@ package tkachgeek.tkachutils.text;
 
 import tkachgeek.tkachutils.numbers.NumbersUtils;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class StringUtils {
@@ -98,5 +95,14 @@ public class StringUtils {
   
   public static boolean endsWithIgnoreCase(String original, String endsWith) {
     return original.equals(endsWith) || original.toLowerCase().endsWith(endsWith.toLowerCase());
+  }
+
+  public static String[] safetySplit(String arguments, String regex) {
+    List<String> args = new ArrayList<>(Arrays.asList(arguments.split(regex)));
+    if (arguments.endsWith(regex)) {
+      args.add("");
+    }
+
+    return args.toArray(new String[0]);
   }
 }

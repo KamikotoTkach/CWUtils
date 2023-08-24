@@ -1,70 +1,77 @@
 package tkachgeek.tkachutils.messages;
 
-import net.kyori.adventure.text.Component;
-
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
-public class Messages {
-    private final HashMap<String, Message> messages = new HashMap<>();
+public class Messages<MessageInheritor extends Message> {
+   private static final HashSet<String> locales = new HashSet<>(
+         Arrays.stream(Locale.getAvailableLocales())
+               .map(Locale::toString)
+               .collect(Collectors.toList())
+   );
+   private static String default_locale = "en";
+   private final HashMap<String, MessageInheritor> messages = new HashMap<>();
+   private final MessageInheritor defaultMessage;
 
-    public Messages(String locale, Message message) {
-        locale = MessagesUtils.formatLocale(locale);
+   public Messages(String locale, MessageInheritor defaultMessage) {
+      this.defaultMessage = defaultMessage;
+      locale = Messages.formatLocale(locale);
 
-        messages.put(locale, message);
-    }
+      messages.put(locale, defaultMessage);
+   }
 
-    public Messages(Message message) {
-        this(MessagesUtils.getDefaultLocale(), message);
-    }
+   public Messages(MessageInheritor defaultMessage) {
+      this(Messages.getDefaultLocale(), defaultMessage);
+   }
 
-    public Messages(String locale, String message) {
-        this(locale, new Message(message));
-    }
+   public Messages add(String locale, MessageInheritor message) {
+      locale = Messages.formatLocale(locale);
+      messages.put(locale, message);
 
-    public Messages(String message) {
-        this(MessagesUtils.getDefaultLocale(), message);
-    }
+      return this;
+   }
 
-    public Messages(String locale, Component message) {
-        this(locale, new Message(message));
-    }
+   public Messages add(MessageInheritor message) {
+      return this.add(Messages.getDefaultLocale(), message);
+   }
 
-    public Messages(Component message) {
-        this(MessagesUtils.getDefaultLocale(), message);
-    }
+   public MessageInheritor get(String locale) {
+      return messages.getOrDefault(locale.toLowerCase(), this.defaultMessage);
+   }
 
-    public Messages add(String locale, Message message) {
-        locale = MessagesUtils.formatLocale(locale);
-        messages.put(locale, message);
+   public MessageInheritor get() {
+      return this.get(Messages.getDefaultLocale());
+   }
 
-        return this;
-    }
+   public static HashSet<String> getAvailableLocales() {
+      return locales;
+   }
 
-    public Messages add(Message message) {
-        return this.add(MessagesUtils.getDefaultLocale(), message);
-    }
+   public static boolean isAvailableLocale(String locale) {
+      return locales.contains(locale.toLowerCase());
+   }
 
-    public Messages add(String locale, String message) {
-        return this.add(locale, new Message(message));
-    }
+   public static String formatLocale(String locale) {
+      if (!isAvailableLocale(locale)) {
+         locale = default_locale;
+      }
 
-    public Messages add(String message) {
-        return this.add(MessagesUtils.getDefaultLocale(), message);
-    }
+      return locale;
+   }
 
-    public Messages add(String locale, Component message) {
-        return this.add(locale, new Message(message));
-    }
+   public static String getDefaultLocale() {
+      return default_locale;
+   }
 
-    public Messages add(Component message) {
-        return this.add(MessagesUtils.getDefaultLocale(), message);
-    }
+   public static boolean setDefaultLocale(String locale) {
+      if (isAvailableLocale(locale)) {
+         default_locale = locale;
+         return true;
+      }
 
-    public Message get(String locale) {
-        return messages.getOrDefault(locale.toLowerCase(), new Message("empty"));
-    }
-
-    public Message get() {
-        return this.get(MessagesUtils.getDefaultLocale());
-    }
+      return false;
+   }
 }
