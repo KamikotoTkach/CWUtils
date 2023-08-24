@@ -44,13 +44,19 @@ public class RepeatAPI {
         
         if (annotation != null) {
           plugin.getLogger().info("Registered task " + classInfo.getName() + "." + method.getName() + "()");
-          int id = new RepeatEntry(method, annotation).schedule(plugin);
-          tasks.get(plugin).add(id);
+          registerRepeatable(plugin, method, annotation);
           registered++;
         }
       }
     }
     return registered;
+  }
+  
+  public static void registerRepeatable(JavaPlugin plugin, Method method, Repeat annotation) {
+    tasks.computeIfAbsent(plugin, x -> new ArrayList<>());
+    
+    int id = new RepeatEntry(method, annotation).schedule(plugin);
+    tasks.get(plugin).add(id);
   }
   
   public static void unregisterAll(JavaPlugin plugin) {

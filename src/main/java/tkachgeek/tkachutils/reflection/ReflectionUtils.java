@@ -3,6 +3,8 @@ package tkachgeek.tkachutils.reflection;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -50,5 +52,21 @@ public class ReflectionUtils {
       e.printStackTrace();
     }
     return classes;
+  }
+  
+  public static void tryToInvokeStaticMethod(Class<?> classInfo, String methodName) {
+    try {
+      Method load;
+      load = classInfo.getDeclaredMethod(methodName);
+      
+      if (!Modifier.isStatic(load.getModifiers()) || load.getParameterCount() != 0) {
+        return;
+      }
+      
+      load.invoke(null);
+    } catch (NoSuchMethodException | InvocationTargetException |
+             IllegalAccessException e) {
+      e.printStackTrace();
+    }
   }
 }
