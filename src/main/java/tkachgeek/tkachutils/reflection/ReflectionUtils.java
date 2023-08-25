@@ -54,19 +54,21 @@ public class ReflectionUtils {
     return classes;
   }
   
-  public static void tryToInvokeStaticMethod(Class<?> classInfo, String methodName) {
+  public static boolean tryToInvokeStaticMethod(Class<?> classInfo, String methodName) {
     try {
       Method load;
       load = classInfo.getDeclaredMethod(methodName);
       
       if (!Modifier.isStatic(load.getModifiers()) || load.getParameterCount() != 0) {
-        return;
+        return false;
       }
       
       load.invoke(null);
     } catch (NoSuchMethodException | InvocationTargetException |
              IllegalAccessException e) {
-      e.printStackTrace();
+      return false;
     }
+    
+    return true;
   }
 }
