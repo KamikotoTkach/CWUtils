@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -28,5 +29,13 @@ public class ItemStackUtils {
       }
 
       return items;
+   }
+
+   public boolean isSimilar(@Nullable ItemStack item1, @Nullable ItemStack item2, @NotNull SimilarMode... modes) {
+      for (SimilarMode mode : modes) {
+         if (!mode.compare(item1, item2)) return false;
+      }
+
+      return true;
    }
 }

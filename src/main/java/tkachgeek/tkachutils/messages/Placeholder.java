@@ -28,8 +28,8 @@ class Placeholder {
    }
 
    protected static Placeholder getInstance(Message message) {
-      message = message.clone();
       if (instance == null) instance = new Placeholder();
+      instance.message = message.clone();
       return instance;
    }
 
