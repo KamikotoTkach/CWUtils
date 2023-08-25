@@ -51,9 +51,9 @@ public abstract class Message {
 
    public abstract void send(Audience player);
 
-   public abstract void send(String name, Collection<Audience> receivers);
+   public abstract void send(String name, Collection<? extends Audience> receivers);
 
-   public void broadcast(Collection<Audience> receivers) {
+   public void broadcast(Collection<? extends Audience> receivers) {
       for (Audience audience : receivers) {
          this.send(audience);
       }
@@ -61,9 +61,9 @@ public abstract class Message {
 
    public abstract void sendActionBar(Audience player);
 
-   public abstract void sendActionBar(String name, Collection<Audience> audiences);
+   public abstract void sendActionBar(String name, Collection<? extends Audience> audiences);
 
-   public void broadcastActionBar(Collection<Audience> receivers) {
+   public void broadcastActionBar(Collection<? extends Audience> receivers) {
       for (Audience audience : receivers) {
          this.sendActionBar(audience);
       }
