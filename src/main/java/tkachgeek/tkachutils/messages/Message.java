@@ -73,7 +73,7 @@ public abstract class Message {
 
    @Override
    public String toString() {
-      return this.message.content();
+      return Message.from(this.message);
    }
 
    public static TextComponent from(String message) {

@@ -24,7 +24,7 @@ public class ExpiredSet<Element> {
          return Status.NO_ELEMENT;
       }
 
-      return expireable.isExpired() ? Status.ACTIVE : Status.EXPIRED;
+      return expireable.isExpired() ? Status.EXPIRED : Status.ACTIVE;
    }
 
    public double getPercent(Element element) {
