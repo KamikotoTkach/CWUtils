@@ -3,6 +3,7 @@ package tkachgeek.tkachutils.messages;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextReplacementConfig;
+import org.bukkit.Bukkit;
 
 class Placeholder {
    private enum PlaceholderSymbols {
@@ -44,12 +45,11 @@ class Placeholder {
 
    Message replacePlaceholders(String placeholder, Component value) {
       placeholder = this.formatPlaceholder(placeholder);
-      TextReplacementConfig config = TextReplacementConfig.builder()
-                                                          .matchLiteral(placeholder)
-                                                          .replacement(value)
-                                                          .build();
-
-      this.message.message = (TextComponent) this.message.message.replaceText(config);
+      TextReplacementConfig replacement = TextReplacementConfig.builder()
+                                                               .matchLiteral(placeholder)
+                                                               .replacement(value)
+                                                               .build();
+      this.message.set((TextComponent) this.message.get().replaceText(replacement));
       return this.message;
    }
 }

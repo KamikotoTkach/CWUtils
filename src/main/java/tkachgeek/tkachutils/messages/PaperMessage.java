@@ -16,7 +16,7 @@ public class PaperMessage extends Message {
          instance = new PaperMessage(message);
       }
 
-      instance.message = message;
+      instance.set(message);
       return instance;
    }
 
@@ -43,7 +43,7 @@ public class PaperMessage extends Message {
    @Override
    public void send(Audience receiver) {
       if (ServerUtils.isVersionBefore1_16_5()) {
-         receiver.sendMessage(this.message);
+         receiver.sendMessage(this.get());
          return;
       }
 
@@ -66,7 +66,7 @@ public class PaperMessage extends Message {
    @Override
    public void sendActionBar(Audience receiver) {
       if (ServerUtils.isVersionBefore1_16_5()) {
-         receiver.sendActionBar(this.message);
+         receiver.sendActionBar(this.get());
          return;
       }
 
@@ -88,6 +88,6 @@ public class PaperMessage extends Message {
 
    @Override
    protected Message clone() {
-      return new PaperMessage(this.message);
+      return new PaperMessage(this.get());
    }
 }

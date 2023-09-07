@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Map;
 
 public abstract class Message {
-   protected TextComponent message;
+   private TextComponent message;
 
    public Message(TextComponent message) {
       this.message = message;
@@ -45,8 +45,12 @@ public abstract class Message {
       return message;
    }
 
-   public Component get() {
+   public TextComponent get() {
       return this.message.decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
+   }
+
+   public void set(TextComponent message) {
+      this.message = message;
    }
 
    public abstract void send(Audience player);
