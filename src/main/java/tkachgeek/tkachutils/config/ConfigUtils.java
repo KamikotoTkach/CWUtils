@@ -17,6 +17,7 @@ import org.bukkit.potion.PotionEffectType;
 import tkachgeek.tkachutils.collections.EnumUtils;
 import tkachgeek.tkachutils.items.ItemBuilder;
 import tkachgeek.tkachutils.items.ItemBuilderFactory;
+import tkachgeek.tkachutils.messages.Message;
 import tkachgeek.tkachutils.messages.PaperMessage;
 import tkachgeek.tkachutils.server.ServerUtils;
 
@@ -246,8 +247,8 @@ public class ConfigUtils {
             value = EnumUtils.getEnumInstance(EnumUtils.getEnumValues(field.getType()), String.valueOf(value)).orElse(null);
          }
 
-         if (field.getType().equals(PaperMessage.class)) {
-            value = PaperMessage.getInstance(String.valueOf(value));
+         if (field.getType().isAssignableFrom(Message.class)) {
+            value = new PaperMessage(String.valueOf(value));
          }
 
          field.set(instance, value);

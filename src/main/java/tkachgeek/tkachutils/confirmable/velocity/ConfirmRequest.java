@@ -7,8 +7,6 @@ import com.velocitypowered.api.scheduler.ScheduledTask;
 import java.time.Duration;
 
 public class ConfirmRequest {
-   public ProxyServer server;
-   public Object plugin;
    Player sender;
    String required;
    long timeToExpire;
@@ -27,12 +25,11 @@ public class ConfirmRequest {
       this.timeToExpire = millisToExpire;
    }
 
-   public void startTimer(Object plugin) {
+   public void startTimer(ProxyServer server, Object plugin) {
       expiredTask = server.getScheduler().buildTask(plugin, () -> {
          if (onExpired != null) onExpired.run();
          ConfirmAPI.requests.remove(sender, this);
       }).delay(Duration.ofMillis(this.timeToExpire)).schedule();
-      this.plugin = plugin;
    }
 
    public void stopTimer() {

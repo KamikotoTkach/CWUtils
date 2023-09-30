@@ -46,7 +46,7 @@ public class ConfirmAPI {
 
       public void register(ProxyServer server, Object plugin) {
          requests.put(request.sender, request);
-         request.startTimer(plugin);
+         request.startTimer(server, plugin);
 
          if (!ChatOutListener.IS_REGISTERED) {
             server.getEventManager().register(plugin, new ChatOutListener());

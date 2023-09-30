@@ -15,7 +15,7 @@ public class VelocityMessage extends Message {
          instance = new VelocityMessage(message);
       }
 
-      instance.message = message;
+      instance.set(message);
       return instance;
    }
 
@@ -77,6 +77,6 @@ public class VelocityMessage extends Message {
 
    @Override
    protected Message clone() {
-      return new VelocityMessage(this.message);
+      return new VelocityMessage(this.get());
    }
 }

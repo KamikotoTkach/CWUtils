@@ -3,6 +3,7 @@ package tkachgeek.tkachutils.messages;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tkachgeek.tkachutils.server.ServerUtils;
 
@@ -16,7 +17,7 @@ public class PaperMessage extends Message {
          instance = new PaperMessage(message);
       }
 
-      instance.message = message;
+      instance.set(message);
       return instance;
    }
 
@@ -43,7 +44,9 @@ public class PaperMessage extends Message {
    @Override
    public void send(Audience receiver) {
       if (ServerUtils.isVersionBefore1_16_5()) {
-         receiver.sendMessage(this.message);
+         if (receiver instanceof CommandSender) {
+            ((CommandSender) receiver).sendMessage(this.toString());
+         }
          return;
       }
 
@@ -66,7 +69,9 @@ public class PaperMessage extends Message {
    @Override
    public void sendActionBar(Audience receiver) {
       if (ServerUtils.isVersionBefore1_16_5()) {
-         receiver.sendActionBar(this.message);
+         if (receiver instanceof Player) {
+            ((Player) receiver).sendActionBar(this.toString());
+         }
          return;
       }
 
@@ -88,6 +93,6 @@ public class PaperMessage extends Message {
 
    @Override
    protected Message clone() {
-      return new PaperMessage(this.message);
+      return new PaperMessage(this.get());
    }
 }
