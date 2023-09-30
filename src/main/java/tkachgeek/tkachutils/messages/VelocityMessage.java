@@ -31,6 +31,10 @@ public class VelocityMessage extends Message {
       }
    }
 
+   private VelocityMessage() {
+      this("empty");
+   }
+
    public VelocityMessage(String message) {
       super(message);
    }

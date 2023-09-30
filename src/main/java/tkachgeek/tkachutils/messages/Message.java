@@ -20,7 +20,7 @@ public abstract class Message {
       this(Message.from(message));
    }
 
-   public Message placeholder(String placeholder, TextComponent value) {
+   public Message placeholder(String placeholder, Component value) {
       return Placeholder.getInstance(this).replacePlaceholders(placeholder, value);
    }
 
@@ -29,8 +29,8 @@ public abstract class Message {
    }
 
    public Message placeholder(String placeholder, Object value) {
-      if (value instanceof TextComponent) {
-         return this.placeholder(placeholder, (TextComponent) value);
+      if (value instanceof Component) {
+         return this.placeholder(placeholder, (Component) value);
       }
 
       return this.placeholder(placeholder, String.valueOf(value));

@@ -33,6 +33,10 @@ public class PaperMessage extends Message {
       }
    }
 
+   private PaperMessage(){
+      this("empty");
+   }
+
    public PaperMessage(String message) {
       super(message);
    }

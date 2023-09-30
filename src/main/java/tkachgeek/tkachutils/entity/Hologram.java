@@ -1,38 +1,42 @@
 package tkachgeek.tkachutils.entity;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.UUID;
+import tkachgeek.tkachutils.messages.Message;
 
 public class Hologram {
-   public static void showTextAsync(String text, int ticksToRemove, Location loc, JavaPlugin plugin) {
-      Bukkit.getScheduler().runTask(plugin, () -> spawnHologram(text, ticksToRemove, loc, plugin));
-   }
-
-   public static UUID showText(String text, int ticksToRemove, Location loc, JavaPlugin plugin) {
+   public static ArmorStand showText(Component text, int ticksToRemove, Location loc, JavaPlugin plugin) {
       if (Bukkit.isPrimaryThread()) {
          return spawnHologram(text, ticksToRemove, loc, plugin);
       } else {
-         showTextAsync(text, ticksToRemove, loc, plugin);
-         plugin.getLogger().warning("Asynchronous entity add!");
-         return null;
+         try {
+            return Bukkit.getScheduler().callSyncMethod(plugin, () -> Hologram.spawnHologram(text, ticksToRemove, loc, plugin)).get();
+         } catch (Exception ignored) {
+            plugin.getLogger().warning("Asynchronous entity add!");
+            return null;
+         }
       }
    }
 
-   private static UUID spawnHologram(String text, int ticksToRemove, Location loc, JavaPlugin plugin) {
+   public static ArmorStand showText(String text, int ticksToRemove, Location loc, JavaPlugin plugin) {
+      return Hologram.showText(Message.from(text), ticksToRemove, loc, plugin);
+   }
+
+   private static ArmorStand spawnHologram(Component text, int ticksToRemove, Location loc, JavaPlugin plugin) {
       return loc.getWorld().spawn(loc, ArmorStand.class, armorStand -> {
          armorStand.setVisible(false);
-         armorStand.setCustomName(text);
+         armorStand.customName(text);
          armorStand.setCustomNameVisible(true);
          armorStand.setMarker(true);
          armorStand.setCanMove(false);
          armorStand.addScoreboardTag("hologram");
          armorStand.setCanTick(false);
-         if (ticksToRemove > 0)
+         if (ticksToRemove > 0) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, armorStand::remove, ticksToRemove);
-      }).getUniqueId();
+         }
+      });
    }
 }
