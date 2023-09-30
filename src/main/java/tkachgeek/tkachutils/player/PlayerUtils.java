@@ -1,6 +1,7 @@
 package tkachgeek.tkachutils.player;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
@@ -38,13 +39,13 @@ public class PlayerUtils {
   /**
    * Считает количество предметов у игрока
    */
-  public static int getItemAmount(Player p, ItemStack s) {
+  public static int getItemAmount(Player player, ItemStack itemStack) {
     int count = 0;
-    for (int i = 0; i < p.getInventory().getSize(); i++) {
-      ItemStack stack = p.getInventory().getItem(i);
+    for (int i = 0; i < player.getInventory().getSize(); i++) {
+      ItemStack stack = player.getInventory().getItem(i);
       if (stack == null)
         continue;
-      if (s.isSimilar(stack)) {
+      if (itemStack.isSimilar(stack)) {
         count += stack.getAmount();
       }
     }
@@ -60,6 +61,56 @@ public class PlayerUtils {
       if (stack == null)
         continue;
       if (itemStack.isSimilar(stack)) {
+        if (stack.getAmount() == 0)
+          break;
+        if (stack.getAmount() <= amount) {
+          amount = amount - stack.getAmount();
+          stack.setAmount(-1);
+        }
+        if (stack.getAmount() > amount) {
+          stack.setAmount(stack.getAmount() - amount);
+          amount = 0;
+        }
+      }
+    }
+  }
+  
+  /**
+   * Удаляет нужное количество предметов у игрока, если у него столько есть и возвращает true, иначе false и не удаляет.
+   */
+  public static boolean removeItems(Player player, Material material, int amount) {
+    if (getItemAmount(player, material) >= amount) {
+      clearItemsForce(player, material, amount);
+      return true;
+    }
+    return false;
+  }
+  
+  /**
+   * Считает количество предметов у игрока
+   */
+  public static int getItemAmount(Player player, Material material) {
+    int count = 0;
+    for (int i = 0; i < player.getInventory().getSize(); i++) {
+      ItemStack stack = player.getInventory().getItem(i);
+      if (stack == null)
+        continue;
+      if (stack.getType() == material) {
+        count += stack.getAmount();
+      }
+    }
+    return count;
+  }
+  
+  /**
+   * Очищает определённое количество предметов у игрока, не взирая на наличие
+   */
+  public static void clearItemsForce(Player player, Material material, int amount) {
+    for (int i = 0; i < player.getInventory().getSize(); i++) {
+      ItemStack stack = player.getInventory().getItem(i);
+      if (stack == null)
+        continue;
+      if (material == stack.getType()) {
         if (stack.getAmount() == 0)
           break;
         if (stack.getAmount() <= amount) {
