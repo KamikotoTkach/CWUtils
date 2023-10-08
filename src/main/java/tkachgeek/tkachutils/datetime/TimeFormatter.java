@@ -13,10 +13,10 @@ public class TimeFormatter {
   public static final SimpleDateFormat MM_SS_TIME_FORMAT_UTC = new SimpleDateFormat("mm:ss");
   public static final SimpleDateFormat HH_MM_SS_TIME_FORMAT_UTC = new SimpleDateFormat("HH:mm:ss");
   public static final SimpleDateFormat FULL_DATE_FORMAT = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-  public static final String formatted_time_days = "д";
-  public static final String formatted_time_hours = "ч";
-  public static final String formatted_time_minutes = "мин";
-  public static final String formatted_time_seconds = "сек";
+  private static final String formatted_time_days = "д";
+  private static final String formatted_time_hours = "ч";
+  private static final String formatted_time_minutes = "мин";
+  private static final String formatted_time_seconds = "сек";
 
   static {
     MM_SS_TIME_FORMAT_UTC.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -68,7 +68,7 @@ public class TimeFormatter {
     return format(millis, MM_SS_TIME_FORMAT_UTC);
   }
 
-  public static String getFormattedTime(@NotNull final Duration duration, int timeParamsCount) {
+  public static String getFormattedTime(@NotNull final Duration duration, int timeParamsCount, String formatted_time_days, String formatted_time_hours, String formatted_time_minutes, String formatted_time_seconds) {
     StringBuilder formattedTime = new StringBuilder();
     long days = duration.toDays();
     long hours = duration.toHours() % 24;
@@ -76,28 +76,43 @@ public class TimeFormatter {
     long seconds = duration.toSeconds() % 60;
 
     if (duration.toDays() != 0) {
-      formattedTime.append(days).append(TimeFormatter.formatted_time_days);
+      formattedTime.append(days).append(formatted_time_days);
       timeParamsCount--;
     }
 
     if (hours != 0 && timeParamsCount > 0) {
       if (formattedTime.length() > 0) formattedTime.append(" ");
-      formattedTime.append(hours).append(TimeFormatter.formatted_time_hours);
+      formattedTime.append(hours).append(formatted_time_hours);
       timeParamsCount--;
     }
 
     if (minutes != 0 && timeParamsCount > 0) {
       if (formattedTime.length() > 0) formattedTime.append(" ");
-      formattedTime.append(minutes).append(TimeFormatter.formatted_time_minutes);
+      formattedTime.append(minutes).append(formatted_time_minutes);
       timeParamsCount--;
     }
 
     if (seconds != 0 && timeParamsCount > 0) {
       if (formattedTime.length() > 0) formattedTime.append(" ");
-      formattedTime.append(seconds).append(TimeFormatter.formatted_time_seconds);
+      formattedTime.append(seconds).append(formatted_time_seconds);
     }
 
     return formattedTime.toString();
+  }
+
+  public static String getFormattedTime(@NotNull final Duration duration, int timeParamsCount) {
+    return TimeFormatter.getFormattedTime(
+          duration,
+          timeParamsCount,
+          TimeFormatter.formatted_time_days,
+          TimeFormatter.formatted_time_hours,
+          TimeFormatter.formatted_time_minutes,
+          TimeFormatter.formatted_time_seconds
+    );
+  }
+
+  public static String getFormattedTime(@NotNull final Duration duration) {
+    return TimeFormatter.getFormattedTime(duration, 2);
   }
 
   @Deprecated
