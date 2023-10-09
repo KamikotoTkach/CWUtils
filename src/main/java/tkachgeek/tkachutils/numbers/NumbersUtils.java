@@ -29,7 +29,7 @@ public class NumbersUtils {
     * @return округляет value до нужного количества цифр (digits) после запятой
     */
    public static double round(double value, int digits) {
-      int scale = (int) Math.pow(10, digits);
+      double scale = Math.pow(10, digits);
       return Math.ceil(value * scale) / scale;
    }
 
