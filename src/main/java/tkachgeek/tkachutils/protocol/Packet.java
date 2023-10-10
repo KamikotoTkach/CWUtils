@@ -8,9 +8,7 @@ import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
-import com.comphenix.protocol.wrappers.nbt.NbtType;
 import com.destroystokyo.paper.profile.PlayerProfile;
-import com.destroystokyo.paper.profile.ProfileProperty;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,6 +17,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
+import tkachgeek.tkachutils.numbers.NumbersUtils;
+import tkachgeek.tkachutils.player.PlayerUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
@@ -147,50 +147,47 @@ public class Packet {
     }
   }
 
-  public static void setHead(JavaPlugin plugin, Player receiver, PlayerProfile playerProfile, Location location) {
+  public static void setHead(Player receiver, PlayerProfile playerProfile, Location location) {
     receiver.sendBlockChange(location, Material.PLAYER_HEAD.createBlockData());
-    Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> Packet.updateHead(receiver, playerProfile, location), 10L);
+    Packet.updateHead(receiver, playerProfile, location);
   }
 
   public static void updateHead(Player receiver, PlayerProfile playerProfile, Location location) {
     if (playerProfile == null) return;
-
-    // Create a new packet container of type TileEntityData
     ProtocolManager manager = ProtocolLibrary.getProtocolManager();
     PacketContainer packet = manager.createPacket(PacketType.Play.Server.TILE_ENTITY_DATA);
-// Set the location of the skull block
-    BlockPosition blockPosition = new BlockPosition(location.toVector());
-    packet.getBlockPositionModifier().write(0, blockPosition);
 
-    // Set the action to 4 (update skull entity data)
+    packet.getBlockPositionModifier().write(0, new BlockPosition(
+          location.getBlockX(),
+          location.getBlockY(),
+          location.getBlockZ())
+    );
+
     packet.getIntegers().write(0, 4);
 
-    // Create a new NBT compound tag for the skull data
-    NbtCompound skullData = NbtFactory.ofCompound("");
+    NbtCompound base = NbtFactory.ofCompound("");
+    base.put("x", location.getBlockX());
+    base.put("y", location.getBlockY());
+    base.put("z", location.getBlockZ());
+    base.put("id", "minecraft:skull");
 
-    // Set the SkullType to 3 (player head)
-    skullData.put("SkullType", (byte) 3);
+    NbtCompound nbt = NbtFactory.ofCompound("SkullOwner");
 
-    // Set the SkullOwner to a compound tag with the profile data
-    NbtCompound skullOwner = NbtFactory.ofCompound("");
-    skullOwner.put("Name", NbtFactory.ofWrapper(NbtType.TAG_STRING, "SKULL"));
-    skullOwner.put("Id", NbtFactory.ofWrapper(NbtType.TAG_INT_ARRAY, playerProfile.getId().toString()));
-    NbtCompound properties = NbtFactory.ofCompound("");
-    for (ProfileProperty property : playerProfile.getProperties()) {
-      NbtCompound propertyTag = NbtFactory.ofCompound("");
-      propertyTag.put("Value", property.getValue());
-      if (property.isSigned()) {
-        propertyTag.put("Signature", property.getSignature());
-      }
-      properties.put(property.getName(), propertyTag);
-    }
-    skullOwner.put("Properties", properties);
-    skullData.put("SkullOwner", skullOwner);
+    nbt.put("Id", NumbersUtils.convertToInts(playerProfile.getId()));
+    nbt.put("Name", "");
 
-    // Set the packet's NBT compound modifier to the skull data tag
-    packet.getNbtModifier().write(0, skullData);
+    NbtCompound properties = NbtFactory.ofCompound("Properties");
+    NbtCompound skin = NbtFactory.ofCompound("");
 
-    // Send the packet to the target player
+    skin.put("Value", PlayerUtils.getTextureValue(playerProfile));
+    properties.put("textures", NbtFactory.ofList("textures", skin));
+
+    nbt.put("Properties", properties);
+
+    base.put("SkullOwner", nbt);
+
+    packet.getNbtModifier().write(0, base);
+
     try {
       manager.sendServerPacket(receiver, packet);
     } catch (Exception e) {

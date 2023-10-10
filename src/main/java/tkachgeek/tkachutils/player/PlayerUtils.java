@@ -1,5 +1,7 @@
 package tkachgeek.tkachutils.player;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -13,18 +15,18 @@ import org.bukkit.util.Vector;
 import java.util.*;
 
 public class PlayerUtils {
-  
+
   /**
    * Выдаёт предмет игроку. Если нет места - спавнит под ногами.
    */
   public static void safeGive(Player player, ItemStack item) {
     HashMap<Integer, ItemStack> noSpace = player.getInventory().addItem(item);
-    
+
     for (ItemStack toDrop : noSpace.values()) {
       player.getWorld().dropItem(player.getLocation(), toDrop);
     }
   }
-  
+
   /**
    * Удаляет нужное количество предметов у игрока, если у него столько есть и возвращает true, иначе false и не удаляет.
    */
@@ -35,7 +37,7 @@ public class PlayerUtils {
     }
     return false;
   }
-  
+
   /**
    * Считает количество предметов у игрока
    */
@@ -51,7 +53,7 @@ public class PlayerUtils {
     }
     return count;
   }
-  
+
   /**
    * Очищает определённое количество предметов у игрока, не взирая на наличие
    */
@@ -74,7 +76,7 @@ public class PlayerUtils {
       }
     }
   }
-  
+
   /**
    * Удаляет нужное количество предметов у игрока, если у него столько есть и возвращает true, иначе false и не удаляет.
    */
@@ -85,7 +87,7 @@ public class PlayerUtils {
     }
     return false;
   }
-  
+
   /**
    * Считает количество предметов у игрока
    */
@@ -101,7 +103,7 @@ public class PlayerUtils {
     }
     return count;
   }
-  
+
   /**
    * Очищает определённое количество предметов у игрока, не взирая на наличие
    */
@@ -124,13 +126,13 @@ public class PlayerUtils {
       }
     }
   }
-  
+
   /**
    * Возвращает ближайших энтити, не считая игрока
    */
   public static List<LivingEntity> getNearbyLivingEntities(Player player, double radius) {
     List<LivingEntity> list = new ArrayList<>();
-    
+
     for (LivingEntity x : player.getLocation().getNearbyLivingEntities(radius)) {
       if (!x.equals(player)) {
         list.add(x);
@@ -138,7 +140,7 @@ public class PlayerUtils {
     }
     return list;
   }
-  
+
   /**
    * Возвращает ближайшего энтити, не считая игрока
    */
@@ -147,8 +149,8 @@ public class PlayerUtils {
     LivingEntity best = null;
     Comparator<LivingEntity> comparator = Comparator.comparingDouble(c -> player.getLocation().distance(c.getLocation()));
     for (LivingEntity x : player
-       .getLocation()
-       .getNearbyLivingEntities(radius)) {
+          .getLocation()
+          .getNearbyLivingEntities(radius)) {
       if (!x.equals(player)) {
         if (!seen || comparator.compare(x, best) < 0) {
           seen = true;
@@ -158,7 +160,7 @@ public class PlayerUtils {
     }
     return seen ? Optional.of(best) : Optional.empty();
   }
-  
+
   /**
    * Возвращает ближайших энтити, не считая игрока
    */
@@ -175,7 +177,7 @@ public class PlayerUtils {
       return new ArrayList<>(player.getWorld().getNearbyEntitiesByType(type, player.getLocation(), radius));
     }
   }
-  
+
   public static void pushItemToPlayer(Player player, Item item, JavaPlugin plugin) {
     item.setVelocity(new Vector(0, 0.45, 0));
     Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -183,5 +185,18 @@ public class PlayerUtils {
                              .subtract(item.getLocation())
                              .toVector().normalize().multiply(0.65));
     }, 5);
+  }
+
+  public static String getTextureValue(PlayerProfile playerProfile) {
+    String value = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDVhZGI2ZmZhMmM1YzBlMzUwYzI4NDk5MTM4YTU1NjY0NDFkN2JjNTczZGUxOTg5ZmRlMjEyZmNiMTk2NjgyNiJ9fX0=";
+    if (playerProfile != null) {
+      for (ProfileProperty profileProperty : playerProfile.getProperties()) {
+        if (profileProperty.getName().equals("textures")) {
+          value = profileProperty.getValue();
+        }
+      }
+    }
+
+    return value;
   }
 }
