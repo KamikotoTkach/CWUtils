@@ -74,25 +74,26 @@ public class TimeFormatter {
     long hours = duration.toHours() % 24;
     long minutes = duration.toMinutes() % 60;
     long seconds = duration.toSeconds() % 60;
+    if (seconds < 0) seconds = 1;
 
-    if (duration.toDays() != 0) {
+    if (duration.toDays() > 0) {
       formattedTime.append(days).append(formatted_time_days);
       timeParamsCount--;
     }
 
-    if (hours != 0 && timeParamsCount > 0) {
+    if (hours > 0 && timeParamsCount > 0) {
       if (formattedTime.length() > 0) formattedTime.append(" ");
       formattedTime.append(hours).append(formatted_time_hours);
       timeParamsCount--;
     }
 
-    if (minutes != 0 && timeParamsCount > 0) {
+    if (minutes > 0 && timeParamsCount > 0) {
       if (formattedTime.length() > 0) formattedTime.append(" ");
       formattedTime.append(minutes).append(formatted_time_minutes);
       timeParamsCount--;
     }
 
-    if (seconds != 0 && timeParamsCount > 0) {
+    if (seconds > 0 && timeParamsCount > 0) {
       if (formattedTime.length() > 0) formattedTime.append(" ");
       formattedTime.append(seconds).append(formatted_time_seconds);
     }
