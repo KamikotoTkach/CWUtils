@@ -4,12 +4,21 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.nbt.NbtCompound;
+import com.comphenix.protocol.wrappers.nbt.NbtFactory;
+import com.destroystokyo.paper.profile.PlayerProfile;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
+import tkachgeek.tkachutils.numbers.NumbersUtils;
+import tkachgeek.tkachutils.player.PlayerUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
@@ -137,4 +146,53 @@ public class Packet {
       e.printStackTrace();
     }
   }
+
+  public static void setHead(Player receiver, PlayerProfile playerProfile, Location location) {
+    receiver.sendBlockChange(location, Material.PLAYER_HEAD.createBlockData());
+    Packet.updateHead(receiver, playerProfile, location);
+  }
+
+  public static void updateHead(Player receiver, PlayerProfile playerProfile, Location location) {
+    if (playerProfile == null) return;
+    ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+    PacketContainer packet = manager.createPacket(PacketType.Play.Server.TILE_ENTITY_DATA);
+
+    packet.getBlockPositionModifier().write(0, new BlockPosition(
+          location.getBlockX(),
+          location.getBlockY(),
+          location.getBlockZ())
+    );
+
+    packet.getIntegers().write(0, 4);
+
+    NbtCompound base = NbtFactory.ofCompound("");
+    base.put("x", location.getBlockX());
+    base.put("y", location.getBlockY());
+    base.put("z", location.getBlockZ());
+    base.put("id", "minecraft:skull");
+
+    NbtCompound nbt = NbtFactory.ofCompound("SkullOwner");
+
+    nbt.put("Id", NumbersUtils.convertToInts(playerProfile.getId()));
+    nbt.put("Name", "");
+
+    NbtCompound properties = NbtFactory.ofCompound("Properties");
+    NbtCompound skin = NbtFactory.ofCompound("");
+
+    skin.put("Value", PlayerUtils.getTextureValue(playerProfile));
+    properties.put("textures", NbtFactory.ofList("textures", skin));
+
+    nbt.put("Properties", properties);
+
+    base.put("SkullOwner", nbt);
+
+    packet.getNbtModifier().write(0, base);
+
+    try {
+      manager.sendServerPacket(receiver, packet);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
 }
