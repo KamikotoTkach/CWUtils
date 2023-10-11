@@ -105,19 +105,27 @@ public class Scheduler<T> extends AbstractScheduler {
     }
   }
   
-  private void run(Consumer<T> action) {
+  private void runWithCancelling(Consumer<T> action) {
     running = true;
     
-    action.accept(anything);
+    try {
+      action.accept(anything);
+      if (!infinite) Tasks.cancelTask(id);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     
     running = false;
   }
   
-  private void runWithCancelling(Consumer<T> action) {
+  private void run(Consumer<T> action) {
     running = true;
     
+    try {
     action.accept(anything);
-    if (!infinite) Tasks.cancelTask(id);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     
     running = false;
   }
