@@ -9,13 +9,13 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.destroystokyo.paper.profile.PlayerProfile;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import tkachgeek.tkachutils.numbers.NumbersUtils;
 import tkachgeek.tkachutils.player.PlayerUtils;
@@ -147,8 +147,8 @@ public class Packet {
     }
   }
 
-  public static void setHead(Player receiver, PlayerProfile playerProfile, Location location) {
-    receiver.sendBlockChange(location, Material.PLAYER_HEAD.createBlockData());
+  public static void setHead(Player receiver, PlayerProfile playerProfile, Location location, BlockFace rotation) {
+    receiver.sendBlockChange(location, Material.PLAYER_HEAD.createBlockData((blockData -> ((Rotatable) blockData).setRotation(rotation))));
     Packet.updateHead(receiver, playerProfile, location);
   }
 
