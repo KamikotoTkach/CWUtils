@@ -1,5 +1,7 @@
 package tkachgeek.tkachutils.numbers;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.UUID;
 
 public class NumbersUtils {
@@ -156,8 +158,9 @@ public class NumbersUtils {
     return String.join(" ", parts);
   }
 
-  public static int[] convertToInts(UUID uuid) {
-    if (uuid == null) return new int[0];
+  public static int[] convertToInts(@Nullable UUID uuid) {
+    if (uuid == null) return NumbersUtils.convertToInts(UUID.randomUUID());
+
     long msb = uuid.getMostSignificantBits();
     long lsb = uuid.getLeastSignificantBits();
 

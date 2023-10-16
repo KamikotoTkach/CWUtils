@@ -1,10 +1,7 @@
 package tkachgeek.tkachutils.reflection;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,20 +9,23 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class ReflectionUtils {
-  
+
   public static <T> T getNewInstance(Class<T> type, Object... parameters) {
     try {
       Class<?>[] classes = new Class<?>[parameters.length];
       for (int i = 0; i < parameters.length; i++) {
         classes[i] = parameters[i].getClass();
       }
-      return type.getConstructor(classes).newInstance(parameters);
+      Constructor<T> constructor = type.getConstructor(classes);
+      constructor.setAccessible(true);
+
+      return constructor.newInstance(parameters);
     } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
       e.printStackTrace();
     }
     return null;
   }
-  
+
   public static <T> T getFieldValue(Object object, String fieldName, Class<T> fieldType) {
     try {
       Field field = object.getClass().getDeclaredField(fieldName);
@@ -36,7 +36,7 @@ public class ReflectionUtils {
       return null;
     }
   }
-  
+
   public static Set<Class<?>> getClasses(File jarFile, String packageName) {
     Set<Class<?>> classes = new HashSet<>();
     try {
@@ -53,22 +53,22 @@ public class ReflectionUtils {
     }
     return classes;
   }
-  
+
   public static boolean tryToInvokeStaticMethod(Class<?> classInfo, String methodName) {
     try {
       Method load;
       load = classInfo.getDeclaredMethod(methodName);
-      
+
       if (!Modifier.isStatic(load.getModifiers()) || load.getParameterCount() != 0) {
         return false;
       }
-      
+
       load.invoke(null);
     } catch (NoSuchMethodException | InvocationTargetException |
              IllegalAccessException e) {
       return false;
     }
-    
+
     return true;
   }
 }
