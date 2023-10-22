@@ -5,10 +5,7 @@ import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class EntityUtils {
-   public static Component getCustomName(@Nullable LivingEntity entity, Component defaultName) {
-      if (entity == null) return defaultName;
-      if (entity.customName() == null) return defaultName;
-
-      return entity.customName();
-   }
+  public static Component getCustomName(@Nullable LivingEntity entity, Component defaultName) {
+    return (entity == null || entity.customName() == null) ? defaultName : entity.customName();
+  }
 }

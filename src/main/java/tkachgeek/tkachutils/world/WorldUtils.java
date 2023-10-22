@@ -1,4 +1,4 @@
-package tkachgeek.tkachutils.word;
+package tkachgeek.tkachutils.world;
 
 import org.bukkit.*;
 import org.bukkit.generator.ChunkGenerator;

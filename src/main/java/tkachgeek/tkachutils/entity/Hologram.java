@@ -7,6 +7,8 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.java.JavaPlugin;
 import tkachgeek.tkachutils.messages.Message;
 
+import java.util.concurrent.ExecutionException;
+
 public class Hologram {
    public static ArmorStand showText(Component text, int ticksToRemove, Location loc, JavaPlugin plugin) {
       if (Bukkit.isPrimaryThread()) {
@@ -14,8 +16,9 @@ public class Hologram {
       } else {
          try {
             return Bukkit.getScheduler().callSyncMethod(plugin, () -> Hologram.spawnHologram(text, ticksToRemove, loc, plugin)).get();
-         } catch (Exception ignored) {
-            plugin.getLogger().warning("Asynchronous entity add!");
+         } catch (InterruptedException | ExecutionException exception) {
+            plugin.getLogger().warning(exception.getMessage());
+            exception.printStackTrace();
             return null;
          }
       }
