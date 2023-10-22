@@ -101,27 +101,25 @@ public class VoidScheduler extends AbstractScheduler {
   }
   
   private void runWithCancelling(Runnable action) {
-    running = true;
-    
     try {
+      running = true;
       action.run();
       if (!infinite) Tasks.cancelTask(id);
     } catch (Exception e) {
       e.printStackTrace();
+    } finally {
+      running = false;
     }
-    
-    running = false;
   }
   
   private void run(Runnable action) {
-    running = true;
-    
     try {
-    action.run();
+      running = true;
+      action.run();
     } catch (Exception e) {
       e.printStackTrace();
+    } finally {
+      running = false;
     }
-    
-    running = false;
   }
 }

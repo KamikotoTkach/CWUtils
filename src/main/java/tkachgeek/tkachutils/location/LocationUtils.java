@@ -2,12 +2,14 @@ package tkachgeek.tkachutils.location;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import tkachgeek.tkachutils.numbers.Rand;
+import tkachgeek.tkachutils.particles.ParticlesUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -193,5 +195,48 @@ public class LocationUtils {
        x > x1 && x < x2
           && y > y1 && y < y2
           && z > z1 && z < z2;
+  }
+  
+  public static float getYawRotatedToGiven(float yaw) {
+    return Location.normalizeYaw(Math.round(yaw / 90) * 90 - 180);
+  }
+  
+  public static BlockFace getBlockFaceFromYaw(float yaw) {
+    switch (Math.round((180 + yaw) / 90)) {
+      case 0:
+        return BlockFace.NORTH;
+      case 1:
+        return BlockFace.EAST;
+      case 2:
+        return BlockFace.SOUTH;
+      case 3:
+        return BlockFace.WEST;
+      default:
+        throw new IllegalStateException("Unexpected value: " + Math.round((180 + yaw) / 90));
+    }
+  }
+  
+  public static boolean validateAir(Location location) {
+    if (location.getBlock().getType().isAir()) return true;
+    
+    ParticlesUtils.drawHollowCuboid(location, location.clone().add(1, 1, 1), Particle.ASH, 0.2);
+    return false;
+  }
+  
+  public static boolean validateSolid(Location location) {
+    if (location.getBlock().getType().isSolid()) return true;
+    
+    ParticlesUtils.drawHollowCuboid(location, location.clone().add(1, 1, 1), Particle.ASH, 0.2);
+    return false;
+  }
+  
+  public static boolean validateNoEntities(Location pos1, Location pos2) {
+    Collection<Entity> nearbyEntities = pos1.getWorld().getNearbyEntities(BoundingBox.of(pos1, pos2));
+    
+    if (!nearbyEntities.isEmpty()) {
+      ParticlesUtils.drawHollowCuboid(pos1, pos2, Particle.ASH, 0.2);
+      return false;
+    }
+    return true;
   }
 }

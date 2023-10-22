@@ -1,4 +1,4 @@
-package tkachgeek.tkachutils.listener;
+package tkachgeek.tkachutils.event;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;

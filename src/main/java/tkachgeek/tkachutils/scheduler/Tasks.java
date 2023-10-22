@@ -15,12 +15,13 @@ public class Tasks {
   public static void cancelTasks(JavaPlugin plugin) {
     tasks.values()
          .stream()
-         .filter(x -> x.registrant.equals(plugin))
+         .filter(x -> plugin.equals(x.registrant))
          .forEach(x -> cancelTask(x.taskId));
   }
   
   public static boolean cancelTask(int id) {
     AbstractScheduler AbstractScheduler = get(id);
+    
     if (has(id) && AbstractScheduler.taskId != -1) {
       Bukkit.getScheduler().cancelTask(AbstractScheduler.taskId);
       remove(id);

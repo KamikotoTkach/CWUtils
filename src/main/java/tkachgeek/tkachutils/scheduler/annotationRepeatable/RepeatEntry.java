@@ -20,6 +20,7 @@ public class RepeatEntry {
   public int schedule(JavaPlugin plugin) {
     Scheduler<Method> scheduler = Scheduler.create(method).infinite();
     if (async) scheduler.async();
+    
     scheduler.perform(x -> {
       try {
         x.invoke(null);
@@ -27,6 +28,7 @@ public class RepeatEntry {
         e.printStackTrace();
       }
     });
+    
     return scheduler.register(plugin, (int) delay);
   }
 }

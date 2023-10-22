@@ -199,4 +199,12 @@ public class PlayerUtils {
 
     return value;
   }
+  
+  public static void setMainItemCooldown(Player player, int ticks) {
+    player.setCooldown(player.getInventory().getItemInMainHand().getType(), ticks);
+  }
+  
+  public static boolean isMainItemCooldown(Player player) {
+    return player.hasCooldown(player.getInventory().getItemInMainHand().getType());
+  }
 }

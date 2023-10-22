@@ -60,6 +60,8 @@ public class RepeatAPI {
   }
   
   public static void unregisterAll(JavaPlugin plugin) {
+    if (!tasks.containsKey(plugin)) return;
+    
     for (Integer id : tasks.get(plugin)) {
       Tasks.cancelTask(id);
     }
