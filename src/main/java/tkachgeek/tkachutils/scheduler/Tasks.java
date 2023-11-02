@@ -2,8 +2,10 @@ package tkachgeek.tkachutils.scheduler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 public class Tasks {
   private static final ConcurrentHashMap<Integer, AbstractScheduler> tasks = new ConcurrentHashMap<>();
@@ -20,10 +22,10 @@ public class Tasks {
   }
   
   public static boolean cancelTask(int id) {
-    AbstractScheduler AbstractScheduler = get(id);
+    AbstractScheduler abstractScheduler = get(id);
     
-    if (has(id) && AbstractScheduler.taskId != -1) {
-      Bukkit.getScheduler().cancelTask(AbstractScheduler.taskId);
+    if (has(id) && abstractScheduler.taskId != -1) {
+      Bukkit.getScheduler().cancelTask(abstractScheduler.taskId);
       remove(id);
       return true;
     }

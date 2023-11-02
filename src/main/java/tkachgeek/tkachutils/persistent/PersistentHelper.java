@@ -13,143 +13,144 @@ public class PersistentHelper {
   public PersistentHelper(JavaPlugin plugin) {
     this.plugin = plugin;
   }
+  public static Set<NamespacedKey> getPersistentDataHolderKeys(PersistentDataHolder holder) {
+    return holder.getPersistentDataContainer().getKeys();
+  }
   
   //INTEGER
   
-  public static boolean hasDoubleTag(PersistentDataHolder meta, NamespacedKey key) {
-    return meta.getPersistentDataContainer().has(key, PersistentDataType.DOUBLE);
+  public boolean hasIntTag(PersistentDataHolder holder, String key) {
+    return hasIntTag(holder, new NamespacedKey(plugin, key));
   }
   
-  public static boolean hasByteArrTag(PersistentDataHolder meta, NamespacedKey key) {
-    return meta.getPersistentDataContainer().has(key, PersistentDataType.BYTE_ARRAY);
+  public static boolean hasIntTag(PersistentDataHolder holder, NamespacedKey key) {
+    return holder.getPersistentDataContainer().has(key, PersistentDataType.INTEGER);
   }
   
-  public static Set<NamespacedKey> getPersistentDataHolderKeys(PersistentDataHolder meta) {
-    return meta.getPersistentDataContainer().getKeys();
+  public void set(PersistentDataHolder holder, String key, int value) {
+    set(holder, new NamespacedKey(plugin, key), value);
   }
   
-  public boolean hasIntTag(PersistentDataHolder meta, String key) {
-    return hasIntTag(meta, new NamespacedKey(plugin, key));
+  public static void set(PersistentDataHolder holder, NamespacedKey key, int value) {
+    holder.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, value);
   }
   
-  public static boolean hasIntTag(PersistentDataHolder meta, NamespacedKey key) {
-    return meta.getPersistentDataContainer().has(key, PersistentDataType.INTEGER);
+  public void incrementInt(PersistentDataHolder holder, String key) {
+    incrementInt(holder, new NamespacedKey(plugin, key));
   }
   
-  public void set(PersistentDataHolder meta, String key, int value) {
-    set(meta, new NamespacedKey(plugin, key), value);
+  public static void incrementInt(PersistentDataHolder holder, NamespacedKey key) {
+    addIntToIntTag(holder, key, 1);
   }
   
-  public static void set(PersistentDataHolder meta, NamespacedKey key, int value) {
-    meta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, value);
-  }
-  
-  public void incrementInt(PersistentDataHolder meta, String key) {
-    incrementInt(meta, new NamespacedKey(plugin, key));
-  }
-  
-  public static void incrementInt(PersistentDataHolder meta, NamespacedKey key) {
-    addIntToIntTag(meta, key, 1);
-  }
-  
-  public static void addIntToIntTag(PersistentDataHolder meta, NamespacedKey key, int value) {
-    if (!hasIntTag(meta, key)) {
-      set(meta, key, value);
+  public static void addIntToIntTag(PersistentDataHolder holder, NamespacedKey key, int value) {
+    if (!hasIntTag(holder, key)) {
+      set(holder, key, value);
     } else {
-      set(meta, key, value + get(meta, key, 0));
+      set(holder, key, value + get(holder, key, 0));
     }
   }
   
-  public static int get(PersistentDataHolder meta, NamespacedKey key, int defaultValue) {
-    if (meta == null) return defaultValue;
-    return meta.getPersistentDataContainer().getOrDefault(key, PersistentDataType.INTEGER, defaultValue);
+  public static int get(PersistentDataHolder holder, NamespacedKey key, int defaultValue) {
+    if (holder == null) return defaultValue;
+    return holder.getPersistentDataContainer().getOrDefault(key, PersistentDataType.INTEGER, defaultValue);
   }
   
-  public void decrementInt(PersistentDataHolder meta, String key) {
-    decrementInt(meta, new NamespacedKey(plugin, key));
+  public void decrementInt(PersistentDataHolder holder, String key) {
+    decrementInt(holder, new NamespacedKey(plugin, key));
+  }
+  
+  public int get(PersistentDataHolder holder, String key, int defaultValue) {
+    return get(holder, new NamespacedKey(plugin, key), defaultValue);
+  }
+  public static void decrementInt(PersistentDataHolder holder, NamespacedKey key) {
+    addIntToIntTag(holder, key, -1);
+  }
+  
+  public void addIntToIntTag(PersistentDataHolder holder, String key, int value) {
+    addIntToIntTag(holder, new NamespacedKey(plugin, key), value);
   }
   
   //STRING
   
-  public static void decrementInt(PersistentDataHolder meta, NamespacedKey key) {
-    addIntToIntTag(meta, key, -1);
+  
+  public boolean hasStringTag(PersistentDataHolder holder, String key) {
+    return hasStringTag(holder, new NamespacedKey(plugin, key));
   }
   
-  public void addIntToIntTag(PersistentDataHolder meta, String key, int value) {
-    addIntToIntTag(meta, new NamespacedKey(plugin, key), value);
+  public static boolean hasStringTag(PersistentDataHolder holder, NamespacedKey key) {
+    return holder.getPersistentDataContainer().has(key, PersistentDataType.STRING);
   }
   
-  public boolean hasStringTag(PersistentDataHolder meta, String key) {
-    return hasStringTag(meta, new NamespacedKey(plugin, key));
+  public void set(PersistentDataHolder holder, String key, String value) {
+    set(holder, new NamespacedKey(plugin, key), value);
   }
   
-  public static boolean hasStringTag(PersistentDataHolder meta, NamespacedKey key) {
-    return meta.getPersistentDataContainer().has(key, PersistentDataType.STRING);
+  public static void set(PersistentDataHolder holder, NamespacedKey key, String value) {
+    holder.getPersistentDataContainer().set(key, PersistentDataType.STRING, value);
   }
   
-  public void set(PersistentDataHolder meta, String key, String value) {
-    set(meta, new NamespacedKey(plugin, key), value);
+  public String get(PersistentDataHolder holder, String key, String defaultValue) {
+    return get(holder, new NamespacedKey(plugin, key), defaultValue);
   }
   
-  public static void set(PersistentDataHolder meta, NamespacedKey key, String value) {
-    meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, value);
+  public static String get(PersistentDataHolder holder, NamespacedKey key, String defaultValue) {
+    if (holder == null) return defaultValue;
+    return holder.getPersistentDataContainer().getOrDefault(key, PersistentDataType.STRING, defaultValue);
   }
   
   //DOUBLE
   
-  public String get(PersistentDataHolder meta, String key, String defaultValue) {
-    return get(meta, new NamespacedKey(plugin, key), defaultValue);
+  public boolean hasDoubleTag(PersistentDataHolder holder, String key) {
+    return hasStringTag(holder, new NamespacedKey(plugin, key));
   }
   
-  public static String get(PersistentDataHolder meta, NamespacedKey key, String defaultValue) {
-    if (meta == null) return defaultValue;
-    return meta.getPersistentDataContainer().getOrDefault(key, PersistentDataType.STRING, defaultValue);
+  public void set(PersistentDataHolder holder, String key, double value) {
+    set(holder, new NamespacedKey(plugin, key), value);
   }
   
-  public boolean hasDoubleTag(PersistentDataHolder meta, String key) {
-    return hasStringTag(meta, new NamespacedKey(plugin, key));
+  public static void set(PersistentDataHolder holder, NamespacedKey key, double value) {
+    holder.getPersistentDataContainer().set(key, PersistentDataType.DOUBLE, value);
   }
   
-  public boolean hasByteArrTag(PersistentDataHolder meta, String key) {
-    return hasStringTag(meta, new NamespacedKey(plugin, key));
+  public double get(PersistentDataHolder holder, String key, double defaultValue) {
+    return get(holder, new NamespacedKey(plugin, key), defaultValue);
   }
   
-  public void set(PersistentDataHolder meta, String key, byte[] value) {
-    set(meta, new NamespacedKey(plugin, key), value);
+  public static double get(PersistentDataHolder holder, NamespacedKey key, double defaultValue) {
+    if (holder == null) return defaultValue;
+    return holder.getPersistentDataContainer().getOrDefault(key, PersistentDataType.DOUBLE, defaultValue);
   }
   
-  public static void set(PersistentDataHolder meta, NamespacedKey key, byte[] value) {
-    meta.getPersistentDataContainer().set(key, PersistentDataType.BYTE_ARRAY, value);
-  }
   //BYTE ARRAY
   
-  public byte[] get(PersistentDataHolder meta, String key, byte[] defaultValue) {
-    return get(meta, new NamespacedKey(plugin, key), defaultValue);
+  public void set(PersistentDataHolder holder, String key, byte[] value) {
+    set(holder, new NamespacedKey(plugin, key), value);
   }
   
-  public static byte[] get(PersistentDataHolder meta, NamespacedKey key, byte[] defaultValue) {
-    if (meta == null) return defaultValue;
-    return meta.getPersistentDataContainer().getOrDefault(key, PersistentDataType.BYTE_ARRAY, defaultValue);
+  public static void set(PersistentDataHolder holder, NamespacedKey key, byte[] value) {
+    holder.getPersistentDataContainer().set(key, PersistentDataType.BYTE_ARRAY, value);
   }
   
-  public int get(PersistentDataHolder meta, String key, int defaultValue) {
-    return get(meta, new NamespacedKey(plugin, key), defaultValue);
+  public boolean hasByteArrTag(PersistentDataHolder holder, String key) {
+    return hasStringTag(holder, new NamespacedKey(plugin, key));
   }
   
-  public void set(PersistentDataHolder meta, String key, double value) {
-    set(meta, new NamespacedKey(plugin, key), value);
+  public byte[] get(PersistentDataHolder holder, String key, byte[] defaultValue) {
+    return get(holder, new NamespacedKey(plugin, key), defaultValue);
   }
   
-  public static void set(PersistentDataHolder meta, NamespacedKey key, double value) {
-    meta.getPersistentDataContainer().set(key, PersistentDataType.DOUBLE, value);
+  public static byte[] get(PersistentDataHolder holder, NamespacedKey key, byte[] defaultValue) {
+    if (holder == null) return defaultValue;
+    return holder.getPersistentDataContainer().getOrDefault(key, PersistentDataType.BYTE_ARRAY, defaultValue);
   }
   
-  public double get(PersistentDataHolder meta, String key, double defaultValue) {
-    return get(meta, new NamespacedKey(plugin, key), defaultValue);
+  public static boolean hasDoubleTag(PersistentDataHolder holder, NamespacedKey key) {
+    return holder.getPersistentDataContainer().has(key, PersistentDataType.DOUBLE);
   }
   
-  public static double get(PersistentDataHolder meta, NamespacedKey key, double defaultValue) {
-    if (meta == null) return defaultValue;
-    return meta.getPersistentDataContainer().getOrDefault(key, PersistentDataType.DOUBLE, defaultValue);
+  public static boolean hasByteArrTag(PersistentDataHolder holder, NamespacedKey key) {
+    return holder.getPersistentDataContainer().has(key, PersistentDataType.BYTE_ARRAY);
   }
+
 }

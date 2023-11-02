@@ -1,25 +1,26 @@
-package tkachgeek.tkachutils.dynamicBossBar;
+package tkachgeek.tkachutils.dynamicBossBar.broadcast;
 
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
-public final class BossBarEntry {
+public final class BroadcastBossBar {
   private final UUID uuid;
   private final Supplier<Component> title;
   private final Supplier<Float> progress;
   private final Supplier<Boolean> shouldRemove;
-  private final Supplier<Boolean> shouldDisplay;
+  private final Function<Player, Boolean> shouldDisplay;
   private final Supplier<BossBar.Color> color;
   private final Supplier<BossBar.Overlay> overlay;
   private final BossBar bossBar;
+  private final Supplier<Collection<UUID>> viewers;
   
-  BossBarEntry(UUID uuid, Supplier<Component> title, Supplier<Float> progress, Supplier<Boolean> shouldRemove, Supplier<Boolean> shouldDisplay, Supplier<BossBar.Color> color, Supplier<BossBar.Overlay> overlay) {
+  BroadcastBossBar(UUID uuid, Supplier<Component> title, Supplier<Float> progress, Supplier<Boolean> shouldRemove, Function<Player, Boolean> shouldDisplay, Supplier<BossBar.Color> color, Supplier<BossBar.Overlay> overlay, Supplier<Collection<UUID>> viewers) {
     this.uuid = uuid;
     this.title = title;
     this.progress = progress;
@@ -27,11 +28,13 @@ public final class BossBarEntry {
     this.shouldDisplay = shouldDisplay;
     this.color = color;
     this.overlay = overlay;
+    this.viewers = viewers;
+    
     this.bossBar = BossBar.bossBar(title.get(), progress.get(), color.get(), overlay.get());
   }
   
-  public static BossBarEntryBuilder of(Supplier<Component> title) {
-    return new BossBarEntryBuilder().setTitle(title);
+  public static BroadcastBossBarBuilder of(Supplier<Component> title) {
+    return new BroadcastBossBarBuilder().setTitle(title);
   }
   
   public UUID getUUID() {
@@ -50,7 +53,7 @@ public final class BossBarEntry {
     return shouldRemove;
   }
   
-  public Supplier<Boolean> getShouldDisplay() {
+  public Function<Player, Boolean> getShouldDisplay() {
     return shouldDisplay;
   }
   
@@ -76,7 +79,7 @@ public final class BossBarEntry {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     
-    BossBarEntry that = (BossBarEntry) o;
+    BroadcastBossBar that = (BroadcastBossBar) o;
     
     return uuid.equals(that.uuid);
   }
@@ -91,16 +94,21 @@ public final class BossBarEntry {
     }
   }
   
-  public void update(Player onlinePlayer) {
+  public void update() {
     bossBar.name(title.get());
     bossBar.color(color.get());
     bossBar.overlay(overlay.get());
     bossBar.progress(progress.get());
     
-    if (shouldDisplay.get()) {
-      onlinePlayer.showBossBar(bossBar);
-    } else {
-      onlinePlayer.hideBossBar(bossBar);
-    }
+    viewers.get().stream()
+           .map(Bukkit::getPlayer)
+           .filter(Objects::nonNull)
+           .forEach(player -> {
+             if (shouldDisplay.apply(player)) {
+               player.showBossBar(bossBar);
+             } else {
+               player.hideBossBar(bossBar);
+             }
+           });
   }
 }

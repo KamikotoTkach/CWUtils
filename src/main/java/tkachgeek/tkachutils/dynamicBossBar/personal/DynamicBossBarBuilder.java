@@ -1,4 +1,4 @@
-package tkachgeek.tkachutils.dynamicBossBar;
+package tkachgeek.tkachutils.dynamicBossBar.personal;
 
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class BossBarEntryBuilder {
+public class DynamicBossBarBuilder {
   private UUID uuid = UUID.randomUUID();
   private Supplier<Component> title;
   private Supplier<Float> progress = () -> 1.0f;
@@ -16,42 +16,42 @@ public class BossBarEntryBuilder {
   private Supplier<BossBar.Color> color = () -> BossBar.Color.WHITE;
   private Supplier<BossBar.Overlay> overlay = () -> BossBar.Overlay.PROGRESS;
   
-  public BossBarEntryBuilder setUuid(@NotNull UUID uuid) {
+  public DynamicBossBarBuilder setUuid(@NotNull UUID uuid) {
     this.uuid = uuid;
     return this;
   }
   
-  public BossBarEntryBuilder setTitle(@NotNull Supplier<Component> title) {
+  public DynamicBossBarBuilder setTitle(@NotNull Supplier<Component> title) {
     this.title = title;
     return this;
   }
   
-  public BossBarEntryBuilder setProgress(@NotNull Supplier<Float> progress) {
+  public DynamicBossBarBuilder setProgress(@NotNull Supplier<Float> progress) {
     this.progress = progress;
     return this;
   }
   
-  public BossBarEntryBuilder setShouldRemove(@NotNull Supplier<Boolean> shouldRemove) {
+  public DynamicBossBarBuilder setShouldRemove(@NotNull Supplier<Boolean> shouldRemove) {
     this.shouldRemove = shouldRemove;
     return this;
   }
   
-  public BossBarEntryBuilder setShouldDisplay(@NotNull Supplier<Boolean> shouldDisplay) {
+  public DynamicBossBarBuilder setShouldDisplay(@NotNull Supplier<Boolean> shouldDisplay) {
     this.shouldDisplay = shouldDisplay;
     return this;
   }
   
-  public BossBarEntryBuilder setColor(@NotNull Supplier<BossBar.Color> color) {
+  public DynamicBossBarBuilder setColor(@NotNull Supplier<BossBar.Color> color) {
     this.color = color;
     return this;
   }
   
-  public BossBarEntryBuilder setOverlay(@NotNull Supplier<BossBar.Overlay> overlay) {
+  public DynamicBossBarBuilder setOverlay(@NotNull Supplier<BossBar.Overlay> overlay) {
     this.overlay = overlay;
     return this;
   }
   
-  public BossBarEntry build() {
-    return new BossBarEntry(uuid, title, progress, shouldRemove, shouldDisplay, color, overlay);
+  public DynamicBossBar build() {
+    return new DynamicBossBar(uuid, title, progress, shouldRemove, shouldDisplay, color, overlay);
   }
 }

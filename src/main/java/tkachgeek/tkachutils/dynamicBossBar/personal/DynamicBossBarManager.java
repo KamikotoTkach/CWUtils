@@ -1,4 +1,4 @@
-package tkachgeek.tkachutils.dynamicBossBar;
+package tkachgeek.tkachutils.dynamicBossBar.personal;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -10,9 +10,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DynamicBossBarManager {
-  HashMap<UUID, Set<BossBarEntry>> bars = new HashMap<>();
+  ConcurrentHashMap<UUID, Set<DynamicBossBar>> bars = new ConcurrentHashMap<>();
   
   JavaPlugin plugin;
   
@@ -28,7 +29,7 @@ public class DynamicBossBarManager {
   
   private void tick() {
     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-      Set<BossBarEntry> bossBarEntries = bars.get(onlinePlayer.getUniqueId());
+      Set<DynamicBossBar> bossBarEntries = bars.get(onlinePlayer.getUniqueId());
       if (bossBarEntries == null || bossBarEntries.isEmpty()) continue;
       
       bossBarEntries.removeIf(bar -> {
@@ -43,8 +44,8 @@ public class DynamicBossBarManager {
     }
   }
   
-  public void send(Player player, BossBarEntry entry) {
-    Set<BossBarEntry> bossBarEntries = getBossBarEntries(player);
+  public void send(Player player, DynamicBossBar entry) {
+    Set<DynamicBossBar> bossBarEntries = getBossBarEntries(player);
     
     removeBar(player, entry.getUUID());
     
@@ -52,7 +53,7 @@ public class DynamicBossBarManager {
   }
   
   @NotNull
-  public Set<BossBarEntry> getBossBarEntries(Player player) {
+  public Set<DynamicBossBar> getBossBarEntries(Player player) {
     return bars.computeIfAbsent(player.getUniqueId(), uuid -> new HashSet<>());
   }
   
