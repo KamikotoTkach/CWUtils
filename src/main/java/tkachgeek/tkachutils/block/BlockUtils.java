@@ -31,4 +31,8 @@ public class BlockUtils {
     }
     return ret;
   }
+  
+  public static Location getCenter(final Block block) {
+    return block.getLocation().add(0.5, 0.5, 0.5);
+  }
 }

@@ -239,4 +239,17 @@ public class LocationUtils {
     }
     return true;
   }
+  
+  /**
+   * Converts a location to a Vector containing the location's coordinates inside the chunk (rounded to int values)
+   *
+   * @param location Location
+   * @return Vector containing the X, Y and Z int values of the location inside its chunk
+   */
+  public static Vector getCoordinatesInsideChunk(final Location location) {
+    final int x = location.getBlockX() & 0x000F;
+    final int y = location.getBlockY();
+    final int z = location.getBlockZ() & 0x000F;
+    return new Vector(x, y, z);
+  }
 }
