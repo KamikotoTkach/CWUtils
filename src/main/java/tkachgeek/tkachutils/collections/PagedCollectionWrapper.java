@@ -19,4 +19,12 @@ public class PagedCollectionWrapper<T> {
     
     return entries.subList(Math.min(from, entries.size()), Math.min(to, entries.size()));
   }
+  
+  public int getPagesAmount() {
+    return entries.isEmpty() ? 0 : (entries.size() / pageSize) + 1;
+  }
+  
+  public int getPageSize() {
+    return pageSize;
+  }
 }

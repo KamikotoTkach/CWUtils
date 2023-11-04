@@ -70,13 +70,15 @@ public class TimeFormatter {
 
   public static String getFormattedTime(@NotNull final Duration duration, int timeParamsCount, String formatted_time_days, String formatted_time_hours, String formatted_time_minutes, String formatted_time_seconds) {
     StringBuilder formattedTime = new StringBuilder();
-    long days = duration.toDays();
-    long hours = duration.toHours() % 24;
-    long minutes = duration.toMinutes() % 60;
-    long seconds = duration.toSeconds() % 60;
-    if (seconds < 0) seconds = 1;
-
-    if (duration.toDays() > 0) {
+    
+    long days = Math.abs(duration.toDaysPart());
+    long hours = Math.abs(duration.toHoursPart());
+    long minutes = Math.abs(duration.toMinutesPart());
+    long seconds = Math.abs(duration.toSecondsPart());
+    
+    if (seconds == 0) seconds = 1;
+    
+    if (days > 0) {
       formattedTime.append(days).append(formatted_time_days);
       timeParamsCount--;
     }
@@ -115,18 +117,27 @@ public class TimeFormatter {
   public static String getFormattedTime(@NotNull final Duration duration) {
     return TimeFormatter.getFormattedTime(duration, 2);
   }
-
-  @Deprecated
+  
+  /**
+   * Moved to TimeUtils
+   */
+  @Deprecated(forRemoval = true)
   public static long unix() {
     return System.currentTimeMillis() / 1000;
   }
-
-  @Deprecated
+  
+  /**
+   * Moved to TimeUtils
+   */
+  @Deprecated(forRemoval = true)
   public static boolean isBefore(long millis) {
     return System.currentTimeMillis() < millis;
   }
-
-  @Deprecated
+  
+  /**
+   * Moved to TimeUtils
+   */
+  @Deprecated(forRemoval = true)
   public static boolean isAfter(long millis) {
     return System.currentTimeMillis() > millis;
   }

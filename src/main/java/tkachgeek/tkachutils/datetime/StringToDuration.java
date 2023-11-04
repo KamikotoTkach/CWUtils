@@ -56,7 +56,7 @@ public class StringToDuration {
     StringBuilder currentPart = new StringBuilder();
     HashMap<Character, String> parts = new HashMap<>();
     
-    if (line.length() == 0) return parts;
+    if (line.isEmpty()) return parts;
     
     for (char c : line.toCharArray()) {
       if (c >= '0' && c <= '9') {

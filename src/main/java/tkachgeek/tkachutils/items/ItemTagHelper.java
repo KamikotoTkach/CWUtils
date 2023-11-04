@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * @deprecated Используйте <code>PersistentHelper</code, этот оставлен для совместимости
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class ItemTagHelper {
   JavaPlugin plugin;
   

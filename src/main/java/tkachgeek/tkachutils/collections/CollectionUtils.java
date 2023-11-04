@@ -8,7 +8,7 @@ import java.util.*;
 public class CollectionUtils {
   public static <T> @Nullable T getRandomListEntry(List<T> list) {
     if (list == null) return null;
-    if (list.size() == 0) return null;
+    if (list.isEmpty()) return null;
     if (list.size() == 1) return list.get(0);
     return list.get(Rand.ofInt(list.size()));
   }
@@ -44,7 +44,7 @@ public class CollectionUtils {
   }
   
   /**
-   * Используйте HashSet для параметров, если коллекции достаточно большие, чтобы накладные расходы создания HashMap были меньше кучи contains
+   * Используйте HashSet для параметров, если коллекции достаточно большие
    */
   public static <T> boolean containsAny(Collection<T> one, Collection<T> two) {
     for (T t : one) {
@@ -54,7 +54,7 @@ public class CollectionUtils {
   }
   
   /**
-   * Используйте HashSet для параметров, если коллекции достаточно большие, чтобы накладные расходы создания HashMap были меньше кучи contains
+   * Используйте HashSet для параметров, если коллекции достаточно большие
    */
   public static <T> boolean hasAllElements(Collection<T> toCheck, Collection<T> elements) {
     for (T t : elements) {
@@ -76,7 +76,7 @@ public class CollectionUtils {
   }
   
   public static <T> String toString(List<T> values, String prefix, String suffix, boolean removeLastSuffix) {
-    if (values.size() == 0) return "";
+    if (values.isEmpty()) return "";
     
     StringBuilder sb = new StringBuilder();
     for (T value : values) {
@@ -102,7 +102,7 @@ public class CollectionUtils {
   }
   
   public static <T> T getRandomWeightedElement(Map<T, ? extends Number> map) {
-    if (map.size() == 0) return null;
+    if (map.isEmpty()) return null;
     
     double totalWeight = map.values().stream().mapToDouble(Number::doubleValue).sum();
     double randomWeight = Rand.ofDouble(totalWeight);
