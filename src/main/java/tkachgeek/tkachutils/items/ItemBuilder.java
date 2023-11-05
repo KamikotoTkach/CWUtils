@@ -35,7 +35,10 @@ public class ItemBuilder {
   
   public ItemBuilder(ItemStack item) {
     this.item = item;
-    meta = item.getItemMeta();
+    
+    if (item != null) {
+      this.meta = item.getItemMeta();
+    }
   }
   
   static public ItemBuilder of(Material material) {
@@ -51,10 +54,6 @@ public class ItemBuilder {
     return this;
   }
   
-  public boolean hasName() {
-    return this.meta.hasDisplayName();
-  }
-  
   public Component name() {
     if (!this.hasName()) {
       return Component.translatable(this.item.getType().getTranslationKey())
@@ -64,13 +63,13 @@ public class ItemBuilder {
     return meta.displayName();
   }
   
+  public boolean hasName() {
+    return meta != null && this.meta.hasDisplayName();
+  }
+  
   public ItemBuilder name(Component name) {
     meta.displayName(name.decoration(TextDecoration.ITALIC, false));
     return this;
-  }
-  
-  public boolean hasDescription() {
-    return this.meta.hasLore();
   }
   
   public List<Component> description() {
@@ -78,6 +77,10 @@ public class ItemBuilder {
       return new ArrayList<>();
     }
     return meta.lore();
+  }
+  
+  public boolean hasDescription() {
+    return meta != null && this.meta.hasLore();
   }
   
   public ItemBuilder description(Component... description) {
@@ -112,6 +115,12 @@ public class ItemBuilder {
     return setAttribute(Attribute.GENERIC_ATTACK_DAMAGE, damage);
   }
   
+  public ItemBuilder setAttribute(Attribute attribute, double value) {
+    meta.removeAttributeModifier(attribute);
+    meta.addAttributeModifier(attribute, new AttributeModifier(UUID.randomUUID(), attribute.name(), value - 1, AttributeModifier.Operation.ADD_NUMBER, item.getType().getEquipmentSlot()));
+    return this;
+  }
+  
   public ItemBuilder health(double health) {
     return setAttribute(Attribute.GENERIC_MAX_HEALTH, health);
   }
@@ -132,20 +141,9 @@ public class ItemBuilder {
     return setAttribute(Attribute.GENERIC_ATTACK_SPEED, knockback);
   }
   
-  public ItemBuilder setAttribute(Attribute attribute, double value) {
-    meta.removeAttributeModifier(attribute);
-    meta.addAttributeModifier(attribute, new AttributeModifier(UUID.randomUUID(), attribute.name(), value - 1, AttributeModifier.Operation.ADD_NUMBER, item.getType().getEquipmentSlot()));
-    return this;
-  }
-  
   public ItemBuilder multiplyAttribute(Attribute attribute, double value) {
     meta.addAttributeModifier(attribute, new AttributeModifier(UUID.randomUUID(), attribute.name(), value, AttributeModifier.Operation.MULTIPLY_SCALAR_1, item.getType().getEquipmentSlot()));
     return this;
-  }
-  
-  protected ItemStack generateItem() {
-    item.setItemMeta(meta);
-    return item;
   }
   
   public ItemBuilder enchantment(Enchantment enchantment, int level) {
@@ -153,8 +151,8 @@ public class ItemBuilder {
     return this;
   }
   
-  public boolean isPotionMeta() {
-    return meta instanceof PotionMeta;
+  public ItemBuilder customEffect(PotionEffectType effect, int duration, int level) {
+    return this.customEffect(new PotionEffect(effect, duration, level));
   }
   
   public ItemBuilder customEffect(PotionEffect effect) {
@@ -164,12 +162,8 @@ public class ItemBuilder {
     return this;
   }
   
-  public ItemBuilder customEffect(PotionEffectType effect, int duration, int level) {
-    return this.customEffect(new PotionEffect(effect, duration, level));
-  }
-  
-  public boolean isSkullMeta() {
-    return meta instanceof SkullMeta;
+  public boolean isPotionMeta() {
+    return meta instanceof PotionMeta;
   }
   
   public ItemBuilder playerProfile(PlayerProfile profile) {
@@ -177,6 +171,10 @@ public class ItemBuilder {
       ((SkullMeta) meta).setPlayerProfile(profile);
     }
     return this;
+  }
+  
+  public boolean isSkullMeta() {
+    return meta instanceof SkullMeta;
   }
   
   public ItemBuilder customModelData(int data) {
@@ -199,7 +197,17 @@ public class ItemBuilder {
     return this;
   }
   
+  public ItemBuilder type(Material material) {
+    item.setType(material);
+    return this;
+  }
+  
   public ItemStack build() {
     return this.generateItem();
+  }
+  
+  protected ItemStack generateItem() {
+    item.setItemMeta(meta);
+    return item;
   }
 }
