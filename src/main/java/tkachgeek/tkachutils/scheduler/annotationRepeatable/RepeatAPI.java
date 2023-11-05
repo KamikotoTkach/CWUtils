@@ -54,6 +54,7 @@ public class RepeatAPI {
   
   public static void registerRepeatable(JavaPlugin plugin, Method method, Repeat annotation) {
     tasks.computeIfAbsent(plugin, x -> new ArrayList<>());
+    method.setAccessible(true);
     
     int id = new RepeatEntry(method, annotation).schedule(plugin);
     tasks.get(plugin).add(id);
