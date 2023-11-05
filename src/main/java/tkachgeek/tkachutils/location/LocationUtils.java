@@ -192,9 +192,9 @@ public class LocationUtils {
     double z = tested.getZ();
     
     return
-       x > x1 && x < x2
-          && y > y1 && y < y2
-          && z > z1 && z < z2;
+       x >= x1 && x <= x2
+          && y >= y1 && y <= y2
+          && z >= z1 && z <= z2;
   }
   
   public static float getYawRotatedToGiven(float yaw) {
