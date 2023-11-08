@@ -84,4 +84,17 @@ public class VectorUtils {
   public static double angleToXAxis(Vector vector) {
     return Math.atan2(vector.getX(), vector.getY());
   }
+  
+  public static Vector directional(float pitch, float yaw) {
+    Vector vector = new Vector();
+    
+    vector.setY(-Math.sin(Math.toRadians(pitch)));
+    
+    double xz = Math.cos(Math.toRadians(pitch));
+    
+    vector.setX(-xz * Math.sin(Math.toRadians(yaw)));
+    vector.setZ(xz * Math.cos(Math.toRadians(yaw)));
+    
+    return vector;
+  }
 }
