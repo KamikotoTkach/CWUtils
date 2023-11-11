@@ -2,6 +2,7 @@ package tkachgeek.tkachutils.scheduler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.function.Supplier;
 
@@ -74,18 +75,27 @@ public class VoidScheduler extends AbstractScheduler {
   /**
    * Регистрирует и запускает планировщик
    */
-  public int register(JavaPlugin plugin, long delay) {
+  public BukkitTask registerTask(JavaPlugin plugin, long delay) {
+    BukkitTask task;
     if (asyncTask) {
-      taskId = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this::tick, delay, delay).getTaskId();
+      task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this::tick, delay, delay);
     } else {
-      taskId = Bukkit.getScheduler().runTaskTimer(plugin, this::tick, delay, delay).getTaskId();
+      task = Bukkit.getScheduler().runTaskTimer(plugin, this::tick, delay, delay);
     }
     
     registrant = plugin;
+    taskId = task.getTaskId();
     
     Tasks.put(id, this);
     
-    return id;
+    return task;
+  }
+  
+  /**
+   * Регистрирует и запускает планировщик
+   */
+  public int register(JavaPlugin plugin, long delay) {
+    return registerTask(plugin, delay).getTaskId();
   }
   
   private void tick() {
