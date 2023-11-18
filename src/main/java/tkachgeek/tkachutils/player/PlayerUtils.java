@@ -177,7 +177,10 @@ public class PlayerUtils {
       return new ArrayList<>(player.getWorld().getNearbyEntitiesByType(type, player.getLocation(), radius));
     }
   }
-
+  
+  /**
+   * Толкает предмет в сторону игрока
+   */
   public static void pushItemToPlayer(Player player, Item item, JavaPlugin plugin) {
     item.setVelocity(new Vector(0, 0.45, 0));
     Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -186,7 +189,10 @@ public class PlayerUtils {
                              .toVector().normalize().multiply(0.65));
     }, 5);
   }
-
+  
+  /**
+   * @return значение текстуры из профиля игрока
+   */
   public static String getTextureValue(PlayerProfile playerProfile) {
     String value = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDVhZGI2ZmZhMmM1YzBlMzUwYzI4NDk5MTM4YTU1NjY0NDFkN2JjNTczZGUxOTg5ZmRlMjEyZmNiMTk2NjgyNiJ9fX0=";
     if (playerProfile != null) {

@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class PlayerFaceResolver {
-  JavaPlugin plugin;
+  private final JavaPlugin plugin;
   private String filler = "⬛";
   
   public PlayerFaceResolver(JavaPlugin plugin) {
@@ -27,52 +27,9 @@ public class PlayerFaceResolver {
     this.filler = filler;
   }
   
-  public CompletableFuture<ArrayList<Component>> getHeadLines(String name) {
+  public List<Component> getHeadLines(String name) {
     var list = new ArrayList<Component>();
-    var imageCompletableFuture = getPlayerFace(name);
-    return imageCompletableFuture.thenApplyAsync(x -> {
-      if (x == null) return new ArrayList<>();
-      
-      for (int h = 0; h < x.getHeight(); h++) {
-        var text = Component.empty();
-        for (int w = 0; w < x.getWidth(); w++) {
-          text = text.append(Component.text(filler, TextColor.color(x.getRGB(w, h))));
-        }
-        list.add(text);
-      }
-      return list;
-    });
-  }
-  
-  public CompletableFuture<BufferedImage> getPlayerFace(String name) {
-    File file = resolveFile(name);
-    var cf = new CompletableFuture<BufferedImage>();
-    
-    if (!file.exists()) {
-      cf.thenRun(() -> {
-        try {
-          downloadHead(name);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      });
-    }
-    
-    cf.completeAsync(() -> {
-      try {
-        return ImageIO.read(file);
-      } catch (IOException e) {
-        e.printStackTrace();
-        return null;
-      }
-    });
-    
-    return cf;
-  }
-  
-  public List<Component> getHeadLinesSync(String name) {
-    var list = new ArrayList<Component>();
-    var img = getPlayerFaceSync(name);
+    var img = getPlayerFace(name);
     for (int h = 0; h < img.getHeight(); h++) {
       var text = Component.empty();
       for (int w = 0; w < img.getWidth(); w++) {
@@ -83,7 +40,7 @@ public class PlayerFaceResolver {
     return list;
   }
   
-  public BufferedImage getPlayerFaceSync(String name) {
+  public BufferedImage getPlayerFace(String name) {
     File file = resolveFile(name);
     try {
       if (file.exists()) {
@@ -101,12 +58,29 @@ public class PlayerFaceResolver {
     FileUtils.downloadFileTo("https://minotar.net/helm/" + name + "/8", resolvePath(name));
   }
   
+  public CompletableFuture<List<Component>> getHeadLinesCompletable(String name) {
+    return CompletableFuture.supplyAsync(() -> getHeadLines(name));
+  }
+  
+  public CompletableFuture<BufferedImage> getPlayerFaceCompletable(String name) {
+    return CompletableFuture.supplyAsync(() -> getPlayerFace(name));
+  }
+  
   String resolvePath(String name) {
-    return plugin.getDataFolder().toPath().resolve("heads").resolve(name + ".png").toAbsolutePath().toString();
+    return plugin.getDataFolder()
+                 .toPath()
+                 .resolve("heads")
+                 .resolve(name + ".png")
+                 .toAbsolutePath()
+                 .toString();
   }
   
   File resolveFile(String name) {
-    Path path = plugin.getDataFolder().toPath().resolve("heads").resolve(name + ".png");
+    Path path = plugin.getDataFolder()
+                      .toPath()
+                      .resolve("heads")
+                      .resolve(name + ".png");
+    
     if (!Files.exists(path)) {
       try {
         com.google.common.io.Files.createParentDirs(path.toFile());
