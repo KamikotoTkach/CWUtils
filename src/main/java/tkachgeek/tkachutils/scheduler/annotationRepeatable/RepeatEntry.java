@@ -23,6 +23,7 @@ public class RepeatEntry {
     
     scheduler.perform(x -> {
       try {
+        x.setAccessible(true);
         x.invoke(null);
       } catch (IllegalAccessException | InvocationTargetException e) {
         e.printStackTrace();
