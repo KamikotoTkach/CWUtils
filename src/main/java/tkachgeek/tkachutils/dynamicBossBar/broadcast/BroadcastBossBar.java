@@ -5,7 +5,10 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -19,6 +22,7 @@ public final class BroadcastBossBar {
   private final Supplier<BossBar.Overlay> overlay;
   private final BossBar bossBar;
   private final Supplier<Collection<UUID>> viewers;
+  private Collection<UUID> previousViewers = new ArrayList<>();
   
   BroadcastBossBar(UUID uuid, Supplier<Component> title, Supplier<Float> progress, Supplier<Boolean> shouldRemove, Function<Player, Boolean> shouldDisplay, Supplier<BossBar.Color> color, Supplier<BossBar.Overlay> overlay, Supplier<Collection<UUID>> viewers) {
     this.uuid = uuid;
@@ -100,15 +104,27 @@ public final class BroadcastBossBar {
     bossBar.overlay(overlay.get());
     bossBar.progress(progress.get());
     
-    viewers.get().stream()
-           .map(Bukkit::getPlayer)
-           .filter(Objects::nonNull)
-           .forEach(player -> {
-             if (shouldDisplay.apply(player)) {
-               player.showBossBar(bossBar);
-             } else {
-               player.hideBossBar(bossBar);
-             }
-           });
+    Collection<UUID> newViewers = viewers.get();
+    
+    previousViewers.removeAll(newViewers);
+    previousViewers.stream()
+                   .map(Bukkit::getPlayer)
+                   .filter(Objects::nonNull)
+                   .forEach(player -> {
+                     player.hideBossBar(bossBar);
+                   });
+    
+    newViewers.stream()
+              .map(Bukkit::getPlayer)
+              .filter(Objects::nonNull)
+              .forEach(player -> {
+                if (shouldDisplay.apply(player)) {
+                  player.showBossBar(bossBar);
+                } else {
+                  player.hideBossBar(bossBar);
+                }
+              });
+    
+    previousViewers = newViewers;
   }
 }
