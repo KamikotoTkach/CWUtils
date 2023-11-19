@@ -75,6 +75,10 @@
             <id>sk89q-repo</id>
             <url>https://maven.enginehub.org/repo/</url>
         </repository>
+        <repository>
+            <id>Jitpack</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -117,6 +121,11 @@
             <artifactId>worldedit-bukkit</artifactId>
             <version>7.2.12</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.Querz</groupId>
+            <artifactId>NBT</artifactId>
+            <version>6.1</version>
         </dependency>
     </dependencies>
 </project>
