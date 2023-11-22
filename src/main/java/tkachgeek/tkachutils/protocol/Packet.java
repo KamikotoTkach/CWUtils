@@ -19,14 +19,23 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import tkachgeek.tkachutils.numbers.NumbersUtils;
 import tkachgeek.tkachutils.player.PlayerUtils;
+import tkachgeek.tkachutils.server.ServerUtils;
 
 import java.util.UUID;
 
 public class Packet {
   public static void setSlot(Player player, int slot, ItemStack item) {
     PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.SET_SLOT);
-    packet.getIntegers().write(0, 0);
-    packet.getIntegers().write(1, slot);
+    
+    if (ServerUtils.isVersionGreater_1_16_5()) {
+      packet.getIntegers().write(0, 0);
+      packet.getIntegers().write(1, 0); //state id
+      packet.getIntegers().write(2, slot);
+    } else {
+      packet.getIntegers().write(0, 0);
+      packet.getIntegers().write(1, slot);
+    }
+    
     packet.getItemModifier().write(0, item);
     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
   }
