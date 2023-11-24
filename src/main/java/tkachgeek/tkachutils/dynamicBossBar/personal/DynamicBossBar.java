@@ -4,6 +4,7 @@ import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import tkachgeek.tkachutils.numbers.NumbersUtils;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -95,7 +96,7 @@ public final class DynamicBossBar {
     bossBar.name(title.get());
     bossBar.color(color.get());
     bossBar.overlay(overlay.get());
-    bossBar.progress(progress.get());
+    bossBar.progress((float) NumbersUtils.bound(progress.get(), 0, 1));
     
     if (shouldDisplay.get()) {
       onlinePlayer.showBossBar(bossBar);
