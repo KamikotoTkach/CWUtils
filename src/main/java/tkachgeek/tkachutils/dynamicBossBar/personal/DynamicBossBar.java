@@ -4,6 +4,7 @@ import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import tkachgeek.tkachutils.numbers.NumbersUtils;
 
 import java.util.Objects;
@@ -20,7 +21,14 @@ public final class DynamicBossBar {
   private final Supplier<BossBar.Overlay> overlay;
   private final BossBar bossBar;
   
-  DynamicBossBar(UUID uuid, Supplier<Component> title, Supplier<Float> progress, Supplier<Boolean> shouldRemove, Supplier<Boolean> shouldDisplay, Supplier<BossBar.Color> color, Supplier<BossBar.Overlay> overlay) {
+  DynamicBossBar(@NotNull UUID uuid,
+                 @NotNull Supplier<Component> title,
+                 @NotNull Supplier<Float> progress,
+                 @NotNull Supplier<Boolean> shouldRemove,
+                 @NotNull Supplier<Boolean> shouldDisplay,
+                 @NotNull Supplier<BossBar.Color> color,
+                 @NotNull Supplier<BossBar.Overlay> overlay) {
+    
     this.uuid = uuid;
     this.title = title;
     this.progress = progress;

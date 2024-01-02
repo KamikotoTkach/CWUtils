@@ -4,6 +4,7 @@ import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import tkachgeek.tkachutils.numbers.NumbersUtils;
 
 import java.util.ArrayList;
@@ -25,7 +26,16 @@ public final class BroadcastBossBar {
   private final Supplier<Collection<UUID>> viewers;
   private Collection<UUID> previousViewers = new ArrayList<>();
   
-  BroadcastBossBar(UUID uuid, Supplier<Component> title, Supplier<Float> progress, Supplier<Boolean> shouldRemove, Function<Player, Boolean> shouldDisplay, Supplier<BossBar.Color> color, Supplier<BossBar.Overlay> overlay, Supplier<Collection<UUID>> viewers) {
+  BroadcastBossBar(
+     @NotNull UUID uuid,
+     @NotNull Supplier<Component> title,
+     @NotNull Supplier<Float> progress,
+     @NotNull Supplier<Boolean> shouldRemove,
+     @NotNull Function<Player, Boolean> shouldDisplay,
+     @NotNull Supplier<BossBar.Color> color,
+     @NotNull Supplier<BossBar.Overlay> overlay,
+     @NotNull Supplier<Collection<UUID>> viewers) {
+    
     this.uuid = uuid;
     this.title = title;
     this.progress = progress;
