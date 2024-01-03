@@ -15,6 +15,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import tkachgeek.tkachutils.numbers.NumbersUtils;
@@ -26,7 +27,7 @@ import java.util.UUID;
 public class Packet {
   public static void setSlot(Player player, int slot, ItemStack item) {
     PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.SET_SLOT);
-    
+
     if (ServerUtils.isVersionGreater_1_16_5()) {
       packet.getIntegers().write(0, 0);
       packet.getIntegers().write(1, 0); //state id
@@ -35,7 +36,7 @@ public class Packet {
       packet.getIntegers().write(0, 0);
       packet.getIntegers().write(1, slot);
     }
-    
+
     packet.getItemModifier().write(0, item);
     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
   }
@@ -44,18 +45,29 @@ public class Packet {
     setSlot(player, slot, player.getInventory().getItem(slot));
   }
 
+  public static void clearInventory(Player player) {
+    Inventory inventory = player.getInventory();
+    ItemStack air = new ItemStack(Material.AIR);
+    for (int slot = 0; slot < 36; slot++) {
+      ItemStack item = inventory.getItem(slot);
+      if (item != null && item.getType().isItem()) {
+        Packet.setSlot(player, slot, air);
+      }
+    }
+  }
+
   public static void spawnLivingEntity(Player player, int id, int entityId, Location loc) {
     PacketContainer packet = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
-    
+
     packet.getIntegers().write(0, id);
     packet.getIntegers().write(1, entityId);
     packet.getIntegers().write(2, 0);
     packet.getUUIDs().write(0, UUID.randomUUID());
-    
+
     packet.getDoubles().write(0, loc.getX());
     packet.getDoubles().write(1, loc.getY());
     packet.getDoubles().write(2, loc.getZ());
-    
+
     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
   }
 
@@ -174,5 +186,4 @@ public class Packet {
       e.printStackTrace();
     }
   }
-
 }
