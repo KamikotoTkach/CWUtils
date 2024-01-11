@@ -41,11 +41,11 @@ public class ItemBuilder {
     }
   }
   
-  static public ItemBuilder of(Material material) {
+  public static ItemBuilder of(Material material) {
     return new ItemBuilder(material);
   }
   
-  static public ItemBuilder of(ItemStack item) {
+  public static ItemBuilder of(ItemStack item) {
     return new ItemBuilder(item);
   }
   
