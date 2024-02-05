@@ -82,4 +82,11 @@ public class Expireable implements Serializable {
   public double getPercentBounded() {
     return Math.min(1.0, (System.currentTimeMillis() - time) / (double) expires);
   }
+  
+  /**
+   * @return 0 if expired, >0 && <1 if not expired
+   */
+  public double getRevertPercentBounded() {
+    return 1 - getPercentBounded();
+  }
 }
