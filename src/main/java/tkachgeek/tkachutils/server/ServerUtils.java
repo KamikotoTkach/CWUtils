@@ -43,9 +43,13 @@ public class ServerUtils {
     
     return version <= getVersionWeight("1.12.2");
   }
-  
+
+  public static boolean isVersionGreater(String version) {
+    return getVersionWeight() > getVersionWeight(version);
+  }
+
   public static boolean isVersionGreater_1_16_5() {
-    return getVersionWeight() > getVersionWeight("1.16.5");
+    return isVersionGreater("1.16.5");
   }
   
   private static int getVersionWeight() {

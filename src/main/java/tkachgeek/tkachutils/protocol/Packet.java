@@ -6,9 +6,11 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedRegistrable;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.destroystokyo.paper.profile.PlayerProfile;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -156,7 +158,11 @@ public class Packet {
        location.getBlockZ())
     );
     
-    packet.getIntegers().write(0, 4);
+    if (ServerUtils.isVersionGreater("1.17.1")) {
+      packet.getBlockEntityTypeModifier().write(0, WrappedRegistrable.blockEntityType("skull"));
+    } else {
+      packet.getIntegers().write(0, 4);
+    }
     
     NbtCompound base = NbtFactory.ofCompound("");
     base.put("x", location.getBlockX());
