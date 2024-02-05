@@ -10,7 +10,6 @@ import com.comphenix.protocol.wrappers.WrappedRegistrable;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.destroystokyo.paper.profile.PlayerProfile;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -22,16 +21,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import tkachgeek.tkachutils.numbers.NumbersUtils;
 import tkachgeek.tkachutils.player.PlayerUtils;
-import tkachgeek.tkachutils.reflection.BukkitReflectionUtils;
 import tkachgeek.tkachutils.server.ServerUtils;
 
 import java.util.UUID;
 
 public class Packet {
-  public static void setSlot(Player player, int slot, ItemStack item) {
+  public static void setSlot(Player player, int slot, ItemStack item, int windowID) {
     PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.SET_SLOT);
     
-    packet.getIntegers().write(0, BukkitReflectionUtils.getActiveWindowId(player));
+    packet.getIntegers().write(0, windowID);
     
     if (ServerUtils.isVersionGreater_1_16_5()) {
       packet.getIntegers().write(1, 0); //state id
@@ -44,17 +42,18 @@ public class Packet {
     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
   }
   
-  public static void updateSlot(Player player, int slot) {
-    setSlot(player, slot, player.getInventory().getItem(slot));
+  public static void updateSlot(Player player, int slot, int windowID) {
+    setSlot(player, slot, player.getInventory().getItem(slot), windowID);
   }
   
-  public static void clearInventory(Player player) {
+  public static void clearInventory(Player player, int windowID) {
     Inventory inventory = player.getInventory();
     ItemStack air = new ItemStack(Material.AIR);
+    
     for (int slot = 0; slot < 36; slot++) {
       ItemStack item = inventory.getItem(slot);
       if (item != null && item.getType().isItem()) {
-        Packet.setSlot(player, slot, air);
+        Packet.setSlot(player, slot, air, windowID);
       }
     }
   }
