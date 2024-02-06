@@ -26,6 +26,10 @@ import tkachgeek.tkachutils.server.ServerUtils;
 import java.util.UUID;
 
 public class Packet {
+  public static void setSlot(Player player, int slot, ItemStack item) {
+    setSlot(player, slot, item, 0);
+  }
+  
   public static void setSlot(Player player, int slot, ItemStack item, int windowID) {
     PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.SET_SLOT);
     
@@ -42,8 +46,16 @@ public class Packet {
     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
   }
   
+  public static void updateSlot(Player player, int slot) {
+    updateSlot(player, slot, 0);
+  }
+  
   public static void updateSlot(Player player, int slot, int windowID) {
     setSlot(player, slot, player.getInventory().getItem(slot), windowID);
+  }
+  
+  public static void clearInventory(Player player) {
+    clearInventory(player, 0);
   }
   
   public static void clearInventory(Player player, int windowID) {
@@ -85,7 +97,7 @@ public class Packet {
     WrappedDataWatcher watcher = new WrappedDataWatcher(); //Create data watcher, the Entity Metadata packet requires this
     WrappedDataWatcher.Serializer serializer = WrappedDataWatcher.Registry.get(Byte.class); //Found this through google, needed for some stupid reason
     watcher.setEntity(entity); //Set the new data watcher's target
-    watcher.setObject(0, serializer, (byte) (0x40)); //Set status to glowing, found on protocol page
+    watcher.setObject(0, serializer, status); //Set status to glowing, found on protocol page
     packet.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects()); //Make the packet's datawatcher the one we created
     ProtocolLibrary.getProtocolManager().sendServerPacket(receiver, packet);
   }
