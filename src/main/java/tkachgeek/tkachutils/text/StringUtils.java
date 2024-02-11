@@ -12,8 +12,8 @@ public class StringUtils {
   public static int searchSimilarity(String string, String written) {
     
     if (string.equals(written)) return Integer.MAX_VALUE;
-    if (string.startsWith(written)) return Integer.MAX_VALUE;
-    if (string.contains(written)) return written.length() * written.length();
+    if (string.startsWith(written)) return Integer.MAX_VALUE - 1;
+    if (string.contains(written)) return Integer.MAX_VALUE - 2;
     
     int score = 0;
     
@@ -51,7 +51,7 @@ public class StringUtils {
   }
   
   public static List<String> getSuggestions(List<String> variants, String written, int limit) {
-    if (written.length() == 0) return variants;
+    if (written.isEmpty()) return variants;
     
     List<StringIntEntry> suggestions = new ArrayList<>();
     for (String x : variants) {
@@ -63,12 +63,17 @@ public class StringUtils {
     
     suggestions.sort(SUGGESTION_COMPARATOR.reversed());
     
+    int scoreLimit = suggestions.isEmpty() ? 0 : suggestions.get(0).anInt;
+    
     List<String> limited = new ArrayList<>(NumbersUtils.notGreater(limit, suggestions.size()));
     
     for (StringIntEntry suggestion : suggestions) {
       if (limit-- == 0) break;
+      if (suggestion.anInt < scoreLimit) continue;
+      
       limited.add(suggestion.getString());
     }
+    
     return limited;
   }
   
