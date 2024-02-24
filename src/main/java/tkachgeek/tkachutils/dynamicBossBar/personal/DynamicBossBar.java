@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public final class DynamicBossBar {
+public class DynamicBossBar {
   private final UUID uuid;
   private final Supplier<Component> title;
   private final Supplier<Float> progress;
@@ -94,9 +94,13 @@ public final class DynamicBossBar {
     player.hideBossBar(bossBar);
   }
   
-  public void hideAll() {
+  public void show(Player player) {
+    player.showBossBar(bossBar);
+  }
+  
+  public void onRemove() {
     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-      onlinePlayer.hideBossBar(bossBar);
+      hide(onlinePlayer);
     }
   }
   
@@ -107,9 +111,9 @@ public final class DynamicBossBar {
     bossBar.progress((float) NumbersUtils.bound(progress.get(), 0, 1));
     
     if (shouldDisplay.get()) {
-      onlinePlayer.showBossBar(bossBar);
+      show(onlinePlayer);
     } else {
-      onlinePlayer.hideBossBar(bossBar);
+      hide(onlinePlayer);
     }
   }
 }
