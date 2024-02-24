@@ -3,6 +3,7 @@ package tkachgeek.tkachutils.dynamicBossBar.personal;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
+import tkachgeek.tkachutils.server.ServerUtils;
 
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -52,6 +53,8 @@ public class DynamicBossBarBuilder {
   }
   
   public DynamicBossBar build() {
-    return new DynamicBossBar(uuid, title, progress, shouldRemove, shouldDisplay, color, overlay);
+    return ServerUtils.isVersionGreater_1_16_5() ?
+       new DynamicBossBar(uuid, title, progress, shouldRemove, shouldDisplay, color, overlay)
+       : new DynamicBossBar_v1_16_5(uuid, title, progress, shouldRemove, shouldDisplay, color, overlay);
   }
 }

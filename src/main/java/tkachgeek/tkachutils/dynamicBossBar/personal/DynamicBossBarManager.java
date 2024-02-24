@@ -6,7 +6,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import tkachgeek.tkachutils.scheduler.Scheduler;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -34,7 +33,7 @@ public class DynamicBossBarManager {
       
       bossBarEntries.removeIf(bar -> {
         if (bar.getShouldRemove().get()) {
-          bar.hideAll();
+          bar.onRemove();
           return true;
         } else {
           bar.update(onlinePlayer);
@@ -60,7 +59,7 @@ public class DynamicBossBarManager {
   private void removeBar(Player player, UUID bar) {
     getBossBarEntries(player).removeIf(x -> {
       if (x.getUUID().equals(bar)) {
-        x.hideAll();
+        x.onRemove();
         return true;
       }
       return false;
