@@ -20,11 +20,21 @@ public class CollectionUtils {
     return values[Rand.ofInt(values.length)];
   }
   
+  @Deprecated
   public static void shuffleArray(int[] ar) {
     for (int i = ar.length - 1; i > 0; i--) {
       int index = Rand.ofInt(i + 1);
       
       int a = ar[index];
+      ar[index] = ar[i];
+      ar[i] = a;
+    }
+  }
+  
+  public static <T> void shuffleArray(T[] ar) {
+    for (int i = ar.length - 1; i > 0; --i) {
+      int index = Rand.ofInt(i + 1);
+      T a = ar[index];
       ar[index] = ar[i];
       ar[i] = a;
     }
