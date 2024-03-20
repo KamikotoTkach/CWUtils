@@ -5,6 +5,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedRegistrable;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
@@ -13,6 +14,7 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -23,6 +25,7 @@ import tkachgeek.tkachutils.numbers.NumbersUtils;
 import tkachgeek.tkachutils.player.PlayerUtils;
 import tkachgeek.tkachutils.server.ServerUtils;
 
+import java.util.Collection;
 import java.util.UUID;
 
 public class Packet {
@@ -203,5 +206,23 @@ public class Packet {
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+  
+  public static void blockUpdate(Collection<? extends Player> players, Location location, BlockData blockData) {
+    ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+    
+    PacketContainer blockUpdatePacket = getBlockUpdatePacket(location, blockData);
+    
+    manager.broadcastServerPacket(blockUpdatePacket, players);
+  }
+  
+  public static PacketContainer getBlockUpdatePacket(Location location, BlockData blockData) {
+    ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+    PacketContainer packet = manager.createPacket(PacketType.Play.Server.BLOCK_CHANGE);
+    
+    packet.getBlockPositionModifier().write(0, new BlockPosition(location.toVector()));
+    packet.getBlockData().write(0, WrappedBlockData.createData(blockData));
+    
+    return packet;
   }
 }
