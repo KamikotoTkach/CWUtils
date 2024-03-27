@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StringToDuration {
-  public static final HashMap<Character, TemporalUnit> units = new HashMap<>();
+  private static final HashMap<Character, TemporalUnit> units = new HashMap<>();
+  private static final String unitsString = "%sy %sM %sw %sd %sh %sm %ss";
   
   static {
     {
@@ -49,6 +50,37 @@ public class StringToDuration {
       }
     }
     return duration;
+  }
+  
+  public static String fromDuration(Duration duration) {
+    long seconds = duration.getSeconds();
+    
+    long years = seconds / 31536000;
+    seconds = (seconds % 31536000);
+    
+    long months = seconds / 2419200;
+    seconds = (seconds % 2419200);
+    
+    long weeks = seconds / 604800;
+    seconds = (seconds % 604800);
+    
+    long days = seconds / 86400;
+    seconds = (seconds % 86400);
+    
+    long hours = seconds / 3600;
+    seconds = (seconds % 3600);
+    
+    long minutes = seconds / 60;
+    seconds = (seconds % 60);
+    
+    return String.format(unitsString, years, months, weeks, days, hours, minutes, seconds)
+                 .replaceFirst("0y", "")
+                 .replaceFirst("0M", "")
+                 .replaceFirst("0w", "")
+                 .replaceFirst("0d", "")
+                 .replaceFirst("0h", "")
+                 .replaceFirst("0m", "")
+                 .replaceFirst("0s", "");
   }
   
   @NotNull
