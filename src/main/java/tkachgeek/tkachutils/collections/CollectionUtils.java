@@ -19,15 +19,17 @@ public class CollectionUtils {
     if (values.length == 1) return values[0];
     return values[Rand.ofInt(values.length)];
   }
-  
-  public static void shuffleArray(int[] ar) {
-    for (int i = ar.length - 1; i > 0; i--) {
+
+  public <T> T[] shuffleArray(T[] array) {
+    for (int i = array.length - 1; i > 0; i--) {
       int index = Rand.ofInt(i + 1);
-      
-      int a = ar[index];
-      ar[index] = ar[i];
-      ar[i] = a;
+
+      T a = array[index];
+      array[index] = array[i];
+      array[i] = a;
     }
+
+    return array;
   }
   
   @SafeVarargs
