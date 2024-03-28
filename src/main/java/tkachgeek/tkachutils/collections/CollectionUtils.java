@@ -31,13 +31,15 @@ public class CollectionUtils {
     }
   }
   
-  public static <T> void shuffleArray(T[] ar) {
-    for (int i = ar.length - 1; i > 0; --i) {
+  public static <T> T[] shuffleArray(T[] array) {
+    for (int i = array.length - 1; i > 0; --i) {
       int index = Rand.ofInt(i + 1);
-      T a = ar[index];
-      ar[index] = ar[i];
-      ar[i] = a;
+      T a = array[index];
+      array[index] = array[i];
+      array[i] = a;
     }
+
+    return array;
   }
   
   @SafeVarargs
