@@ -16,6 +16,7 @@ public class ClassScanner {
   List<MethodApplier> methodAppliers = new ArrayList<>();
   List<FieldApplier> fieldAppliers = new ArrayList<>();
   
+  Predicate<String> filter = filter -> true;
   public ClassScanner(File jar) {
     this.jar = jar;
   }
@@ -35,6 +36,11 @@ public class ClassScanner {
     return this;
   }
   
+  public ClassScanner classFilter(Predicate<String> filter) {
+    this.filter = filter;
+    return this;
+  }
+  
   public void scan(JavaPlugin plugin) {
     if (classAppliers.isEmpty() && methodAppliers.isEmpty() && fieldAppliers.isEmpty()) return;
     
@@ -44,7 +50,7 @@ public class ClassScanner {
     long start = System.currentTimeMillis();
     
     try {
-      for (var clazz : ReflectionUtils.getClasses(jar, packageName)) {
+      for (var clazz : ReflectionUtils.getClasses(jar, packageName, filter)) {
         i++;
         handle(clazz);
       }

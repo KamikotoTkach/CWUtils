@@ -14,7 +14,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public final class BroadcastBossBar {
+public class BroadcastBossBar {
   private final UUID uuid;
   private final Supplier<Component> title;
   private final Supplier<Float> progress;
@@ -103,9 +103,9 @@ public final class BroadcastBossBar {
     player.hideBossBar(bossBar);
   }
   
-  public void hideAll() {
+  public void onRemove() {
     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-      onlinePlayer.hideBossBar(bossBar);
+      hide(onlinePlayer);
     }
   }
   
@@ -115,14 +115,14 @@ public final class BroadcastBossBar {
     bossBar.overlay(overlay.get());
     bossBar.progress((float) NumbersUtils.bound(progress.get(), 0, 1));
     
-    Collection<UUID> newViewers = viewers.get();
+    Collection<UUID> newViewers = new ArrayList<>(viewers.get());
     
     previousViewers.removeAll(newViewers);
     previousViewers.stream()
                    .map(Bukkit::getPlayer)
                    .filter(Objects::nonNull)
                    .forEach(player -> {
-                     player.hideBossBar(bossBar);
+                     hide(player);
                    });
     
     newViewers.stream()
@@ -130,12 +130,16 @@ public final class BroadcastBossBar {
               .filter(Objects::nonNull)
               .forEach(player -> {
                 if (shouldDisplay.apply(player)) {
-                  player.showBossBar(bossBar);
+                  show(player);
                 } else {
-                  player.hideBossBar(bossBar);
+                  hide(player);
                 }
               });
     
     previousViewers = newViewers;
+  }
+  
+  public void show(Player player) {
+    player.showBossBar(bossBar);
   }
 }
