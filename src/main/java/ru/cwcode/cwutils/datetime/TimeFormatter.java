@@ -75,27 +75,26 @@ public class TimeFormatter {
     long hours = Math.abs(duration.toHoursPart());
     long minutes = Math.abs(duration.toMinutesPart());
     long seconds = Math.abs(duration.toSecondsPart());
-    
-    if (seconds == 0) seconds = 1;
+    int timeParamsLeft = timeParamsCount;
     
     if (days > 0) {
       formattedTime.append(days).append(formatted_time_days);
-      timeParamsCount--;
+      timeParamsLeft--;
     }
     
-    if (hours > 0 && timeParamsCount > 0) {
+    if (hours > 0 && timeParamsLeft > 0) {
       if (formattedTime.length() > 0) formattedTime.append(" ");
       formattedTime.append(hours).append(formatted_time_hours);
-      timeParamsCount--;
+      timeParamsLeft--;
     }
     
-    if (minutes > 0 && timeParamsCount > 0) {
+    if (minutes > 0 && timeParamsLeft > 0) {
       if (formattedTime.length() > 0) formattedTime.append(" ");
       formattedTime.append(minutes).append(formatted_time_minutes);
-      timeParamsCount--;
+      timeParamsLeft--;
     }
     
-    if (seconds > 0 && timeParamsCount > 0) {
+    if ((seconds > 0 || timeParamsLeft == timeParamsCount) && timeParamsLeft > 0) {
       if (formattedTime.length() > 0) formattedTime.append(" ");
       formattedTime.append(seconds).append(formatted_time_seconds);
     }
@@ -116,29 +115,5 @@ public class TimeFormatter {
   
   public static String getFormattedTime(@NotNull final Duration duration) {
     return TimeFormatter.getFormattedTime(duration, 2);
-  }
-  
-  /**
-   * Moved to TimeUtils
-   */
-  @Deprecated(forRemoval = true)
-  public static long unix() {
-    return System.currentTimeMillis() / 1000;
-  }
-  
-  /**
-   * Moved to TimeUtils
-   */
-  @Deprecated(forRemoval = true)
-  public static boolean isBefore(long millis) {
-    return System.currentTimeMillis() < millis;
-  }
-  
-  /**
-   * Moved to TimeUtils
-   */
-  @Deprecated(forRemoval = true)
-  public static boolean isAfter(long millis) {
-    return System.currentTimeMillis() > millis;
   }
 }

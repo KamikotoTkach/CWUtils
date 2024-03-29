@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class StringToDuration {
   private static final HashMap<Character, TemporalUnit> units = new HashMap<>();
-  private static final String unitsString = "%sy %sM %sw %sd %sh %sm %ss";
+  private static final String unitsString = "%sy %sM %sw %sd %sh %sm %ss ";
   
   static {
     {
@@ -27,7 +27,7 @@ public class StringToDuration {
   public static boolean isValid(String st) {
     try {
       for (char c : st.toCharArray()) {
-        if ((c < '0' || c > '9') && !hasUnit(c) && c != 't') {
+        if (c != ' ' && (c < '0' || c > '9') && !hasUnit(c) && c != 't') {
           return false;
         }
       }
@@ -74,13 +74,14 @@ public class StringToDuration {
     seconds = (seconds % 60);
     
     return String.format(unitsString, years, months, weeks, days, hours, minutes, seconds)
-                 .replaceFirst("0y", "")
-                 .replaceFirst("0M", "")
-                 .replaceFirst("0w", "")
-                 .replaceFirst("0d", "")
-                 .replaceFirst("0h", "")
-                 .replaceFirst("0m", "")
-                 .replaceFirst("0s", "");
+                 .replaceFirst("0y ", "")
+                 .replaceFirst("0M ", "")
+                 .replaceFirst("0w ", "")
+                 .replaceFirst("0d ", "")
+                 .replaceFirst("0h ", "")
+                 .replaceFirst("0m ", "")
+                 .replaceFirst("0s ", "")
+                 .stripTrailing();
   }
   
   @NotNull
@@ -91,6 +92,8 @@ public class StringToDuration {
     if (line.isEmpty()) return parts;
     
     for (char c : line.toCharArray()) {
+      if (c == ' ') continue;
+      
       if (c >= '0' && c <= '9') {
         currentPart.append(c);
       } else if (hasUnit(c) || c == 't') {
