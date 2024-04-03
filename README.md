@@ -1,4 +1,16 @@
-Набор утилсов и мини-либ для всех случаев жизни. Из интересного:
+# TkachUtils 2.0.0
+Набор утилсов и мини-либ для всех случаев жизни.
+
+Подключение:
+```xml
+<dependency>
+  <groupId>ru.cwcode.tkach.refreshmenu</groupId>
+  <artifactId>RefreshMenu</artifactId>
+  <version>1.1.0</version>
+</dependency>
+```
+
+Из интересного:
 - Мини-либа на анимации
 - Мини-либа на бенчмарки
 - Хороший набор утилсов для коллекций
@@ -17,4 +29,5 @@
 - Шедулер на основе BukkitTask-ов. (Scheduler.create(player).until(predicate).run(task).othewise(endTask))
 - Аннотация Repeat(delay=ticks, async=true) для авто-рега тикающих шедулеров
 - Ну и по мелочи всякого добра
+<br><br>
 Можно смело копировать в свои проекты, если не хочется добавлять зависимость
