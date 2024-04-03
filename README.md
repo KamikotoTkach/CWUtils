@@ -1,12 +1,14 @@
-# TkachUtils 2.0.0
+# CWUtils 2.0.0
+aka TkachUtils
+
 Набор утилсов и мини-либ для всех случаев жизни.
 
 Подключение:
 ```xml
 <dependency>
-  <groupId>ru.cwcode.tkach.refreshmenu</groupId>
-  <artifactId>RefreshMenu</artifactId>
-  <version>1.1.0</version>
+  <groupId>ru.cwcode.cwutils</groupId>
+  <artifactId>CWUtils</artifactId>
+  <version>2.0.0</version>
 </dependency>
 ```
 
