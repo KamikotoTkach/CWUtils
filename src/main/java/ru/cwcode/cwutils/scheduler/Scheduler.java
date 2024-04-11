@@ -3,6 +3,7 @@ package ru.cwcode.cwutils.scheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -137,6 +138,14 @@ public class Scheduler<T> extends AbstractScheduler {
       e.printStackTrace();
     } finally {
       running = false;
+    }
+  }
+  
+  public static void runSync(@NotNull final JavaPlugin plugin, @NotNull final Runnable runnable) {
+    if (Bukkit.isPrimaryThread()) {
+      runnable.run();
+    } else {
+      Bukkit.getScheduler().runTask(plugin, runnable);
     }
   }
 }
