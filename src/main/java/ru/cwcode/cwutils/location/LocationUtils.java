@@ -59,9 +59,7 @@ public class LocationUtils {
     
     World world = pos1.getWorld();
     
-    List<Block> blocks = new ArrayList<>((Math.abs(xMin) - Math.abs(xMax))
-                                            * (Math.abs(yMin) - Math.abs(yMax))
-                                            * (Math.abs(zMin) - Math.abs(zMax)));
+    List<Block> blocks = new ArrayList<>();
     
     for (int y = yMin; y <= yMax; y++) {
       for (int z = zMin; z <= zMax; z++) {
