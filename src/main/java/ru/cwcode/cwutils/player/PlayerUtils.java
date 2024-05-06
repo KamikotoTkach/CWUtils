@@ -3,6 +3,7 @@ package ru.cwcode.cwutils.player;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -10,6 +11,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -212,5 +215,17 @@ public class PlayerUtils {
   
   public static boolean isMainItemCooldown(Player player) {
     return player.hasCooldown(player.getInventory().getItemInMainHand().getType());
+  }
+  
+  public static boolean isTargeting(Player player, Location target, double expand, double distance) {
+    Location eyeLocation = player.getEyeLocation();
+    
+    BoundingBox boundingBox = new BoundingBox(target.getX(), target.getY(), target.getZ(),
+                                              target.getX(), target.getY(), target.getZ());
+    boundingBox.expand(expand);
+    
+    RayTraceResult rayTraceResult = boundingBox.rayTrace(eyeLocation.toVector(), eyeLocation.getDirection(), distance);
+    
+    return rayTraceResult != null;
   }
 }
