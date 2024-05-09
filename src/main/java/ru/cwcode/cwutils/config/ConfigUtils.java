@@ -19,7 +19,7 @@ import ru.cwcode.cwutils.items.ItemBuilder;
 import ru.cwcode.cwutils.items.ItemBuilderFactory;
 import ru.cwcode.cwutils.messages.Message;
 import ru.cwcode.cwutils.messages.PaperMessage;
-import ru.cwcode.cwutils.server.ServerUtils;
+import ru.cwcode.cwutils.server.PaperServerUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -89,7 +89,7 @@ public class ConfigUtils {
     Material item_type = Material.matchMaterial(item_type_name);
     
     if (item_type == null
-       || (!ServerUtils.isVersionBefore1_16_5()
+        || (!PaperServerUtils.isVersionBefore1_16_5()
        && item_type.isAir())
        || item_type.equals(Material.AIR)) {
       item_type = Material.DIRT;

@@ -4,7 +4,7 @@ import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import ru.cwcode.cwutils.server.ServerUtils;
+import ru.cwcode.cwutils.server.PaperServerUtils;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -63,7 +63,7 @@ public class BroadcastBossBarBuilder {
   }
   
   public BroadcastBossBar build() {
-    return ServerUtils.isVersionGreater_1_16_5() ? //todo: может быть нужно с более высокой, не проверял
+    return PaperServerUtils.isVersionGreater_1_16_5() ? //todo: может быть нужно с более высокой, не проверял
        new BroadcastBossBar(uuid, title, progress, shouldRemove, shouldDisplay, color, overlay, viewers)
        : new BroadcastBossBar_v1_16_5(uuid, title, progress, shouldRemove, shouldDisplay, color, overlay, viewers);
   }

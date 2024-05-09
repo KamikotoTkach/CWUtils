@@ -3,7 +3,7 @@ package ru.cwcode.cwutils.dynamicBossBar.personal;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
-import ru.cwcode.cwutils.server.ServerUtils;
+import ru.cwcode.cwutils.server.PaperServerUtils;
 
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -53,7 +53,7 @@ public class DynamicBossBarBuilder {
   }
   
   public DynamicBossBar build() {
-    return ServerUtils.isVersionGreater_1_16_5() ?
+    return PaperServerUtils.isVersionGreater_1_16_5() ?
        new DynamicBossBar(uuid, title, progress, shouldRemove, shouldDisplay, color, overlay)
        : new DynamicBossBar_v1_16_5(uuid, title, progress, shouldRemove, shouldDisplay, color, overlay);
   }

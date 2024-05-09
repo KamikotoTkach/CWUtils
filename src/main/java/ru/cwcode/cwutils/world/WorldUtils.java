@@ -41,10 +41,8 @@ public class WorldUtils {
       return null;
     }
     
-    World world = WorldCreator.name(name)
-                              .type(worldType)
-                              .createWorld();
-    
-    return world;
+    return WorldCreator.name(name)
+                       .type(worldType)
+                       .createWorld();
   }
 }
