@@ -3,7 +3,7 @@ package ru.cwcode.cwutils.messages;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 
-public class MessageReturn extends Exception {
+public class MessageReturn extends RuntimeException {
   private final Component componentMessage;
   private final boolean styled;
   

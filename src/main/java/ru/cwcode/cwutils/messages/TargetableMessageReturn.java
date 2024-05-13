@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.function.Function;
 
-public class TargetableMessageReturn extends Exception {
+public class TargetableMessageReturn extends RuntimeException {
   Function<CommandSender, Component> messageGetter;
   
   public TargetableMessageReturn(Function<CommandSender, Component> messageGetter) {
