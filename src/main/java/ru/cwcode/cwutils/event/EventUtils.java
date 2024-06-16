@@ -28,7 +28,7 @@ public class EventUtils {
     return new BlockBreakEvent(location.getBlock(), player).callEvent();
   }
   
-  public Optional<Player> getDamager(EntityDamageByEntityEvent event) {
+  public static Optional<Player> getDamager(EntityDamageByEntityEvent event) {
     Player damager;
     if (event.getDamager() instanceof Player) {
       damager = ((Player) event.getDamager());
