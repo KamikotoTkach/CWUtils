@@ -23,7 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import ru.cwcode.cwutils.numbers.NumbersUtils;
 import ru.cwcode.cwutils.player.PlayerUtils;
-import ru.cwcode.cwutils.server.ServerUtils;
+import ru.cwcode.cwutils.server.PaperServerUtils;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -38,7 +38,7 @@ public class Packet {
     
     packet.getIntegers().write(0, windowID);
     
-    if (ServerUtils.isVersionGreater_1_16_5()) {
+    if (PaperServerUtils.isVersionGreater_1_16_5()) {
       packet.getIntegers().write(1, 0); //state id
       packet.getIntegers().write(2, slot);
     } else {
@@ -172,7 +172,7 @@ public class Packet {
        location.getBlockZ())
     );
     
-    if (ServerUtils.isVersionGreater("1.17.1")) {
+    if (PaperServerUtils.isVersionGreater("1.17.1")) {
       packet.getBlockEntityTypeModifier().write(0, WrappedRegistrable.blockEntityType("skull"));
     } else {
       packet.getIntegers().write(0, 4);

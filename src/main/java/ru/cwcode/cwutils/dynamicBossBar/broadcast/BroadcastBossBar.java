@@ -121,9 +121,7 @@ public class BroadcastBossBar {
     previousViewers.stream()
                    .map(Bukkit::getPlayer)
                    .filter(Objects::nonNull)
-                   .forEach(player -> {
-                     hide(player);
-                   });
+                   .forEach(this::hide);
     
     newViewers.stream()
               .map(Bukkit::getPlayer)

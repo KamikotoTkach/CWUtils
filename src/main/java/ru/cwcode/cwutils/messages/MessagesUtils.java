@@ -3,11 +3,11 @@ package ru.cwcode.cwutils.messages;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.CommandSender;
-import ru.cwcode.cwutils.server.ServerUtils;
+import ru.cwcode.cwutils.server.PaperServerUtils;
 
 public class MessagesUtils {
   public static void send(CommandSender sender, Component message) {
-    if (ServerUtils.isVersionBefore1_16_5()) {
+    if (PaperServerUtils.isVersionBefore1_16_5()) {
       sender.sendMessage(LegacyComponentSerializer.legacySection().serialize(message));
       return;
     }

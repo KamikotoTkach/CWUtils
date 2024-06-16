@@ -5,7 +5,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import ru.cwcode.cwutils.server.ServerUtils;
+import ru.cwcode.cwutils.server.PaperServerUtils;
 
 import java.util.Collection;
 
@@ -47,7 +47,7 @@ public class PaperMessage extends Message {
   
   @Override
   public void send(Audience receiver) {
-    if (ServerUtils.isVersionBefore1_16_5()) {
+    if (PaperServerUtils.isVersionBefore1_16_5()) {
       if (receiver instanceof CommandSender) {
         ((CommandSender) receiver).sendMessage(this.toString());
       }
@@ -72,7 +72,7 @@ public class PaperMessage extends Message {
   
   @Override
   public void sendActionBar(Audience receiver) {
-    if (ServerUtils.isVersionBefore1_16_5()) {
+    if (PaperServerUtils.isVersionBefore1_16_5()) {
       if (receiver instanceof Player) {
         ((Player) receiver).sendActionBar(this.toString());
       }

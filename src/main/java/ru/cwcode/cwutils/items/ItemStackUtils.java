@@ -16,7 +16,8 @@ import java.util.EnumSet;
 
 public class ItemStackUtils {
   @SuppressWarnings("deprecation")
-  public static @Nullable Material fromLegacyID(int ID, byte Data) {
+  @Nullable
+  public static Material fromLegacyID(int ID, byte Data) {
     for (Material i : EnumSet.allOf(Material.class))
       if (i.getId() == ID) return Bukkit.getUnsafe().fromLegacy(new MaterialData(i, Data));
     return null;
@@ -44,8 +45,8 @@ public class ItemStackUtils {
     return true;
   }
   
-  public @Nullable
-  static String toSNBT(ItemStack itemStack) {
+  @Nullable
+  public static String toSNBT(ItemStack itemStack) {
     if (itemStack == null) return null;
     
     try {
@@ -56,8 +57,8 @@ public class ItemStackUtils {
     }
   }
   
-  public @Nullable
-  static ItemStack fromSNBT(String snbt) {
+  @Nullable
+  public static ItemStack fromSNBT(String snbt) {
     if (snbt == null) return null;
     
     try {

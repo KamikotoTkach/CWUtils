@@ -1,6 +1,5 @@
 package ru.cwcode.cwutils.server;
 
-import org.bukkit.Bukkit;
 import ru.cwcode.cwutils.numbers.NumbersUtils;
 
 import java.util.WeakHashMap;
@@ -32,27 +31,35 @@ public class ServerUtils {
     return intVersion;
   }
   
+  /**
+   * @deprecated <p> Используйте {@link PaperServerUtils#isVersionBefore1_16_5()}
+   */
+  @Deprecated
   public static boolean isVersionBefore1_16_5() {
-    int version = getVersionWeight();
-    
-    return version < getVersionWeight("1.16.5");
+    return PaperServerUtils.isVersionBefore1_16_5();
   }
   
+  /**
+   * @deprecated <p> Используйте {@link PaperServerUtils#isVersionBeforeOrEqual1_12_2()}
+   */
+  @Deprecated
   public static boolean isVersionBeforeOrEqual1_12_2() {
-    int version = getVersionWeight();
-    
-    return version <= getVersionWeight("1.12.2");
+    return PaperServerUtils.isVersionBeforeOrEqual1_12_2();
   }
   
-  public static boolean isVersionGreater(String version) {
-    return getVersionWeight() > getVersionWeight(version);
-  }
-  
+  /**
+   * @deprecated <p> Используйте {@link PaperServerUtils#isVersionGreater_1_16_5()}
+   */
+  @Deprecated
   public static boolean isVersionGreater_1_16_5() {
-    return isVersionGreater("1.16.5");
+    return PaperServerUtils.isVersionGreater("1.16.5");
   }
   
-  private static int getVersionWeight() {
-    return getVersionWeight(Bukkit.getBukkitVersion());
+  /**
+   * @deprecated <p> Используйте {@link PaperServerUtils#isVersionGreater(String)}
+   */
+  @Deprecated
+  public static boolean isVersionGreater(String version) {
+    return PaperServerUtils.isVersionGreater(version);
   }
 }
