@@ -1,6 +1,7 @@
 package ru.cwcode.cwutils.vector;
 
 import org.bukkit.Location;
+import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
 
 public class VectorUtils {
@@ -96,5 +97,34 @@ public class VectorUtils {
     vector.setZ(xz * Math.cos(Math.toRadians(yaw)));
     
     return vector;
+  }
+  
+  public static void rotateLocationToFace(Location center, BlockFace blockFace) {
+    switch (blockFace) {
+      case NORTH:
+        center.setYaw(180);
+        center.setPitch(0);
+        break;
+      case EAST:
+        center.setYaw(-90);
+        center.setPitch(0);
+        break;
+      case SOUTH:
+        center.setYaw(0);
+        center.setPitch(0);
+        break;
+      case WEST:
+        center.setYaw(90);
+        center.setPitch(0);
+        break;
+      case UP:
+        center.setPitch(-90);
+        center.setYaw(180);
+        break;
+      case DOWN:
+        center.setYaw(180);
+        center.setPitch(90);
+        break;
+    }
   }
 }
