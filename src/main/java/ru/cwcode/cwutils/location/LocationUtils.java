@@ -8,6 +8,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Range;
 import ru.cwcode.cwutils.numbers.Rand;
 import ru.cwcode.cwutils.particles.ParticlesUtils;
 
@@ -212,6 +213,35 @@ public class LocationUtils {
       default:
         throw new IllegalStateException("Unexpected value: " + Math.round((180 + yaw) / 90));
     }
+  }
+  
+  public static int packChunkCoords(@Range(from = 0, to = 15) int x,
+                                    @Range(from = 0, to = 15) int z,
+                                    @Range(from = -8388608, to = 8388607) int y) {
+    return (x & 0xF) << 28 | (z & 0xF) << 24 | (y & 0xFFFFFF);
+  }
+  
+  public static @Range(from = 0, to = 15)
+  int unpackChunkX(int packed) {
+    return (packed >> 28) & 0xF;
+  }
+  
+  public static @Range(from = -8388608, to = 8388607)
+  int unpackChunkY(int packed) {
+    return (packed << 8) >> 8;
+  }
+  
+  public static @Range(from = 0, to = 15)
+  int unpackChunkZ(int packed) {
+    return (packed >> 24) & 0xF;
+  }
+  
+  public static int packChunkCoords(Location location) {
+    int x = ((int) location.getX() - location.getChunk().getX() * 16);
+    int z = ((int) location.getZ() - location.getChunk().getZ() * 16);
+    int y = (int) location.getY();
+    
+    return packChunkCoords(x, z, y);
   }
   
   public static boolean validateAir(Location location) {
