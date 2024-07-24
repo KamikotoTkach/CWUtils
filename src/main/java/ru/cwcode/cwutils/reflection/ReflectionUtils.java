@@ -14,10 +14,12 @@ public class ReflectionUtils {
   public static <T> T getNewInstance(Class<T> type, Object... parameters) {
     try {
       Class<?>[] classes = new Class<?>[parameters.length];
+      
       for (int i = 0; i < parameters.length; i++) {
         classes[i] = parameters[i].getClass();
       }
-      Constructor<T> constructor = type.getConstructor(classes);
+      
+      Constructor<T> constructor = type.getDeclaredConstructor(classes);
       constructor.setAccessible(true);
       
       return constructor.newInstance(parameters);

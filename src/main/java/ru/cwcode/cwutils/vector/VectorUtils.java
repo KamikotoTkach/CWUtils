@@ -118,8 +118,8 @@ public class VectorUtils {
         center.setPitch(0);
         break;
       case UP:
-        center.setPitch(-90);
         center.setYaw(180);
+        center.setPitch(-90);
         break;
       case DOWN:
         center.setYaw(180);
