@@ -4,7 +4,6 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 import ru.cwcode.cwutils.collections.CollectionUtils;
@@ -13,7 +12,7 @@ import ru.cwcode.cwutils.numbers.Rand;
 public class FireworkUtils {
   
   public static void spawnRandomFirework(final Location loc) {
-    final Firework firework = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
+    final Firework firework = loc.getWorld().spawn(loc, Firework.class);
     final FireworkMeta fireworkMeta = firework.getFireworkMeta();
     final FireworkEffect effect = FireworkEffect.builder()
                                                 .with(CollectionUtils.getRandomArrayEntry(Type.values()))

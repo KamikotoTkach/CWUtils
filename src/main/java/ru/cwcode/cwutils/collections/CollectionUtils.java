@@ -4,6 +4,8 @@ import org.jetbrains.annotations.Nullable;
 import ru.cwcode.cwutils.numbers.Rand;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class CollectionUtils {
   public static <T> @Nullable T getRandomListEntry(List<T> list) {
@@ -99,17 +101,17 @@ public class CollectionUtils {
     return sb.toString();
   }
   
-  public static <T> int increment(T item, HashMap<T, Integer> map) {
+  public static <T> int increment(T item, Map<T, Integer> map) {
     return add(item, 1, map);
   }
   
-  public static <T> int add(T item, int toAdd, HashMap<T, Integer> map) {
+  public static <T> int add(T item, int toAdd, Map<T, Integer> map) {
     int newValue = map.getOrDefault(item, 0) + toAdd;
     map.put(item, newValue);
     return newValue;
   }
   
-  public static <T> int decrement(T item, HashMap<T, Integer> map) {
+  public static <T> int decrement(T item, Map<T, Integer> map) {
     return add(item, -1, map);
   }
   
@@ -127,6 +129,12 @@ public class CollectionUtils {
     }
     
     return null;
+  }
+  
+  public static <T> T getRandomWeightedElement(Collection<T> elements, Function<T, ? extends Number> chanceExtractor) {
+    if (elements == null || elements.isEmpty()) return null;
+    
+    return getRandomWeightedElement(elements.stream().collect(Collectors.toMap(x -> x, chanceExtractor)));
   }
   
   public static int getFirstAvailableID(Collection<Integer> set, int minID) {
