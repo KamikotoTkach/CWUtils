@@ -224,17 +224,14 @@ public class IndexList<E> implements List<E> {
   
   @Override
   public boolean removeIf(Predicate<? super E> filter) {
-    boolean anyMatch = false;
     
     for (E element : elements) {
       if (filter.test(element)) {
-        anyMatch = true;
-        elements.remove(element);
         notifyRemove(element);
       }
     }
     
-    return anyMatch;
+    return elements.removeIf(filter);
   }
   
   @Override
