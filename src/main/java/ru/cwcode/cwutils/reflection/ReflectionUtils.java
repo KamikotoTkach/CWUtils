@@ -46,20 +46,53 @@ public class ReflectionUtils {
   
   public static Set<Class<?>> getClasses(File jarFile, String packageName, Predicate<String> filter) {
     Set<Class<?>> classes = new HashSet<>();
+    
     try {
       JarFile file = new JarFile(jarFile);
+      
       for (Enumeration<JarEntry> entry = file.entries(); entry.hasMoreElements(); ) {
+        
         JarEntry jarEntry = entry.nextElement();
         String name = jarEntry.getName().replace("/", ".");
-        if (name.startsWith(packageName) && name.endsWith(".class") && filter.test(name))
+        
+        if (name.startsWith(packageName) && name.endsWith(".class") && filter.test(name)) {
           classes.add(Class.forName(name.substring(0, name.length() - 6)));
+        }
       }
+      
       file.close();
     } catch (Exception e) {
       e.printStackTrace();
     }
+    
     return classes;
   }
+  
+  public static Set<String> findMatchingResources(File jarFile, Predicate<String> filter) {
+    Set<String> resources = new HashSet<>();
+    
+    try {
+      JarFile file = new JarFile(jarFile);
+      
+      for (Enumeration<JarEntry> entry = file.entries(); entry.hasMoreElements(); ) {
+        
+        JarEntry jarEntry = entry.nextElement();
+        String name = jarEntry.getName().replace("/", ".");
+        
+        if (!name.endsWith(".class") && filter.test(name)) {
+          resources.add(name);
+        }
+      }
+      
+      file.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    
+    return resources;
+  }
+  
+  
   
   public static boolean tryToInvokeStaticMethod(Class<?> classInfo, String methodName) {
     try {
@@ -71,8 +104,7 @@ public class ReflectionUtils {
       }
       
       load.invoke(null);
-    } catch (NoSuchMethodException | InvocationTargetException |
-             IllegalAccessException e) {
+    } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
       return false;
     }
     
