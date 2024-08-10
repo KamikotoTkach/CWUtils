@@ -6,6 +6,8 @@ import ru.cwcode.cwutils.reflection.ReflectionUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class JavaPluginLocalizationRepository implements LocalizationRepository {
@@ -29,7 +31,7 @@ public class JavaPluginLocalizationRepository implements LocalizationRepository 
           continue;
         }
         
-        properties.load(localePropertiesStream);
+        properties.load(new InputStreamReader(localePropertiesStream, StandardCharsets.UTF_8));
         
         for (String languageCode : properties.stringPropertyNames()) {
           loadLocale(plugin, languageCode, properties.getProperty(languageCode));
@@ -70,7 +72,7 @@ public class JavaPluginLocalizationRepository implements LocalizationRepository 
     if (defaultLocale == null) {
       defaultLocale = locales.values().stream()
                              .findFirst()
-                             .orElseGet(() -> (HashMap<String, String>) Collections.EMPTY_MAP);
+                             .orElseGet(() -> (Map<String, String>) Collections.EMPTY_MAP);
     }
     
     return defaultLocale;
@@ -87,7 +89,7 @@ public class JavaPluginLocalizationRepository implements LocalizationRepository 
     Properties locale = new Properties();
     
     try {
-      locale.load(localeStream);
+      locale.load(new InputStreamReader(localeStream, StandardCharsets.UTF_8));
     } catch (IOException e) {
       plugin.getLogger().warning("Cannot load locale `" + languageCode + "`: " + e.getMessage());
       e.printStackTrace();
