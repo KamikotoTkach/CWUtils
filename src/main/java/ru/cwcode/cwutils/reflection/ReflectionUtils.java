@@ -77,7 +77,7 @@ public class ReflectionUtils {
       for (Enumeration<JarEntry> entry = file.entries(); entry.hasMoreElements(); ) {
         
         JarEntry jarEntry = entry.nextElement();
-        String name = jarEntry.getName().replace("/", ".");
+        String name = jarEntry.getName();
         
         if (!name.endsWith(".class") && filter.test(name)) {
           resources.add(name);
