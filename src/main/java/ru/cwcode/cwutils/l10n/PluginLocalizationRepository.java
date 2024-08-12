@@ -1,51 +1,49 @@
 package ru.cwcode.cwutils.l10n;
 
-import org.bukkit.plugin.java.JavaPlugin;
 import ru.cwcode.cwutils.reflection.ReflectionUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class JavaPluginLocalizationRepository implements LocalizationRepository {
+public class PluginLocalizationRepository implements LocalizationRepository {
   private final static String DEFAULT_LOCALE = "en";
   
   Map<String, Map<String, String>> locales = new HashMap<>();
   Map<String, String> defaultLocale;
   
-  public JavaPluginLocalizationRepository(File jarFile, JavaPlugin plugin) {
+  public PluginLocalizationRepository(L10nPlatform l10nPlatform) {
     
-    Set<String> localePropertiesFiles = ReflectionUtils.findMatchingResources(jarFile, x -> x.startsWith("locale/")
-                                                                                            && x.endsWith("/locale.properties"));
+    Set<String> localePropertiesFiles = ReflectionUtils.findMatchingResources(l10nPlatform.getFile(), x -> x.startsWith("locale/")
+                                                                                                           && x.endsWith("/locale.properties"));
     
     for (String localePropertiesFile : localePropertiesFiles) {
       Properties properties = new Properties();
       
       try {
-        InputStream localePropertiesStream = plugin.getResource(localePropertiesFile);
+        InputStream localePropertiesStream = l10nPlatform.getResource(localePropertiesFile);
         if (localePropertiesStream == null) {
-          plugin.getLogger().warning("Could not find locale properties file: " + localePropertiesFile);
+          l10nPlatform.getLogger().warn("Could not find locale properties file: " + localePropertiesFile);
           continue;
         }
         
         properties.load(new InputStreamReader(localePropertiesStream, StandardCharsets.UTF_8));
         
         for (String languageCode : properties.stringPropertyNames()) {
-          loadLocale(plugin, languageCode, properties.getProperty(languageCode));
+          loadLocale(l10nPlatform, languageCode, properties.getProperty(languageCode));
         }
       } catch (IOException e) {
-        plugin.getLogger().severe("Failed to load locale properties file: " + localePropertiesFile);
+        l10nPlatform.getLogger().error("Failed to load locale properties file: " + localePropertiesFile);
         e.printStackTrace();
       }
     }
     
     if (locales.isEmpty()) {
-      plugin.getLogger().info("No locale properties files were found.");
+      l10nPlatform.getLogger().info("No locale properties files were found.");
     } else {
-      plugin.getLogger().info("Loaded " + locales.size() + " locales.");
+      l10nPlatform.getLogger().info("Loaded " + locales.size() + " locales.");
     }
   }
   
@@ -78,11 +76,11 @@ public class JavaPluginLocalizationRepository implements LocalizationRepository 
     return defaultLocale;
   }
   
-  private void loadLocale(JavaPlugin plugin, String languageCode, String path) {
-    InputStream localeStream = plugin.getResource(path);
+  private void loadLocale(L10nPlatform l10nPlatform, String languageCode, String path) {
+    InputStream localeStream = l10nPlatform.getResource(path);
     
     if (localeStream == null) {
-      plugin.getLogger().warning("Cannot find locale `" + languageCode + "` at `" + path + "`");
+      l10nPlatform.getLogger().warn("Cannot find locale `" + languageCode + "` at `" + path + "`");
       return;
     }
     
@@ -91,13 +89,13 @@ public class JavaPluginLocalizationRepository implements LocalizationRepository 
     try {
       locale.load(new InputStreamReader(localeStream, StandardCharsets.UTF_8));
     } catch (IOException e) {
-      plugin.getLogger().warning("Cannot load locale `" + languageCode + "`: " + e.getMessage());
+      l10nPlatform.getLogger().warn("Cannot load locale `" + languageCode + "`: " + e.getMessage());
       e.printStackTrace();
     }
     
     locales.computeIfAbsent(languageCode, k -> new HashMap<>())
            .putAll(((Map<String, String>) (Map) locale));
     
-    plugin.getLogger().info("Loaded locale `" + languageCode + "` from `" + path + "`");
+    l10nPlatform.getLogger().info("Loaded locale `" + languageCode + "` from `" + path + "`");
   }
 }
