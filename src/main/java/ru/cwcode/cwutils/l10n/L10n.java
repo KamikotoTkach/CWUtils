@@ -6,6 +6,7 @@ import ru.cwcode.cwutils.collections.CollectionUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
@@ -45,7 +46,7 @@ public class L10n {
     }
     
     this.locale = locale;
-    l10nPlatform.getLogger().warn("Selected locale: " + locale);
+    l10nPlatform.getLogger().info("Selected locale: " + locale);
     
     if (persist) storeSelectedLocaleAtFile();
   }
@@ -79,15 +80,21 @@ public class L10n {
   }
   
   private @NotNull File getSelectedLocaleFile() {
-    return l10nPlatform.getDataDirectory()
-                       .resolve("locale")
+    return localeDirectoryPath()
                        .resolve("selectedLocale.properties")
                        .toFile();
+  }
+  
+  private @NotNull Path localeDirectoryPath() {
+    return l10nPlatform.getDataDirectory()
+                       .resolve("locale");
   }
   
   private void storeSelectedLocaleAtFile() {
     Properties selectedLocale = new Properties();
     selectedLocale.setProperty("locale", locale);
+    
+    localeDirectoryPath().toFile().mkdirs();
     
     try (FileWriter fileWriter = new FileWriter(getSelectedLocaleFile())) {
       selectedLocale.store(fileWriter, "");
