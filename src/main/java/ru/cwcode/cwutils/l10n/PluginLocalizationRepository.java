@@ -62,6 +62,11 @@ public class PluginLocalizationRepository implements LocalizationRepository {
     return value;
   }
   
+  @Override
+  public Set<String> getAvailableLocales() {
+    return locales.keySet();
+  }
+  
   private Map<String, String> getDefaultLocale() {
     if (defaultLocale != null) return defaultLocale;
     
@@ -88,14 +93,15 @@ public class PluginLocalizationRepository implements LocalizationRepository {
     
     try {
       locale.load(new InputStreamReader(localeStream, StandardCharsets.UTF_8));
+      
+      locales.computeIfAbsent(languageCode, k -> new HashMap<>())
+             .putAll(((Map<String, String>) (Map) locale));
+      
+      l10nPlatform.getLogger().info("Loaded locale `" + languageCode + "` from `" + path + "`");
+      
     } catch (IOException e) {
       l10nPlatform.getLogger().warn("Cannot load locale `" + languageCode + "`: " + e.getMessage());
       e.printStackTrace();
     }
-    
-    locales.computeIfAbsent(languageCode, k -> new HashMap<>())
-           .putAll(((Map<String, String>) (Map) locale));
-    
-    l10nPlatform.getLogger().info("Loaded locale `" + languageCode + "` from `" + path + "`");
   }
 }

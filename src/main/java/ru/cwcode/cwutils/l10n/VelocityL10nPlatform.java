@@ -5,14 +5,17 @@ import ru.cwcode.cwutils.logger.VelocityLogger;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 public class VelocityL10nPlatform implements L10nPlatform {
   private final Object plugin;
+  private final Path dataDirectory;
   private final File file;
   private final Logger logger;
   
-  public VelocityL10nPlatform(Object plugin, org.slf4j.Logger logger, File file) {
+  public VelocityL10nPlatform(Object plugin, Path dataDirectory, org.slf4j.Logger logger, File file) {
     this.plugin = plugin;
+    this.dataDirectory = dataDirectory;
     this.file = file;
     this.logger = new VelocityLogger(logger);
   }
@@ -20,6 +23,11 @@ public class VelocityL10nPlatform implements L10nPlatform {
   @Override
   public File getFile() {
     return file;
+  }
+  
+  @Override
+  public Path getDataDirectory() {
+    return dataDirectory;
   }
   
   @Override

@@ -6,6 +6,7 @@ import ru.cwcode.cwutils.logger.PaperLogger;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 public class PaperL10nPlatform implements L10nPlatform {
   private final JavaPlugin plugin;
@@ -21,6 +22,11 @@ public class PaperL10nPlatform implements L10nPlatform {
   @Override
   public File getFile() {
     return file;
+  }
+  
+  @Override
+  public Path getDataDirectory() {
+    return plugin.getDataFolder().toPath();
   }
   
   @Override
