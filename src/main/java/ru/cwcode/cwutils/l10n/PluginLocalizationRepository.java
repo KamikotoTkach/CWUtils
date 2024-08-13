@@ -20,30 +20,34 @@ public class PluginLocalizationRepository implements LocalizationRepository {
                                                                                                            && x.endsWith("/locale.properties"));
     
     for (String localePropertiesFile : localePropertiesFiles) {
-      Properties properties = new Properties();
-      
-      try {
-        InputStream localePropertiesStream = l10nPlatform.getResource(localePropertiesFile);
-        if (localePropertiesStream == null) {
-          l10nPlatform.getLogger().warn("Could not find locale properties file: " + localePropertiesFile);
-          continue;
-        }
-        
-        properties.load(new InputStreamReader(localePropertiesStream, StandardCharsets.UTF_8));
-        
-        for (String languageCode : properties.stringPropertyNames()) {
-          loadLocale(l10nPlatform, languageCode, properties.getProperty(languageCode));
-        }
-      } catch (IOException e) {
-        l10nPlatform.getLogger().error("Failed to load locale properties file: " + localePropertiesFile);
-        e.printStackTrace();
-      }
+      loadLocalePropertyFile(l10nPlatform, localePropertiesFile);
     }
     
     if (locales.isEmpty()) {
       l10nPlatform.getLogger().info("No locale properties files were found.");
     } else {
       l10nPlatform.getLogger().info("Loaded " + locales.size() + " locales.");
+    }
+  }
+  
+  private void loadLocalePropertyFile(L10nPlatform l10nPlatform, String localePropertiesFile) {
+    Properties properties = new Properties();
+    
+    try {
+      InputStream localePropertiesStream = l10nPlatform.getResource(localePropertiesFile);
+      if (localePropertiesStream == null) {
+        l10nPlatform.getLogger().warn("Could not find locale properties file: " + localePropertiesFile);
+        return;
+      }
+      
+      properties.load(new InputStreamReader(localePropertiesStream, StandardCharsets.UTF_8));
+      
+      for (String languageCode : properties.stringPropertyNames()) {
+        loadLocale(l10nPlatform, languageCode, properties.getProperty(languageCode));
+      }
+    } catch (IOException e) {
+      l10nPlatform.getLogger().error("Failed to load locale properties file: " + localePropertiesFile);
+      e.printStackTrace();
     }
   }
   
