@@ -10,7 +10,7 @@ public interface Bounceable<T extends Entity> {
   
   void onLanding(Location location);
   
-  default double getMultiplier() {
+  default double getVelocityMultiplier() {
     return 1.0;
   }
   
@@ -22,7 +22,7 @@ public interface Bounceable<T extends Entity> {
   
   default void bounce(Player player, ItemStack itemStack) {
     Location location = player.getEyeLocation();
-    Vector velocity = location.getDirection().normalize().multiply(this.getMultiplier());
+    Vector velocity = location.getDirection().normalize().multiply(this.getVelocityMultiplier());
     
     T entity = this.spawnEntity(location, player, itemStack);
     entity.setVelocity(velocity);
