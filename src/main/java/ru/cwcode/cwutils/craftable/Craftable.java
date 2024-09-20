@@ -69,6 +69,13 @@ public interface Craftable {
     Bukkit.addRecipe(shapedRecipe);
   }
   
+  default void unregister(JavaPlugin plugin) {
+    NamespacedKey namespacedKey = this.getNamespacedKey(plugin);
+    if (namespacedKey == null) return;
+    
+    Bukkit.removeRecipe(namespacedKey);
+  }
+  
   static String getKeyPrefix() {
     return "craftable";
   }
