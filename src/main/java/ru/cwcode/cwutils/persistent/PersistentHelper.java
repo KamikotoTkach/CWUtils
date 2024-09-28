@@ -49,6 +49,37 @@ public class PersistentHelper {
     addIntToIntTag(holder, key, -1);
   }
   
+  //LONG
+  
+  public static boolean hasLongTag(PersistentDataHolder holder, NamespacedKey key) {
+    return holder.getPersistentDataContainer().has(key, PersistentDataType.LONG);
+  }
+  
+  public static void set(PersistentDataHolder holder, NamespacedKey key, long value) {
+    holder.getPersistentDataContainer().set(key, PersistentDataType.LONG, value);
+  }
+  
+  public static void incrementLong(PersistentDataHolder holder, NamespacedKey key) {
+    addLongToLongTag(holder, key, 1L);
+  }
+  
+  public static void addLongToLongTag(PersistentDataHolder holder, NamespacedKey key, long value) {
+    if (!hasIntTag(holder, key)) {
+      set(holder, key, value);
+    } else {
+      set(holder, key, value + get(holder, key, 0L));
+    }
+  }
+  
+  public static long get(PersistentDataHolder holder, NamespacedKey key, long defaultValue) {
+    if (holder == null) return defaultValue;
+    return holder.getPersistentDataContainer().getOrDefault(key, PersistentDataType.LONG, defaultValue);
+  }
+  
+  public static void decrementLong(PersistentDataHolder holder, NamespacedKey key) {
+    addLongToLongTag(holder, key, -1L);
+  }
+  
   public static boolean hasStringTag(PersistentDataHolder holder, NamespacedKey key) {
     return holder.getPersistentDataContainer().has(key, PersistentDataType.STRING);
   }
