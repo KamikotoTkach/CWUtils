@@ -3,12 +3,14 @@ package ru.cwcode.cwutils.bounceable;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-public interface Bounceable<T extends Entity> {
+public interface Bounceable<T extends Entity, EVENT extends EntityEvent> {
   
-  void onLanding(Location location);
+  void onExecute(EVENT event);
   
   default double getVelocityMultiplier() {
     return 1.0;
