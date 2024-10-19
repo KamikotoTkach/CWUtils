@@ -37,6 +37,6 @@ public class VelocityL10nPlatform implements L10nPlatform {
   
   @Override
   public InputStream getResource(String path) {
-    return plugin.getClass().getResourceAsStream(path);
+    return plugin.getClass().getClassLoader().getResourceAsStream(path);
   }
 }
