@@ -13,10 +13,10 @@ public class TimeFormatter {
   public static final SimpleDateFormat MM_SS_TIME_FORMAT_UTC = new SimpleDateFormat("mm:ss");
   public static final SimpleDateFormat HH_MM_SS_TIME_FORMAT_UTC = new SimpleDateFormat("HH:mm:ss");
   public static final SimpleDateFormat FULL_DATE_FORMAT = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-  private static final String formatted_time_days = "д";
-  private static final String formatted_time_hours = "ч";
-  private static final String formatted_time_minutes = "мин";
-  private static final String formatted_time_seconds = "сек";
+  private static final String formatted_time_days = " д";
+  private static final String formatted_time_hours = " ч";
+  private static final String formatted_time_minutes = " мин";
+  private static final String formatted_time_seconds = " сек";
   
   static {
     MM_SS_TIME_FORMAT_UTC.setTimeZone(TimeZone.getTimeZone("UTC"));

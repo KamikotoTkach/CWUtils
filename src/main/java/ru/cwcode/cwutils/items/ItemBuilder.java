@@ -197,6 +197,11 @@ public class ItemBuilder {
     return this;
   }
   
+  public ItemBuilder tag(NamespacedKey key, long value) {
+    meta.getPersistentDataContainer().set(key, PersistentDataType.LONG, value);
+    return this;
+  }
+  
   public ItemBuilder type(Material material) {
     item.setType(material);
     return this;
