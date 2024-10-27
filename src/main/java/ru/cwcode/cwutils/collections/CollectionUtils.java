@@ -1,5 +1,6 @@
 package ru.cwcode.cwutils.collections;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.cwcode.cwutils.numbers.Rand;
 
@@ -147,5 +148,15 @@ public class CollectionUtils {
     }
     
     return availableId;
+  }
+  
+  public static @NotNull List<String> toStringList(Collection<?> collection) {
+    List<String> list = new ArrayList<>();
+    
+    for (Object entry : collection) {
+      list.add(entry.toString());
+    }
+    
+    return list;
   }
 }
