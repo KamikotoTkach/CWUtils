@@ -1,9 +1,9 @@
 package ru.cwcode.cwutils.items;
 
-import net.querz.nbt.io.NBTDeserializer;
-import net.querz.nbt.io.NBTSerializer;
-import net.querz.nbt.io.NamedTag;
-import net.querz.nbt.io.SNBTUtil;
+import at.syntaxerror.syntaxnbt.NBTCompression;
+import at.syntaxerror.syntaxnbt.NBTUtil;
+import at.syntaxerror.syntaxnbt.internal.SNBTParser;
+import at.syntaxerror.syntaxnbt.tag.TagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -11,6 +11,8 @@ import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.EnumSet;
 
@@ -49,11 +51,15 @@ public class ItemStackUtils {
   public static String toSNBT(ItemStack itemStack) {
     if (itemStack == null) return null;
     
+    byte[] bytes = itemStack.serializeAsBytes();
+    ByteArrayInputStream input = new ByteArrayInputStream(bytes);
+
     try {
-      return SNBTUtil.toSNBT(new NBTDeserializer().fromBytes(itemStack.serializeAsBytes()).getTag());
+      String snbt = NBTUtil.deserialize(input).toString();
+      return snbt.substring(5, snbt.length() - 1)
+                 .replace(" ", "");
     } catch (IOException e) {
-      e.printStackTrace();
-      return null;
+      throw new RuntimeException(e);
     }
   }
   
@@ -61,11 +67,15 @@ public class ItemStackUtils {
   public static ItemStack fromSNBT(String snbt) {
     if (snbt == null) return null;
     
+    TagCompound parsed = SNBTParser.parse(snbt);
+    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    
     try {
-      return ItemStack.deserializeBytes(new NBTSerializer().toBytes(new NamedTag("", SNBTUtil.fromSNBT(snbt))));
+      NBTUtil.serialize(null, parsed, byteArrayOutputStream, NBTCompression.GZIP);
     } catch (IOException e) {
-      e.printStackTrace();
-      return null;
+      throw new RuntimeException(e);
     }
+    
+    return ItemStack.deserializeBytes(byteArrayOutputStream.toByteArray());
   }
 }
