@@ -11,6 +11,22 @@ public class Rand {
     return ThreadLocalRandom.current().nextInt(min, max);
   }
   
+  public static long ofLong(long max) {
+    return ofLong(0, max);
+  }
+  
+  public static long ofLong(long min, long max) {
+    return ThreadLocalRandom.current().nextLong(min, max);
+  }
+  
+  public static float ofFloat(float max) {
+    return ofFloat(0.0f, max);
+  }
+  
+  public static float ofFloat(float min, float max) {
+    return ThreadLocalRandom.current().nextFloat(min, max);
+  }
+  
   public static double ofDouble(double max) {
     return ofDouble(0.0, max);
   }
