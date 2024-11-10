@@ -52,9 +52,8 @@ public class ItemStackUtils {
     if (itemStack == null) return null;
     
     byte[] bytes = itemStack.serializeAsBytes();
-    ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-
-    try {
+    
+    try (ByteArrayInputStream input = new ByteArrayInputStream(bytes)) {
       String snbt = NBTUtil.deserialize(input).toString();
       return snbt.substring(5, snbt.length() - 1)
                  .replace(" ", "");
@@ -68,14 +67,12 @@ public class ItemStackUtils {
     if (snbt == null) return null;
     
     TagCompound parsed = SNBTParser.parse(snbt);
-    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     
-    try {
+    try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
       NBTUtil.serialize(null, parsed, byteArrayOutputStream, NBTCompression.GZIP);
+      return ItemStack.deserializeBytes(byteArrayOutputStream.toByteArray());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    
-    return ItemStack.deserializeBytes(byteArrayOutputStream.toByteArray());
   }
 }
