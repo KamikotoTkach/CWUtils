@@ -169,13 +169,13 @@ public class PlayerUtils {
    */
   public static <T extends Entity> List<T> getNearbyEntities(Class<T> type, Player player, double radius) {
     if (type == Player.class) {
-      List<T> list = new ArrayList<>();
-      for (T x : player.getWorld().getNearbyEntitiesByType(type, player.getLocation(), radius)) {
+      List<Player> list = new ArrayList<>();
+      for (Player x : player.getWorld().getNearbyPlayers(player.getLocation(), radius)) {
         if (x != player) {
           list.add(x);
         }
       }
-      return list;
+      return (List<T>) list;
     } else {
       return new ArrayList<>(player.getWorld().getNearbyEntitiesByType(type, player.getLocation(), radius));
     }
