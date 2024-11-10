@@ -4,6 +4,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import ru.cwcode.cwutils.colors.ColorUtils;
 
+/**
+ * Не работает с новыми версиями Adventure (с тех пор, как удалили TextColor.lerp)
+ */
 public class ComponentGradient {
   
   public static Component of(String text, TextColor... colors) {

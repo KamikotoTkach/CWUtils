@@ -1,5 +1,6 @@
 package ru.cwcode.cwutils.config;
 
+@Deprecated(forRemoval = true)
 public enum ItemStackConstituents {
   type,
   amount,

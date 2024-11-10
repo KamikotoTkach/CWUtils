@@ -29,6 +29,7 @@ import java.util.*;
 
 import static ru.cwcode.cwutils.config.ItemStackConstituents.*;
 
+@Deprecated(forRemoval = true)
 public class ConfigUtils {
   public static String getPath(String root, String... keys) {
     StringBuilder path = new StringBuilder(root);

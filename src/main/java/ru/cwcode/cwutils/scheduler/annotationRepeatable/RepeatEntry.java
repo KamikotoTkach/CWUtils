@@ -6,6 +6,7 @@ import ru.cwcode.cwutils.scheduler.Scheduler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+@Deprecated
 public class RepeatEntry {
   Method method;
   long delay;
