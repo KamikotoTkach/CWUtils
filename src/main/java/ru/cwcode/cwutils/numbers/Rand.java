@@ -8,6 +8,8 @@ public class Rand {
   }
   
   public static int ofInt(int min, int max) {
+    if (min >= max) return max;
+    
     return ThreadLocalRandom.current().nextInt(min, max);
   }
   
@@ -16,6 +18,8 @@ public class Rand {
   }
   
   public static long ofLong(long min, long max) {
+    if (min >= max) return max;
+    
     return ThreadLocalRandom.current().nextLong(min, max);
   }
   
@@ -24,6 +28,8 @@ public class Rand {
   }
   
   public static float ofFloat(float min, float max) {
+    if (min >= max) return max;
+    
     return ThreadLocalRandom.current().nextFloat(min, max);
   }
   
@@ -32,6 +38,8 @@ public class Rand {
   }
   
   public static double ofDouble(double min, double max) {
+    if (min >= max) return max;
+    
     return ThreadLocalRandom.current().nextDouble(min, max);
   }
   
