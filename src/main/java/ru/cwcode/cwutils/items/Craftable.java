@@ -20,7 +20,7 @@ public interface Craftable {
     return Collections.emptyMap();
   }
   
-  NamespacedKey getCraftKey();
+  NamespacedKey getCraftableKey();
   
   default Map<String, ItemStack> getCustomIngredients() {
     return Collections.emptyMap();
@@ -33,7 +33,7 @@ public interface Craftable {
     String[] shape = this.getShape();
     if (shape.length == 0) return;
     
-    NamespacedKey namespacedKey = getCraftKey();
+    NamespacedKey namespacedKey = getCraftableKey();
     if (namespacedKey == null) return;
     
     ShapedRecipe shapedRecipe = new ShapedRecipe(
@@ -69,7 +69,7 @@ public interface Craftable {
   }
   
   default void unregister() {
-    NamespacedKey namespacedKey = getCraftKey();
+    NamespacedKey namespacedKey = getCraftableKey();
     if (namespacedKey == null) return;
     
     Bukkit.removeRecipe(namespacedKey);
