@@ -1,11 +1,10 @@
-package ru.cwcode.cwutils.craftable;
+package ru.cwcode.cwutils.items;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collections;
 import java.util.Map;
@@ -19,22 +18,20 @@ public interface Craftable {
   
   Map<Character, String> getRecipe();
   
+  NamespacedKey getCraftKey();
+  
   default Map<String, ItemStack> getCustomIngredients() {
     return Collections.emptyMap();
   }
   
-  default NamespacedKey getNamespacedKey(JavaPlugin plugin) {
-    return new NamespacedKey(plugin, Craftable.getKeyPrefix() + "_" + this.getName());
-  }
-  
-  default void register(JavaPlugin plugin) {
+  default void register() {
     Map<Character, String> recipe = this.getRecipe();
     if (recipe.isEmpty()) return;
     
     String[] shape = this.getShape();
     if (shape.length == 0) return;
     
-    NamespacedKey namespacedKey = this.getNamespacedKey(plugin);
+    NamespacedKey namespacedKey = getCraftKey();
     if (namespacedKey == null) return;
     
     ShapedRecipe shapedRecipe = new ShapedRecipe(
@@ -69,14 +66,10 @@ public interface Craftable {
     Bukkit.addRecipe(shapedRecipe);
   }
   
-  default void unregister(JavaPlugin plugin) {
-    NamespacedKey namespacedKey = this.getNamespacedKey(plugin);
+  default void unregister() {
+    NamespacedKey namespacedKey = getCraftKey();
     if (namespacedKey == null) return;
     
     Bukkit.removeRecipe(namespacedKey);
-  }
-  
-  static String getKeyPrefix() {
-    return "craftable";
   }
 }
