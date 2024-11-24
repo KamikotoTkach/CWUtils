@@ -10,13 +10,15 @@ import java.util.Collections;
 import java.util.Map;
 
 public interface Craftable {
-  String getName();
-  
   ItemStack getResult();
   
-  String[] getShape();
+  default String[] getShape() {
+    return new String[0];
+  }
   
-  Map<Character, String> getRecipe();
+  default Map<Character, String> getRecipe() {
+    return Collections.emptyMap();
+  }
   
   NamespacedKey getCraftKey();
   
@@ -58,7 +60,7 @@ public interface Craftable {
         continue;
       }
       
-      Bukkit.getConsoleSender().sendMessage("Can't register craft for custom item " + this.getName());
+      Bukkit.getConsoleSender().sendMessage("Can't register craft for custom item " + this.getClass().getSimpleName());
       Bukkit.getConsoleSender().sendMessage("Ingredient " + ingredient + " is not custom item or material");
       return;
     }
