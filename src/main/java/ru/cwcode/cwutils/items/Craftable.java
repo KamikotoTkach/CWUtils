@@ -12,13 +12,9 @@ import java.util.Map;
 public interface Craftable {
   ItemStack getResult();
   
-  default String[] getShape() {
-    return new String[0];
-  }
+  String[] getShape();
   
-  default Map<Character, String> getRecipe() {
-    return Collections.emptyMap();
-  }
+  Map<Character, String> getRecipe();
   
   NamespacedKey getCraftableKey();
   
