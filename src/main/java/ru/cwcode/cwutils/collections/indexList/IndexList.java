@@ -1,9 +1,12 @@
-package ru.cwcode.cwutils.collections;
+package ru.cwcode.cwutils.collections.indexList;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.*;
+import java.util.function.Consumer;
+import java.util.function.IntFunction;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 public class IndexList<E> implements List<E> {
@@ -14,10 +17,8 @@ public class IndexList<E> implements List<E> {
     this.elements = elements;
   }
   
-  public <K> Index<K, E> createIndex(Function<E, K> keyExtractor) {
-    Index<K, E> index = new Index<>(this, keyExtractor);
+  public void registerIndex(@NotNull Index<?, E> index) {
     indexes.add(index);
-    return index;
   }
   
   public boolean add(E element) {
@@ -248,38 +249,6 @@ public class IndexList<E> implements List<E> {
   protected void notifyAdd(E element) {
     for (Index<?, E> index : indexes) {
       index.onElementAdded(element);
-    }
-  }
-  
-  public static class Index<K, E> {
-    
-    protected final IndexList<E> list;
-    protected final Function<E, K> keyExtractor;
-    protected HashMap<K, E> map = new HashMap<>();
-    
-    protected Index(IndexList<E> list, Function<E, K> keyExtractor) {
-      this.list = list;
-      this.keyExtractor = keyExtractor;
-      
-      for (int i = 0; i < list.elements.size(); i++) {
-        onElementAdded(list.elements.get(i));
-      }
-    }
-    
-    public E get(K key) {
-      return map.get(key);
-    }
-    
-    public K indexOf(E element) {
-      return keyExtractor.apply(element);
-    }
-    
-    protected void onElementAdded(E element) {
-      map.put(indexOf(element), element);
-    }
-    
-    protected void onElementRemoved(E element) {
-      map.remove(indexOf(element));
     }
   }
 }
