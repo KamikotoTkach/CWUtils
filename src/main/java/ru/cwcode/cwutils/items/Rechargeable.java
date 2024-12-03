@@ -6,9 +6,17 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 public interface Rechargeable {
-  long getRecharge(String... keys);
+  long getRecharge(NamespacedKey key);
   
-  NamespacedKey getRechargeKey(String... keys);
+  default long getRecharge() {
+    return getRecharge(getRechargeKey());
+  }
+  
+  NamespacedKey getRechargeKey(String key);
+  
+  default NamespacedKey getRechargeKey() {
+    return getRechargeKey("");
+  }
   
   default long getTimeStamp(NamespacedKey rechargeKey, ItemStack itemStack) {
     return itemStack.getItemMeta().getPersistentDataContainer().getOrDefault(
@@ -22,7 +30,7 @@ public interface Rechargeable {
   }
   
   default boolean isInRecharge(NamespacedKey rechargeKey, ItemStack itemStack) {
-    long coolDown = getTimeStamp(rechargeKey, itemStack) + getRecharge() * 1000L;
+    long coolDown = getTimeStamp(rechargeKey, itemStack) + getRecharge(rechargeKey) * 1000L;
     return coolDown > System.currentTimeMillis();
   }
   
