@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 public class PlayerHider<Option extends HideOption> {
@@ -92,6 +91,12 @@ public class PlayerHider<Option extends HideOption> {
       cash.add(hiddenFor);
       
       updateHidden(hiddenPlayer);
+    }
+  }
+  
+  public void hideGroup(Option hideOption, Player... players) {
+    for (Player player : players) {
+      hide(player, hideOption, players);
     }
   }
   
