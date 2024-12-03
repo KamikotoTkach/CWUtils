@@ -76,16 +76,6 @@ public class PlayerHider<Option extends HideOption> {
     return isHiddenForAll(hiddenPlayer.getUniqueId());
   }
   
-  public void findOptionsAndInvoke(Player hiddenPlayer, BiConsumer<Player, Option> action) {
-    UUID hidden = hiddenPlayer.getUniqueId();
-    Option option = hiddenForAllPlayers.get(hidden);
-    
-    if (option != null) {
-      action.accept(hiddenPlayer, option);
-      return;
-    }
-  }
-  
   public void hide(Player hiddenPlayer, Option hideOption, Player... players) {
     UUID hidden = hiddenPlayer.getUniqueId();
     HideType type = hideOption.getType();
