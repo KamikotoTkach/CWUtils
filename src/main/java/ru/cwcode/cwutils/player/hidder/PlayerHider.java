@@ -81,22 +81,23 @@ public class PlayerHider<Option extends HideOption> {
     
     if (type == HideType.VIEW_ONLY_FOR) hiddenForAllPlayers.put(hidden, hideOption);
     
-    for (Player player : players) {
-      UUID hiddenFor = player.getUniqueId();
+    for (Player onlinePlayer : players) {
+      UUID player = onlinePlayer.getUniqueId();
+      if (hidden.equals(player)) continue;
       
       HideOptions<Option> hideOptions = gerOrCreateHiddenPlayers(hidden);
       hideOptions.hide(hidden, hideOption);
       
       Set<UUID> cash = getOrCreateCache(hidden);
-      cash.add(hiddenFor);
+      cash.add(player);
       
       updateHidden(hiddenPlayer);
     }
   }
   
   public void hideGroup(Option hideOption, Player... players) {
-    for (Player player : players) {
-      hide(player, hideOption, players);
+    for (Player onlinePlayer : players) {
+      hide(onlinePlayer, hideOption, players);
     }
   }
   
