@@ -56,7 +56,7 @@ public class DynamicBossBarManager {
     }
   }
   
-  private void removeBar(Player player, UUID bar) {
+  public void removeBar(Player player, UUID bar) {
     getBossBarEntries(player).removeIf(x -> {
       if (x.getUUID().equals(bar)) {
         x.onRemove();

@@ -110,7 +110,7 @@ public class ClassScanner {
     }
   }
   
-  private static class FieldApplier {
+  public static class FieldApplier {
     private final Predicate<Field> predicate;
     private final Consumer<Field> consumer;
     
