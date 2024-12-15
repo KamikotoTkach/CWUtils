@@ -4,6 +4,9 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import ru.cwcode.cwutils.datetime.TimeFormatter;
+
+import java.time.Duration;
 
 public interface Rechargeable {
   long getRecharge(NamespacedKey key);
@@ -18,19 +21,19 @@ public interface Rechargeable {
     return getRechargeKey("");
   }
   
-  default long getTimeStamp(NamespacedKey rechargeKey, ItemStack itemStack) {
+  default long getExpire(NamespacedKey rechargeKey, ItemStack itemStack) {
     return itemStack.getItemMeta().getPersistentDataContainer().getOrDefault(
        rechargeKey, PersistentDataType.LONG, 0L
     );
   }
   
-  default long getTimeStamp(ItemStack itemStack) {
+  default long getExpire(ItemStack itemStack) {
     NamespacedKey rechargeKey = getRechargeKey();
-    return getTimeStamp(rechargeKey, itemStack);
+    return getExpire(rechargeKey, itemStack);
   }
   
   default boolean isInRecharge(NamespacedKey rechargeKey, ItemStack itemStack) {
-    long coolDown = getTimeStamp(rechargeKey, itemStack) + getRecharge(rechargeKey) * 1000L;
+    long coolDown = getExpire(rechargeKey, itemStack) + getRecharge(rechargeKey) * 1000L;
     return coolDown > System.currentTimeMillis();
   }
   
@@ -55,5 +58,21 @@ public interface Rechargeable {
   default void setRecharge(ItemStack itemStack) {
     NamespacedKey rechargeKey = getRechargeKey();
     setRecharge(rechargeKey, itemStack);
+  }
+  
+  default String getRechargeTime(Duration duration) {
+    return TimeFormatter.getFormattedTime(duration);
+  }
+  
+  default String getRechargeTime(NamespacedKey rechargeKey, ItemStack itemStack) {
+    long expire = getExpire(rechargeKey, itemStack);
+    long ms = Math.max(expire - System.currentTimeMillis(), 0);
+    
+    return getRechargeTime(Duration.ofMillis(ms));
+  }
+  
+  default String getRechargeTime(ItemStack itemStack) {
+    NamespacedKey rechargeKey = getRechargeKey();
+    return getRechargeTime(rechargeKey, itemStack);
   }
 }
