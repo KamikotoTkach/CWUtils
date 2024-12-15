@@ -7,6 +7,7 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -31,49 +32,38 @@ public class LegacyBossBarAdapter {
     net.kyori.adventure.bossbar.BossBar.Color color = bossBar.color();
     net.kyori.adventure.bossbar.BossBar.Overlay overlay = bossBar.overlay();
     
-    BarStyle barStyle;
-    switch (overlay) {
-      case NOTCHED_6:
-        barStyle = BarStyle.SEGMENTED_6;
-        break;
-      case NOTCHED_10:
-        barStyle = BarStyle.SEGMENTED_10;
-        break;
-      case NOTCHED_12:
-        barStyle = BarStyle.SEGMENTED_12;
-        break;
-      case NOTCHED_20:
-        barStyle = BarStyle.SEGMENTED_20;
-        break;
-      default:
-        barStyle = BarStyle.SOLID;
-    }
+    BarStyle barStyle = switch (overlay) {
+      case NOTCHED_6 -> BarStyle.SEGMENTED_6;
+      case NOTCHED_10 -> BarStyle.SEGMENTED_10;
+      case NOTCHED_12 -> BarStyle.SEGMENTED_12;
+      case NOTCHED_20 -> BarStyle.SEGMENTED_20;
+      default -> BarStyle.SOLID;
+    };
     
     BarColor barColor = BarColor.valueOf(color.name());
     
-    BarFlag[] barFlags = flags.stream().map(flag -> {
-      switch (flag) {
-        case PLAY_BOSS_MUSIC:
-          return BarFlag.PLAY_BOSS_MUSIC;
-        case DARKEN_SCREEN:
-          return BarFlag.DARKEN_SKY;
-        case CREATE_WORLD_FOG:
-          return BarFlag.CREATE_FOG;
-        default:
-          return null;
-      }
+    BarFlag[] barFlags = flags.stream().map(flag -> switch (flag) {
+      case PLAY_BOSS_MUSIC -> BarFlag.PLAY_BOSS_MUSIC;
+      case DARKEN_SCREEN -> BarFlag.DARKEN_SKY;
+      case CREATE_WORLD_FOG -> BarFlag.CREATE_FOG;
     }).distinct().toArray(BarFlag[]::new);
     
     org.bukkit.boss.BossBar bossBarLegacy = cachedBossBars.get(uuid);
     if (bossBarLegacy == null) {
-      bossBarLegacy = Bukkit.createBossBar("loading...", barColor, barStyle, barFlags);
-      cachedBossBars.put(uuid, bossBarLegacy);
+      bossBarLegacy = createBossBar(uuid, barColor, barStyle, barFlags);
     }
     
     bossBarLegacy.setProgress(progress);
     bossBarLegacy.setStyle(barStyle);
     bossBarLegacy.setTitle(LegacyComponentSerializer.legacySection().serialize(name));
     
+    return bossBarLegacy;
+  }
+  
+  public static @NotNull BossBar createBossBar(UUID uuid, BarColor barColor, BarStyle barStyle, BarFlag... barFlags) {
+    BossBar bossBarLegacy;
+    bossBarLegacy = Bukkit.createBossBar("loading...", barColor, barStyle, barFlags);
+    cachedBossBars.put(uuid, bossBarLegacy);
     return bossBarLegacy;
   }
 }
