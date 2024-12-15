@@ -78,6 +78,11 @@ public class CollectionUtils {
     return true;
   }
   
+  public static String toString(Object[] values) {
+    return getStringOfArray(values);
+  }
+  
+  @Deprecated(forRemoval = true)
   public static String getStringOfArray(Object[] values) {
     return toString(values, "\n - ", "", false);
   }
@@ -86,11 +91,11 @@ public class CollectionUtils {
     return toString(Arrays.asList(values), prefix, suffix, removeLastSuffix);
   }
   
-  public static <T> String toString(List<T> values) {
+  public static <T> String toString(Collection<T> values) {
     return toString(values, "", ", ", true);
   }
   
-  public static <T> String toString(List<T> values, String prefix, String suffix, boolean removeLastSuffix) {
+  public static <T> String toString(Collection<T> values, String prefix, String suffix, boolean removeLastSuffix) {
     if (values.isEmpty()) return "";
     
     StringBuilder sb = new StringBuilder();
@@ -138,8 +143,8 @@ public class CollectionUtils {
     return getRandomWeightedElement(elements.stream().collect(Collectors.toMap(x -> x, chanceExtractor)));
   }
   
-  public static int getFirstAvailableID(Collection<Integer> set, int minID) {
-    HashSet<Integer> idSet = new HashSet<>(set);
+  public static int getFirstAvailableID(Collection<Integer> ids, int minID) {
+    HashSet<Integer> idSet = new HashSet<>(ids);
     
     int availableId = minID;
     
