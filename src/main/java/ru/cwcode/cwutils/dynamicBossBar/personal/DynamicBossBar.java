@@ -1,5 +1,6 @@
 package ru.cwcode.cwutils.dynamicBossBar.personal;
 
+import lombok.Getter;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -11,6 +12,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+@Getter
 public class DynamicBossBar {
   private final UUID uuid;
   private final Supplier<Component> title;
@@ -45,34 +47,6 @@ public class DynamicBossBar {
   
   public UUID getUUID() {
     return uuid;
-  }
-  
-  public Supplier<Component> getTitle() {
-    return title;
-  }
-  
-  public Supplier<Float> getProgress() {
-    return progress;
-  }
-  
-  public Supplier<Boolean> getShouldRemove() {
-    return shouldRemove;
-  }
-  
-  public Supplier<Boolean> getShouldDisplay() {
-    return shouldDisplay;
-  }
-  
-  public Supplier<BossBar.Color> getColor() {
-    return color;
-  }
-  
-  public Supplier<BossBar.Overlay> getOverlay() {
-    return overlay;
-  }
-  
-  public BossBar getBossBar() {
-    return bossBar;
   }
   
   @Override

@@ -12,11 +12,11 @@ public class EventHandler<E extends Event> implements Listener {
   
   private boolean isUnregister = false;
   
-  public EventHandler(Class<? extends Event> eventClass, TemporaryEvent<E> event, @NotNull Plugin plugin) {
+  public EventHandler(Class<E> eventClass, TemporaryEvent<E> event, @NotNull Plugin plugin) {
     this(eventClass, EventPriority.NORMAL, plugin, event);
   }
   
-  public EventHandler(Class<? extends Event> eventClass, EventPriority priority, @NotNull Plugin plugin, TemporaryEvent<E> event) {
+  public EventHandler(Class<E> eventClass, EventPriority priority, @NotNull Plugin plugin, TemporaryEvent<E> event) {
     Bukkit.getServer().getPluginManager().registerEvent(eventClass, this, priority,
                                                         (ignored, ev) -> {
                                                           try {
@@ -28,11 +28,11 @@ public class EventHandler<E extends Event> implements Listener {
                                                         plugin);
   }
   
-  public EventHandler(Class<? extends Event> eventClass, @NotNull Plugin plugin, TemporaryEventAutoUnregister<E> event) {
+  public EventHandler(Class<E> eventClass, @NotNull Plugin plugin, TemporaryEventAutoUnregister<E> event) {
     this(eventClass, EventPriority.NORMAL, plugin, event);
   }
   
-  public EventHandler(Class<? extends Event> eventClass, EventPriority priority, @NotNull Plugin plugin, TemporaryEventAutoUnregister<E> event) {
+  public EventHandler(Class<E> eventClass, EventPriority priority, @NotNull Plugin plugin, TemporaryEventAutoUnregister<E> event) {
     Bukkit.getServer().getPluginManager().registerEvent(eventClass, this, priority,
                                                         (ignored, ev) -> {
                                                           try {

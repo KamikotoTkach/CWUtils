@@ -1,5 +1,6 @@
 package ru.cwcode.cwutils.dynamicBossBar.broadcast;
 
+import lombok.Getter;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -16,12 +17,19 @@ import java.util.function.Supplier;
 
 public class BroadcastBossBar {
   private final UUID uuid;
+  @Getter
   private final Supplier<Component> title;
+  @Getter
   private final Supplier<Float> progress;
+  @Getter
   private final Supplier<Boolean> shouldRemove;
+  @Getter
   private final Function<Player, Boolean> shouldDisplay;
+  @Getter
   private final Supplier<BossBar.Color> color;
+  @Getter
   private final Supplier<BossBar.Overlay> overlay;
+  @Getter
   private final BossBar bossBar;
   private final Supplier<Collection<UUID>> viewers;
   private Collection<UUID> previousViewers = new ArrayList<>();
@@ -54,34 +62,6 @@ public class BroadcastBossBar {
   
   public UUID getUUID() {
     return uuid;
-  }
-  
-  public Supplier<Component> getTitle() {
-    return title;
-  }
-  
-  public Supplier<Float> getProgress() {
-    return progress;
-  }
-  
-  public Supplier<Boolean> getShouldRemove() {
-    return shouldRemove;
-  }
-  
-  public Function<Player, Boolean> getShouldDisplay() {
-    return shouldDisplay;
-  }
-  
-  public Supplier<BossBar.Color> getColor() {
-    return color;
-  }
-  
-  public Supplier<BossBar.Overlay> getOverlay() {
-    return overlay;
-  }
-  
-  public BossBar getBossBar() {
-    return bossBar;
   }
   
   @Override
