@@ -91,12 +91,19 @@ public class CollectionUtils {
     return toString(Arrays.asList(values), prefix, suffix, removeLastSuffix);
   }
   
+  public static <T> String toString(List<T> values) {
+    return toString(values, "", ", ", true);
+  }
+  
   public static <T> String toString(Collection<T> values) {
     return toString(values, "", ", ", true);
   }
   
-  public static <T> String toString(Collection<T> values, String prefix, String suffix, boolean removeLastSuffix) {
-    if (values.isEmpty()) return "";
+  public static <T> String toString(List<T> values, String prefix, String suffix, boolean removeLastSuffix) {
+    return toString((Iterable<?>) values, prefix, suffix, removeLastSuffix);
+  }
+  
+  public static <T> String toString(Iterable<T> values, String prefix, String suffix, boolean removeLastSuffix) {
     
     StringBuilder sb = new StringBuilder();
     for (T value : values) {
