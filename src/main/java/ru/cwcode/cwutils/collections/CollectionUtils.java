@@ -95,7 +95,7 @@ public class CollectionUtils {
     return toString(values, "", ", ", true);
   }
   
-  public static <T> String toString(Collection<T> values) {
+  public static <T> String toString(Iterable<T> values) {
     return toString(values, "", ", ", true);
   }
   
