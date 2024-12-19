@@ -44,7 +44,7 @@ public class PersonalBossBar_v1_16_5 extends PersonalBossBar {
     if (barUUID == null) return;
     
     org.bukkit.boss.BossBar bossBarOld = LegacyBossBarAdapter.get(barUUID);
-    if (bossBar == null) return;
+    if (bossBarOld == null) return;
     
     bossBarOld.removePlayer(player);
   }
@@ -52,7 +52,7 @@ public class PersonalBossBar_v1_16_5 extends PersonalBossBar {
   @Override
   protected void show(Player player, BossBar bossBar) {
     org.bukkit.boss.BossBar bossBarOld = LegacyBossBarAdapter.get(bars.get(bossBar));
-    if (bossBar == null) return;
+    if (bossBarOld == null) return;
     
     bossBarOld.addPlayer(player);
   }
