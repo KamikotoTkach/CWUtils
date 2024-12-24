@@ -1,4 +1,4 @@
-package ru.cwcode.cwutils.items;
+package ru.cwcode.cwutils.items.rechargable;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -8,7 +8,7 @@ import ru.cwcode.cwutils.datetime.TimeFormatter;
 
 import java.time.Duration;
 
-public interface Rechargeable {
+public interface RechargeableItem {
   long getRecharge(NamespacedKey key);
   
   default long getRecharge() {
@@ -21,20 +21,29 @@ public interface Rechargeable {
     return getRechargeKey("");
   }
   
-  default long getExpire(NamespacedKey rechargeKey, ItemStack itemStack) {
+  default long getTimestamp(NamespacedKey rechargeKey, ItemStack itemStack) {
     return itemStack.getItemMeta().getPersistentDataContainer().getOrDefault(
        rechargeKey, PersistentDataType.LONG, 0L
     );
   }
   
-  default long getExpire(ItemStack itemStack) {
+  default long getTimestamp(ItemStack itemStack) {
     NamespacedKey rechargeKey = getRechargeKey();
-    return getExpire(rechargeKey, itemStack);
+    return getTimestamp(rechargeKey, itemStack);
+  }
+  
+  default long getRechargeExpire(NamespacedKey rechargeKey, ItemStack itemStack) {
+    return getTimestamp(rechargeKey, itemStack) + getRecharge(rechargeKey) * 1000L;
+  }
+  
+  default long getRechargeExpire(ItemStack itemStack) {
+    NamespacedKey rechargeKey = getRechargeKey();
+    return getRechargeExpire(rechargeKey, itemStack);
   }
   
   default boolean isInRecharge(NamespacedKey rechargeKey, ItemStack itemStack) {
-    long coolDown = getExpire(rechargeKey, itemStack) + getRecharge(rechargeKey) * 1000L;
-    return coolDown > System.currentTimeMillis();
+    long rechargeExpire = getRechargeExpire(rechargeKey, itemStack);
+    return rechargeExpire > System.currentTimeMillis();
   }
   
   default boolean isInRecharge(ItemStack itemStack) {
@@ -60,19 +69,27 @@ public interface Rechargeable {
     setRecharge(rechargeKey, itemStack);
   }
   
-  default String getRechargeTime(Duration duration) {
+  default long getRechargeRemain(NamespacedKey rechargeKey, ItemStack itemStack) {
+    long expire = getRechargeExpire(rechargeKey, itemStack);
+    return Math.max(expire - System.currentTimeMillis(), 0);
+  }
+  
+  default long getRechargeRemain(ItemStack itemStack) {
+    NamespacedKey rechargeKey = getRechargeKey();
+    return getRechargeRemain(rechargeKey, itemStack);
+  }
+  
+  default String getRechargeRemainTime(Duration duration) {
     return TimeFormatter.getFormattedTime(duration);
   }
   
-  default String getRechargeTime(NamespacedKey rechargeKey, ItemStack itemStack) {
-    long expire = getExpire(rechargeKey, itemStack);
-    long ms = Math.max(expire - System.currentTimeMillis(), 0);
-    
-    return getRechargeTime(Duration.ofMillis(ms));
+  default String getRechargeRemainTime(NamespacedKey rechargeKey, ItemStack itemStack) {
+    long rechargeRemain = getRechargeRemain(rechargeKey, itemStack);
+    return getRechargeRemainTime(Duration.ofMillis(rechargeRemain));
   }
   
-  default String getRechargeTime(ItemStack itemStack) {
+  default String getRechargeRemainTime(ItemStack itemStack) {
     NamespacedKey rechargeKey = getRechargeKey();
-    return getRechargeTime(rechargeKey, itemStack);
+    return getRechargeRemainTime(rechargeKey, itemStack);
   }
 }
