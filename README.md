@@ -1,4 +1,4 @@
-# CWUtils 2.4.3
+# CWUtils 2.5.0
 aka TkachUtils
 
 Набор утилсов и мини-либ для всех случаев жизни.
@@ -8,7 +8,7 @@ aka TkachUtils
 <dependency>
   <groupId>ru.cwcode.cwutils</groupId>
   <artifactId>CWUtils</artifactId>
-    <version>2.4.3</version>
+    <version>2.5.0</version>
 </dependency>
 ```
 
