@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 
 public class PlayerHider<Option extends HideOption> {
   private final JavaPlugin plugin;
-  private final Map<UUID, Option> hiddenForAllPlayers = new HashMap<>();
+  private final HideOptions<Option> hiddenForAllPlayers = new HideOptions<>();
   private final Map<UUID, HideOptions<Option>> options = new HashMap<>();
   private final Map<UUID, Set<UUID>> cache = new HashMap<>();
   
@@ -30,25 +30,16 @@ public class PlayerHider<Option extends HideOption> {
     return getHiddenPlayers(onlinePlayer.getUniqueId());
   }
   
-  public boolean isHidden(UUID player, UUID hidden) {
-    return getHiddenPlayers(player).hasOption(hidden);
-  }
-  
-  public boolean isHidden(Player onlinePlayer, Player hiddenPlayer) {
-    return isHidden(onlinePlayer.getUniqueId(), hiddenPlayer.getUniqueId());
-  }
-  
   public boolean isHiddenFor(UUID hidden, UUID player) {
     if (hidden.equals(player)) return false;
     
     boolean isHiddenForAll = isHiddenForAll(hidden);
     
     HideOptions<Option> hideOptions = getHiddenPlayers(player);
-    if (hideOptions.isEmpty()) return isHiddenForAll;
+    List<Option> options = hideOptions.getHideOptions(hidden);
+    if (options.isEmpty()) return isHiddenForAll;
     
-    Option hideOption = hideOptions.getHideOption(hidden).orElse(null);
-    if (hideOption == null) return isHiddenForAll;
-    
+    Option hideOption = options.get(options.size() - 1);
     if (hideOption.getType() == HideType.HIDE_ONLY_FOR) return true;
     if (hideOption.getType() == HideType.VIEW_ONLY_FOR) return false;
     
@@ -60,15 +51,7 @@ public class PlayerHider<Option extends HideOption> {
   }
   
   public boolean isHiddenForAll(UUID hidden) {
-    HideOption hideOption = hiddenForAllPlayers.get(hidden);
-    if (hideOption == null) return false;
-    
-    if (hideOption.isExpired()) {
-      hiddenForAllPlayers.remove(hidden);
-      return false;
-    }
-    
-    return true;
+    return !hiddenForAllPlayers.isEmpty(hidden);
   }
   
   public boolean isHiddenForAll(Player hiddenPlayer) {
@@ -79,26 +62,34 @@ public class PlayerHider<Option extends HideOption> {
     UUID hidden = hiddenPlayer.getUniqueId();
     HideType type = hideOption.getType();
     
-    if (type == HideType.VIEW_ONLY_FOR) hiddenForAllPlayers.put(hidden, hideOption);
+    if (type == HideType.VIEW_ONLY_FOR) hiddenForAllPlayers.hide(hidden, hideOption);
     
     for (Player onlinePlayer : players) {
       UUID player = onlinePlayer.getUniqueId();
       if (hidden.equals(player)) continue;
       
-      HideOptions<Option> hideOptions = gerOrCreateHiddenPlayers(hidden);
+      HideOptions<Option> hideOptions = gerOrCreateHiddenPlayers(player);
       hideOptions.hide(hidden, hideOption);
       
       Set<UUID> cash = getOrCreateCache(hidden);
-      cash.add(player);
+      cash.add(hidden);
       
       updateHidden(hiddenPlayer);
     }
+  }
+  
+  public void hide(Player hiddenPlayer, Option hideOption, Collection<Player> players) {
+    hide(hiddenPlayer, hideOption, players.toArray(new Player[0]));
   }
   
   public void hideGroup(Option hideOption, Player... players) {
     for (Player onlinePlayer : players) {
       hide(onlinePlayer, hideOption, players);
     }
+  }
+  
+  public void hideGroup(Option hideOption, Collection<Player> players) {
+    hideGroup(hideOption, players.toArray(new Player[0]));
   }
   
   public void showFor(Player hiddenPlayer, Player onlinePlayer) {
@@ -115,9 +106,8 @@ public class PlayerHider<Option extends HideOption> {
     UUID hidden = hiddenPlayer.getUniqueId();
     boolean changed = false;
     
-    Option hideOption = hiddenForAllPlayers.get(hidden);
-    if (hideOption != null && showIf.test(hideOption)) {
-      hiddenForAllPlayers.remove(hidden);
+    if (hiddenForAllPlayers.hasOptions(hidden)) {
+      hiddenForAllPlayers.show(hidden, showIf);
       changed = true;
     }
     
@@ -126,7 +116,7 @@ public class PlayerHider<Option extends HideOption> {
       for (UUID player : new HashSet<>(cache)) {
         HideOptions<Option> hideOptions = getHiddenPlayers(player);
         hideOptions.show(hidden, showIf);
-        if (!hideOptions.hasOption(hidden)) {
+        if (hideOptions.isEmpty(hidden)) {
           cache.remove(player);
           changed = true;
         }

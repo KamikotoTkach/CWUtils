@@ -28,6 +28,10 @@ public class HideOption {
     return System.currentTimeMillis() > expire;
   }
   
+  public boolean isValid() {
+    return !isExpired();
+  }
+  
   @Override
   public boolean equals(Object obj) {
     if (obj == this) return true;

@@ -4,55 +4,63 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public final class HideOptions<Option extends HideOption> {
-  private final Map<UUID, Option> hiddenPlayers = new HashMap<>();
+  private final Map<UUID, List<Option>> hiddenPlayers = new HashMap<>();
   
   public HideOptions() {
   }
   
-  public boolean hasOption(UUID hidden) {
-    return getHideOption(hidden).isPresent();
+  public boolean hasOptions(UUID hidden) {
+    return !getHideOptions(hidden).isEmpty();
   }
   
-  public Optional<Option> getHideOption(UUID hidden) {
-    Option hideOption = hiddenPlayers.get(hidden);
-    if (hideOption == null) return Optional.empty();
-    
-    if (!isValid(hideOption)) {
-      hiddenPlayers.remove(hidden);
-      return Optional.empty();
-    }
-    
-    return Optional.of(hideOption);
-  }
-  
-  public void hide(UUID hidden, Option options) {
-    hiddenPlayers.put(hidden, options);
+  public void hide(UUID hidden, Option option) {
+    hiddenPlayers.computeIfAbsent(hidden, k -> new LinkedList<>()).add(option);
   }
   
   public void show(UUID hidden, Predicate<Option> showIf) {
-    Option hideOption = hiddenPlayers.get(hidden);
-    if (hideOption != null && showIf.test(hideOption)) {
-      hiddenPlayers.remove(hidden);
-    }
+    List<Option> hideOptions = getHideOptions(hidden);
+    hideOptions.removeIf(showIf);
+    
+    if (hideOptions.isEmpty()) hiddenPlayers.remove(hidden);
   }
   
   public void show(UUID hidden) {
     show(hidden, (option -> true));
   }
   
+  public boolean isEmpty(UUID hidden) {
+    return getHideOptions(hidden).isEmpty();
+  }
+  
   public boolean isEmpty() {
     return hiddenPlayers.isEmpty();
   }
   
-  public Map<UUID, Option> getHideOptions() {
-    if (!hiddenPlayers.isEmpty()) {
-      hiddenPlayers.entrySet().removeIf((entry) -> !isValid(entry.getValue()));
+  public List<Option> getHideOptions(UUID hidden) {
+    List<Option> hideOptions = getOptions(hidden);
+    hideOptions.removeIf(option -> !option.isValid());
+    
+    if (hideOptions.isEmpty()) hiddenPlayers.remove(hidden);
+    
+    return hideOptions;
+  }
+  
+  public Map<UUID, List<Option>> getHideOptions() {
+    if (hiddenPlayers.isEmpty()) return Map.of();
+    
+    Map<UUID, List<Option>> hiddenPlayers = new HashMap<>();
+    for (UUID hidden : new HashSet<>(this.hiddenPlayers.keySet())) {
+      hiddenPlayers.computeIfAbsent(hidden, k -> new LinkedList<>())
+                   .addAll(getHideOptions(hidden));
     }
     
     return Collections.unmodifiableMap(hiddenPlayers);
   }
   
-  private boolean isValid(Option hideOption) {
-    return !hideOption.isExpired();
+  private List<Option> getOptions(UUID hidden) {
+    List<Option> options = this.hiddenPlayers.getOrDefault(hidden, new LinkedList<>());
+    if (this.hiddenPlayers.containsKey(hidden) && options.isEmpty()) this.hiddenPlayers.remove(hidden);
+    
+    return options;
   }
 }
