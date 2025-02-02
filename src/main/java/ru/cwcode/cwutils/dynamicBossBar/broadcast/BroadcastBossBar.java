@@ -19,7 +19,6 @@ public class BroadcastBossBar {
   private final UUID uuid;
   @Getter
   private final Supplier<Component> title;
-  @Getter
   private final Supplier<Float> progress;
   @Getter
   private final Supplier<Boolean> shouldRemove;
@@ -64,6 +63,10 @@ public class BroadcastBossBar {
     return uuid;
   }
   
+  public float getProgress() {
+    return (float) NumbersUtils.bound(progress.get(), 0, 1);
+  }
+  
   @Override
   public int hashCode() {
     return Objects.hash(uuid);
@@ -93,7 +96,7 @@ public class BroadcastBossBar {
     bossBar.name(title.get());
     bossBar.color(color.get());
     bossBar.overlay(overlay.get());
-    bossBar.progress((float) NumbersUtils.bound(progress.get(), 0, 1));
+    bossBar.progress(getProgress());
     
     Collection<UUID> newViewers = new ArrayList<>(viewers.get());
     
