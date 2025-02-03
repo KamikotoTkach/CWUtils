@@ -25,12 +25,18 @@ public class WorldGuardUtils {
        .getRegions();
   }
   
+  @Deprecated
   public static boolean isInRegion(Location location, String region, String world) {
-    return isInRegion(location, region, Bukkit.getWorld(world));
+    return isInRegion(location, region, location.getWorld());
   }
   
+  @Deprecated
   public static boolean isInRegion(Location location, String region, World world) {
-    if (location == null || region == null || location.getWorld() != world) return false;
+    return isInRegion(location, region);
+  }
+  
+  public static boolean isInRegion(Location location, String region) {
+    if (location == null || region == null) return false;
     
     RegionManager regionManager = WorldGuard.getInstance()
                                             .getPlatform()
