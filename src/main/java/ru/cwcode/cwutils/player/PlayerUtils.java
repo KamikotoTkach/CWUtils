@@ -5,15 +5,19 @@ import com.destroystokyo.paper.profile.ProfileProperty;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+import ru.cwcode.cwutils.entity.DamageCalculator;
 
 import java.util.*;
 
@@ -282,5 +286,18 @@ public class PlayerUtils {
     player.giveExp(newExp);
     
     return newExp;
+  }
+  
+  /**
+   * Damage player with armor, toughness and resistance effect calculation
+   */
+  public static void damagePlayer(Player player, double damage) {
+    double points = player.getAttribute(Attribute.GENERIC_ARMOR).getValue();
+    double toughness = player.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).getValue();
+    PotionEffect effect = player.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+    int resistance = effect == null ? 0 : effect.getAmplifier();
+    int epf = DamageCalculator.getEPF(player.getInventory());
+    
+    player.damage(DamageCalculator.calculateDamageApplied(damage, points, toughness, resistance, epf));
   }
 }
