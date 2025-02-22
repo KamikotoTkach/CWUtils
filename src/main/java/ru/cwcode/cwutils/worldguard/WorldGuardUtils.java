@@ -2,16 +2,24 @@ package ru.cwcode.cwutils.worldguard;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.flags.Flag;
+import com.sk89q.worldguard.protection.flags.FlagContext;
+import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import lombok.extern.java.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
+@Log
 public class WorldGuardUtils {
   public static Set<ProtectedRegion> getRegionsAt(Location location) {
     RegionManager regionManager = WorldGuard.getInstance()
@@ -62,5 +70,35 @@ public class WorldGuardUtils {
     if (regionManager == null) return null;
     
     return regionManager.getRegion(region);
+  }
+  
+  public static int setFlags(ProtectedRegion region, Map<String, String> flags) {
+    AtomicInteger applied = new AtomicInteger();
+    flags.forEach((flag, value) -> {
+      try {
+        Flag flagInstance = Flags.fuzzyMatchFlag(WorldGuard.getInstance().getFlagRegistry(), flag);
+        Object flagValue = flagInstance.parseInput(FlagContext.create().setInput(value).build());
+        
+        region.setFlag(flagInstance, flagValue);
+        applied.getAndIncrement();
+      } catch (Exception e) {
+        log.warning("Cannot parse flag %s with value %s".formatted(flag, value));
+      }
+    });
+    
+    return applied.get();
+  }
+  
+  public static ProtectedCuboidRegion createRegion(Location pos1, Location pos2, String name) {
+    if (pos1.getWorld() != pos2.getWorld()) throw new IllegalArgumentException("pos1.world != pos2.world");
+    
+    RegionManager regionManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(pos1.getWorld()));
+    regionManager.removeRegion(name);
+    
+    ProtectedCuboidRegion region = new ProtectedCuboidRegion(name, BukkitAdapter.asBlockVector(pos1), BukkitAdapter.asBlockVector(pos2));
+    
+    regionManager.addRegion(region);
+    
+    return region;
   }
 }
