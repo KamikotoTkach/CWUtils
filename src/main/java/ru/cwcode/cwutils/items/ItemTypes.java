@@ -14,7 +14,19 @@ public class ItemTypes {
   final static HashMap<Material, Instruments> mappedInstruments = new HashMap<>();
   
   public static ItemType getItemType(ItemStack item) {
-    return item == null ? ItemType.NONE : mappedTypes.getOrDefault(item.getType(), ItemType.NONE);
+    return item == null ? ItemType.NONE : getItemType(item.getType());
+  }
+  
+  public static Instruments getToolType(ItemStack item) {
+    return item == null ? Instruments.NONE : getToolType(item.getType());
+  }
+  
+  public static ItemType getItemType(Material itemType) {
+    return itemType == null ? ItemType.NONE : mappedTypes.getOrDefault(itemType, ItemType.NONE);
+  }
+  
+  public static Instruments getToolType(Material itemType) {
+    return itemType == null ? Instruments.NONE : mappedInstruments.getOrDefault(itemType, Instruments.NONE);
   }
   
   public static boolean isSword(ItemStack item) {
@@ -67,14 +79,18 @@ public class ItemTypes {
   }
   
   public enum Instruments {
-    SWORD,
-    HOE,
-    PICKAXE,
-    SHOVEL,
-    AXE;
+    NONE(false),
+    SWORD(true),
+    HOE(true),
+    PICKAXE(true),
+    SHOVEL(true),
+    AXE(true);
+    
     final Set<Material> values = new HashSet<>();
     
-    Instruments() {
+    Instruments(boolean shouldTryToFoundItems) {
+      if (!shouldTryToFoundItems) return;
+      
       Arrays.stream(Material.values()).filter(x -> x.name().endsWith("_" + this.name())).forEach(e -> {
         values.add(e);
         mappedInstruments.put(e, this);
@@ -96,12 +112,11 @@ public class ItemTypes {
     IRON(true),
     DIAMOND(true),
     NETHERITE(true);
-    final HashMap<Material, ItemType> matchingMaterials = new HashMap<>();
     
     ItemType(boolean shouldTryToFoundItems) {
-      if (shouldTryToFoundItems) {
-        Arrays.stream(Material.values()).filter(x -> x.name().startsWith(this.name() + "_")).forEach(x -> matchingMaterials.put(x, this));
-      }
+      if (!shouldTryToFoundItems) return;
+      
+      Arrays.stream(Material.values()).filter(x -> x.name().startsWith(this.name() + "_")).forEach(x -> mappedTypes.put(x, this));
     }
   }
 }
