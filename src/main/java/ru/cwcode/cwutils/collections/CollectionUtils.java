@@ -92,14 +92,22 @@ public class CollectionUtils {
   }
   
   public static <T> String toString(List<T> values) {
-    return toString(values, "", ", ", true);
+    return toString((Iterable<?>) values, "", ", ", true);
   }
   
   public static <T> String toString(Iterable<T> values) {
     return toString(values, "", ", ", true);
   }
   
+  public static <T> String toString(Collection<T> values) {
+    return toString((Iterable<?>) values, "", ", ", true);
+  }
+  
   public static <T> String toString(List<T> values, String prefix, String suffix, boolean removeLastSuffix) {
+    return toString((Iterable<?>) values, prefix, suffix, removeLastSuffix);
+  }
+  
+  public static <T> String toString(Collection<T> values, String prefix, String suffix, boolean removeLastSuffix) {
     return toString((Iterable<?>) values, prefix, suffix, removeLastSuffix);
   }
   
