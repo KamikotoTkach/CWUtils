@@ -58,6 +58,8 @@ public class ItemStackUtils {
   }
   
   public static Component getDisplayNameWithoutBrackets(ItemStack item) {
+    if (item == null) return Component.text("null");
+    
     Component component = item.displayName();
     if (component instanceof TranslatableComponent tc && tc.args().size() == 1) {
       return tc.args().get(0).style(component.style());
