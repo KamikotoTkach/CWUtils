@@ -15,6 +15,11 @@ import java.util.UUID;
 
 public class LegacyBossBarAdapter {
   static HashMap<UUID, BossBar> cachedBossBars = new HashMap<>();
+  private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.builder()
+                                                                                                        .hexColors()
+                                                                                                        .useUnusualXRepeatedCharacterHexFormat()
+                                                                                                        .character(LegacyComponentSerializer.SECTION_CHAR)
+                                                                                                        .build();
   
   public static void remove(UUID uuid) {
     cachedBossBars.remove(uuid);
@@ -55,7 +60,7 @@ public class LegacyBossBarAdapter {
     
     bossBarLegacy.setProgress(progress);
     bossBarLegacy.setStyle(barStyle);
-    bossBarLegacy.setTitle(LegacyComponentSerializer.legacySection().serialize(name));
+    bossBarLegacy.setTitle(LEGACY_COMPONENT_SERIALIZER.serialize(name));
     
     return bossBarLegacy;
   }
