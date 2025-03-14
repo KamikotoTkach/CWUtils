@@ -1,6 +1,8 @@
 package ru.cwcode.cwutils.items;
 
 import com.saicone.rtag.item.ItemTagStream;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TranslatableComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -53,5 +55,14 @@ public class ItemStackUtils {
     if (snbt == null) return null;
     
     return ItemTagStream.INSTANCE.fromString(snbt);
+  }
+  
+  public static Component getDisplayNameWithoutBrackets(ItemStack item) {
+    Component component = item.displayName();
+    if (component instanceof TranslatableComponent tc && tc.args().size() == 1) {
+      return tc.args().get(0).style(component.style());
+    }
+    
+    return component;
   }
 }
