@@ -17,10 +17,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ItemBuilder {
@@ -204,6 +201,11 @@ public class ItemBuilder {
   
   public ItemBuilder type(Material material) {
     item.setType(material);
+    return this;
+  }
+  
+  public ItemBuilder setCanPlace(Collection<Material> blocks) {
+    meta.setPlaceableKeys(blocks.stream().map(Material::getKey).collect(Collectors.toSet()));
     return this;
   }
   
