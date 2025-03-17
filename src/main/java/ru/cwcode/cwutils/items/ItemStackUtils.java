@@ -3,14 +3,18 @@ package ru.cwcode.cwutils.items;
 import com.saicone.rtag.item.ItemTagStream;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class ItemStackUtils {
   @SuppressWarnings("deprecation")
@@ -33,6 +37,37 @@ public class ItemStackUtils {
     }
     
     return items;
+  }
+  
+  public static void editMeta(ItemStack itemStack, Consumer<ItemMeta> editor) {
+    if (itemStack == null) return;
+    
+    ItemMeta meta = itemStack.getItemMeta();
+    if (meta == null) return;
+    
+    editor.accept(meta);
+    
+    itemStack.setItemMeta(meta);
+  }
+  
+  public static ItemStack removeItalicFont(ItemStack itemStack) {
+    if (itemStack == null) return null;
+    if (itemStack.lore() == null && !itemStack.getItemMeta().hasDisplayName()) return itemStack;
+    
+    if (itemStack.getItemMeta().hasDisplayName()) {
+      editMeta(itemStack, meta -> {
+        meta.displayName(meta.displayName().decoration(TextDecoration.ITALIC, false));
+      });
+    }
+    
+    if (itemStack.lore() != null) {
+      List<Component> lore = itemStack.lore().stream()
+                                      .map(x -> x.decoration(TextDecoration.ITALIC, false))
+                                      .toList();
+      itemStack.lore(lore);
+    }
+    
+    return itemStack;
   }
   
   public static boolean isSimilar(@Nullable ItemStack item1, @Nullable ItemStack item2, @NotNull SimilarMode... modes) {

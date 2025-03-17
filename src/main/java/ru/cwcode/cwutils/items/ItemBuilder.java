@@ -17,11 +17,9 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class ItemBuilder {
   
@@ -73,14 +71,11 @@ public class ItemBuilder {
   }
   
   public List<Component> description() {
-    if (!this.hasDescription()) {
-      return new ArrayList<>();
-    }
-    return meta.lore();
+    return item.lore() == null ? List.of() : item.lore();
   }
   
   public boolean hasDescription() {
-    return meta != null && this.meta.hasLore();
+    return item.lore() != null;
   }
   
   public ItemBuilder description(Component... description) {
@@ -88,7 +83,9 @@ public class ItemBuilder {
   }
   
   public ItemBuilder description(List<Component> description) {
-    meta.lore(description.stream().map(x -> x.decoration(TextDecoration.ITALIC, false)).collect(Collectors.toList()));
+    meta.lore(description.stream()
+                         .map(x -> x.decoration(TextDecoration.ITALIC, false))
+                         .toList());
     return this;
   }
   
@@ -157,7 +154,7 @@ public class ItemBuilder {
   
   public ItemBuilder customEffect(PotionEffect effect) {
     if (isPotionMeta()) {
-      ((PotionMeta) meta).addCustomEffect(effect, false);
+      ((PotionMeta) meta).addCustomEffect(effect, true);
     }
     return this;
   }
@@ -178,8 +175,7 @@ public class ItemBuilder {
   }
   
   public ItemBuilder customModelData(int data) {
-    meta.setCustomModelData(data);
-    return this;
+    return model(data);
   }
   
   public ItemBuilder tag(NamespacedKey key, String value) {
