@@ -30,10 +30,10 @@ public class StringToObjectParser {
     parsers.put(clazz, (Function<String, Object>) parser);
   }
   
-  public static Object parse(String input, Class<?> clazz) {
+  public static <T> T parse(String input, Class<T> clazz) {
     Function<String, Object> function = parsers.get(clazz);
     if (function == null) return null;
     
-    return function.apply(input);
+    return (T) function.apply(input);
   }
 }

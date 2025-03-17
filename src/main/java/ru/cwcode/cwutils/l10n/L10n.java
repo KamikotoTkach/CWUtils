@@ -1,5 +1,6 @@
 package ru.cwcode.cwutils.l10n;
 
+import lombok.Getter;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NotNull;
 import ru.cwcode.cwutils.collections.CollectionUtils;
@@ -14,6 +15,7 @@ import java.util.Set;
 public class L10n {
   private final L10nPlatform l10nPlatform;
   LocalizationRepository repository;
+  @Getter
   String locale;
   
   public L10n(L10nPlatform l10nPlatform) {
@@ -32,10 +34,6 @@ public class L10n {
     }
     
     return String.format(entry, args);
-  }
-  
-  public String getLocale() {
-    return locale;
   }
   
   @Blocking
