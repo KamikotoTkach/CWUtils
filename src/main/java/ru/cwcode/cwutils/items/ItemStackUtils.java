@@ -45,9 +45,7 @@ public class ItemStackUtils {
     ItemMeta meta = itemStack.getItemMeta();
     if (meta == null) return;
     
-    editor.accept(meta);
-    
-    itemStack.setItemMeta(meta);
+    itemStack.editMeta(editor);
   }
   
   public static ItemStack removeItalicFont(ItemStack itemStack) {
