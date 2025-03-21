@@ -24,13 +24,17 @@ public class SimpleConfig {
   }
   
   public String get(String key) {
+    return get(key, "[Key %s not found in %s]".formatted(key, configName));
+  }
+  
+  public String get(String key, String defaultVal) {
     String value = fromFile.getProperty(key);
     if (value != null) return value;
     
     value = fromResources.getProperty(key);
     if (value != null) return value;
     
-    return "[Key %s not found in %s]".formatted(key, configName);
+    return defaultVal;
   }
   
   public <T> T getParsed(String key, Class<T> type) {
