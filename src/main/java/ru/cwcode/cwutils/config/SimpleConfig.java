@@ -5,6 +5,7 @@ import ru.cwcode.cwutils.l10n.L10nPlatform;
 import ru.cwcode.cwutils.text.StringToObjectParser;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.Properties;
 
 public class SimpleConfig {
@@ -25,6 +26,13 @@ public class SimpleConfig {
   
   public String get(String key) {
     return get(key, "[Key %s not found in %s]".formatted(key, configName));
+  }
+  
+  public <T> T get(String key, Class<T> type, T defaultVal) {
+    String val = get(key, null);
+    if (val == null) return defaultVal;
+    
+    return StringToObjectParser.parse(val, type);
   }
   
   public String get(String key, String defaultVal) {
@@ -80,6 +88,9 @@ public class SimpleConfig {
   }
   
   private @NotNull File getConfigFile() {
-    return platform.getDataDirectory().resolve(configName + ".properties").toFile();
+    Path dataDirectory = platform.getDataDirectory();
+    dataDirectory.toFile().mkdirs();
+    
+    return dataDirectory.resolve(configName + ".properties").toFile();
   }
 }
