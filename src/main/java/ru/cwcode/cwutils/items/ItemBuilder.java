@@ -70,11 +70,11 @@ public class ItemBuilder {
   }
   
   public List<Component> description() {
-    return item.lore() == null ? List.of() : item.lore();
+    return meta.lore() == null ? List.of() : meta.lore();
   }
   
   public boolean hasDescription() {
-    return item.lore() != null;
+    return meta.lore() != null;
   }
   
   public ItemBuilder description(Component... description) {
