@@ -35,6 +35,10 @@ public class ExpiredSet<Element> {
     return expireable.getPercent();
   }
   
+  public boolean remove(Element element) {
+    return this.expired.remove(element) != null;
+  }
+  
   public boolean has(Element expired) {
     return this.expired.containsKey(expired);
   }

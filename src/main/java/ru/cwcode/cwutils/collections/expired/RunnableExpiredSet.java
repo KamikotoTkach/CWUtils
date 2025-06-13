@@ -12,10 +12,6 @@ public abstract class RunnableExpiredSet<Element> extends ExpiredSet<Element> {
     this.register(element, runnable, duration);
   }
   
-  public boolean remove(Element element) {
-    return this.expired.remove(element) != null;
-  }
-  
   protected Runnable getAction(Element element, Runnable runnable) {
     return () -> {
       if (!this.remove(element)) return;
