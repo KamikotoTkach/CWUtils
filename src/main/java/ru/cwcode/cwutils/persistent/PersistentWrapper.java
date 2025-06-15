@@ -1,22 +1,30 @@
 package ru.cwcode.cwutils.persistent;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.gson.Gson;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class PersistentWrapper {
-  private static final Gson gson = new Gson();
+  protected static final Gson gson = new Gson();
   
-  PersistentDataContainer container;
-  List<PersistentField<?, ?>> fields = new ArrayList<>(3);
+  protected static final LoadingCache<String, NamespacedKey> STRING_TO_NAMESPACED_KEY_CACHE = CacheBuilder.newBuilder()
+                                                                                                          .softValues()
+                                                                                                          .maximumSize(1000)
+                                                                                                          .build(CacheLoader.from(NamespacedKey::fromString));
+  
+  protected PersistentDataContainer container;
+  protected List<Field<?>> fields = new LinkedList<>();
   
   public PersistentWrapper(PersistentDataContainer container) {
     this.container = container;
@@ -27,41 +35,39 @@ public class PersistentWrapper {
   }
   
   public void clear() {
-    fields.forEach(PersistentField::remove);
+    fields.forEach(Field::remove);
   }
   
   public Map<NamespacedKey, Object> serialize() {
-    return fields.stream().collect(Collectors.toMap(x -> x.key, PersistentField::getOrNull));
+    return fields.stream().collect(Collectors.toMap(x -> x.key, Field::getOrNull));
   }
   
   @Override
   public String toString() {
-    return gson.toJson(fields.stream().collect(Collectors.toMap(x -> x.key.toString(), PersistentField::getOrNull)));
+    return gson.toJson(fields.stream().collect(Collectors.toMap(x -> x.key.toString(), Field::getOrNull)));
   }
   
-  protected <T, Z> PersistentField<T, Z> bind(PersistentDataType<T, Z> type, NamespacedKey key) {
-    PersistentField<T, Z> field = new PersistentField<>(this, type, key);
+  protected <Z> Field<Z> bind(PersistentDataType<?, Z> type, NamespacedKey key) {
+    Field<Z> field = new Field<>(type, key);
     fields.add(field);
     return field;
   }
   
-  protected <T, Z> PersistentField<T, Z> bind(PersistentDataType<T, Z> type, String namespacedKey) {
-    return bind(type, NamespacedKey.fromString(namespacedKey));
+  protected <Z> Field<Z> bind(PersistentDataType<?, Z> type, String namespacedKey) {
+    return bind(type, STRING_TO_NAMESPACED_KEY_CACHE.getUnchecked(namespacedKey));
   }
   
-  public static class PersistentField<T, Z> {
-    private final PersistentWrapper wrapper;
-    private final PersistentDataType<T, Z> type;
+  public class Field<Z> {
+    private final PersistentDataType<?, Z> type;
     private final NamespacedKey key;
     
-    public PersistentField(PersistentWrapper wrapper, PersistentDataType<T, Z> type, NamespacedKey key) {
-      this.wrapper = wrapper;
+    public Field(PersistentDataType<?, Z> type, NamespacedKey key) {
       this.type = type;
       this.key = key;
     }
     
     public Z getOrNull() {
-      return wrapper.container.get(key, type);
+      return container.get(key, type);
     }
     
     public Optional<Z> get() {
@@ -74,7 +80,7 @@ public class PersistentWrapper {
      */
     public Optional<Z> set(Z value) {
       Optional<Z> previous = get();
-      wrapper.container.set(key, type, value);
+      container.set(key, type, value);
       return previous;
     }
     
@@ -83,7 +89,7 @@ public class PersistentWrapper {
      */
     public Optional<Z> remove() {
       Optional<Z> previous = get();
-      wrapper.container.remove(key);
+      container.remove(key);
       return previous;
     }
   }

@@ -118,7 +118,7 @@ public class CollectionUtils {
       sb.append(prefix).append(value).append(suffix);
     }
     
-    if (removeLastSuffix) sb.setLength(sb.length() - suffix.length());
+    if (removeLastSuffix && sb.length() >= suffix.length()) sb.setLength(sb.length() - suffix.length());
     return sb.toString();
   }
   
