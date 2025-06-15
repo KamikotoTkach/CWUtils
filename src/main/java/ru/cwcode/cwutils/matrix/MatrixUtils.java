@@ -9,6 +9,12 @@ import java.util.Optional;
 
 @UtilityClass
 public class MatrixUtils {
+  /**
+   * @param array массив [y][x][z]
+   *              <br>где первый элемент (y) - ось вращения
+   * @param angle угол поворота, кратный 90
+   * @return повернутый массив
+   */
   @SuppressWarnings("unchecked")
   public <T> T[][][] rotate(T[][][] array, int angle) {
     int ySize = array.length;
@@ -53,6 +59,11 @@ public class MatrixUtils {
     return rotated;
   }
   
+  /**
+   * @param array массив[y][x][z]
+   * @param element искомый элемент
+   * @return массив [y][x][z] - координаты элемента
+   */
   public Optional<Integer[]> findFirstPosition(Object[][][] array, Object element) {
     List<Integer[]> positions = findAllPositions(array, element);
     if (positions.isEmpty()) return Optional.empty();
@@ -60,6 +71,11 @@ public class MatrixUtils {
     return Optional.of(positions.get(0));
   }
   
+  /**
+   * @param array массив[y][x][z]
+   * @param element искомый элемент
+   * @return массив [y][x][z] - координаты элемента
+   */
   public List<Integer[]> findAllPositions(Object[][][] array, Object element) {
     int ySize = array.length;
     int xSize = array[0].length;
