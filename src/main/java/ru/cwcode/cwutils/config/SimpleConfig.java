@@ -64,6 +64,7 @@ public class SimpleConfig {
   
   private void loadResources() {
     try (InputStream inStream = platform.getResource("config/" + configName + ".properties")) {
+      if (inStream == null) return;
       fromResources.load(inStream);
     } catch (Exception e) {
       platform.getLogger().error("Cannot read config from resources: %s".formatted(configName));
@@ -81,6 +82,8 @@ public class SimpleConfig {
     
     try (FileInputStream inStream = new FileInputStream(file)) {
       fromFile.load(inStream);
+      if (fromFile == null) {
+      }
     } catch (Exception e) {
       platform.getLogger().error("Cannot read config from file: %s".formatted(configName));
       e.printStackTrace();
