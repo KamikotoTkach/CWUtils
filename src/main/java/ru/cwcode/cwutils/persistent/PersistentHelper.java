@@ -1,13 +1,34 @@
 package ru.cwcode.cwutils.persistent;
 
+import lombok.extern.java.Log;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
+@Log
 public class PersistentHelper {
+  static Map<Class<?>, PersistentDataType<?, ?>> persistentTypes = new HashMap<>();
+  
+  static {
+    for (Field field : PersistentDataType.class.getDeclaredFields()) {
+      if (!(Modifier.isStatic(field.getModifiers()) && Modifier.isPublic(field.getModifiers()))) continue;
+      if (!field.getType().isAssignableFrom(PersistentDataType.PrimitivePersistentDataType.class)) continue;
+      
+      try {
+        var type = (PersistentDataType.PrimitivePersistentDataType<?>) field.get(null);
+        persistentTypes.put(type.getPrimitiveType(), type);
+      } catch (IllegalAccessException ignored) {
+      }
+    }
+  }
+  
   JavaPlugin plugin;
   
   public PersistentHelper(JavaPlugin plugin) {
@@ -183,5 +204,9 @@ public class PersistentHelper {
   
   public byte[] get(PersistentDataHolder holder, String key, byte[] defaultValue) {
     return get(holder, new NamespacedKey(plugin, key), defaultValue);
+  }
+  
+  public static PersistentDataType<?, ?> detectType(Object typeFor) {
+    return persistentTypes.get(typeFor.getClass());
   }
 }
