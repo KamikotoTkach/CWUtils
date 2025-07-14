@@ -3,18 +3,23 @@ package ru.cwcode.cwutils.bossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.jetbrains.annotations.NotNull;
+import ru.cwcode.cwutils.text.nanoid.NanoID;
 
 import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class LegacyBossBarAdapter {
-  static HashMap<UUID, BossBar> cachedBossBars = new HashMap<>();
+  private static final HashMap<UUID, BossBar> cachedBossBars = new HashMap<>();
+  private static final HashMap<UUID, NamespacedKey> cachedBossBarsKeys = new HashMap<>();
+  
   private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.builder()
                                                                                                         .hexColors()
                                                                                                         .useUnusualXRepeatedCharacterHexFormat()
@@ -23,6 +28,11 @@ public class LegacyBossBarAdapter {
   
   public static void remove(UUID uuid) {
     cachedBossBars.remove(uuid);
+    
+    NamespacedKey key = cachedBossBarsKeys.remove(uuid);
+    if (key != null) {
+      Bukkit.removeBossBar(key);
+    }
   }
   
   public static BossBar get(UUID uuid) {
@@ -47,29 +57,45 @@ public class LegacyBossBarAdapter {
     
     BarColor barColor = BarColor.valueOf(color.name());
     
-    BarFlag[] barFlags = flags.stream().map(flag -> switch (flag) {
+    Set<BarFlag> barFlags = flags.stream().map(flag -> switch (flag) {
       case PLAY_BOSS_MUSIC -> BarFlag.PLAY_BOSS_MUSIC;
       case DARKEN_SCREEN -> BarFlag.DARKEN_SKY;
       case CREATE_WORLD_FOG -> BarFlag.CREATE_FOG;
-    }).distinct().toArray(BarFlag[]::new);
+    }).collect(Collectors.toSet());
     
     org.bukkit.boss.BossBar bossBarLegacy = cachedBossBars.get(uuid);
     if (bossBarLegacy == null) {
-      bossBarLegacy = createBossBar(uuid, barColor, barStyle, barFlags);
+      bossBarLegacy = createBossBar(uuid, barColor, barStyle, barFlags.toArray(BarFlag[]::new));
     }
     
     bossBarLegacy.setProgress(progress);
     bossBarLegacy.setStyle(barStyle);
     bossBarLegacy.setTitle(LEGACY_COMPONENT_SERIALIZER.serialize(name));
+    bossBarLegacy.setColor(barColor);
+    
+    for (BarFlag value : BarFlag.values()) {
+      boolean shouldBe = barFlags.contains(value);
+      boolean actual = bossBarLegacy.hasFlag(value);
+      
+      if (shouldBe && !actual) {
+        bossBarLegacy.addFlag(value);
+        continue;
+      }
+      
+      if (!shouldBe && actual) {
+        bossBarLegacy.removeFlag(value);
+      }
+    }
     
     return bossBarLegacy;
   }
   
   public static @NotNull BossBar createBossBar(UUID uuid, BarColor barColor, BarStyle barStyle, BarFlag... barFlags) {
-    BossBar bossBarLegacy;
-    bossBarLegacy = Bukkit.createBossBar("loading...", barColor, barStyle, barFlags);
+    NamespacedKey namespacedKey = NamespacedKey.fromString("cwutils:" + NanoID.randomNanoId().toLowerCase());
+    
+    BossBar bossBarLegacy = Bukkit.createBossBar(namespacedKey, "loading...", barColor, barStyle, barFlags);
     cachedBossBars.put(uuid, bossBarLegacy);
+    cachedBossBarsKeys.put(uuid, namespacedKey);
     return bossBarLegacy;
   }
 }
-
