@@ -6,9 +6,43 @@ import ru.cwcode.cwutils.numbers.Rand;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class CollectionUtils {
+  
+  public static <K, V, tK, tV, M extends Map<tK, tV>> M transformMap(Map<K, V> map,
+                                                                     Function<K, tK> keyTransformer,
+                                                                     Function<V, tV> valueTransformer,
+                                                                     Supplier<M> mapCreator) {
+    M result = mapCreator.get();
+    
+    for (Map.Entry<K, V> x : map.entrySet()) {
+      result.put(keyTransformer.apply(x.getKey()), valueTransformer.apply(x.getValue()));
+    }
+    
+    return result;
+  }
+  
+  public static <K, V, tK, tV> HashMap<tK, tV> transformMap(Map<K, V> map,
+                                                            Function<K, tK> keyTransformer,
+                                                            Function<V, tV> valueTransformer) {
+    
+    return transformMap(map, keyTransformer, valueTransformer, HashMap::new);
+  }
+  
+  public static <K, V, tV> HashMap<K, tV> transformValue(Map<K, V> map,
+                                                         Function<V, tV> valueTransformer) {
+    
+    return transformMap(map, k -> k, valueTransformer, HashMap::new);
+  }
+  
+  public static <K, V, tK> HashMap<tK, V> transformKey(Map<K, V> map,
+                                                       Function<K, tK> keyTransformer) {
+    
+    return transformMap(map, keyTransformer, v -> v, HashMap::new);
+  }
+  
   public static <T> @Nullable T getRandomListEntry(List<T> list) {
     if (list == null) return null;
     if (list.isEmpty()) return null;
