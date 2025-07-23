@@ -63,24 +63,23 @@
             </distributionManagement>
 
             <properties>
-                <plugin.nexus.staging.ver>1.6.13</plugin.nexus.staging.ver>
                 <plugin.maven.source.ver>3.2.1</plugin.maven.source.ver>
                 <plugin.maven.javadoc.ver>3.3.1</plugin.maven.javadoc.ver>
                 <plugin.maven.gpg.ver>3.0.1</plugin.maven.gpg.ver>
+                <plugin.central.publishing.ver>0.8.0</plugin.central.publishing.ver>
             </properties>
 
             <build>
                 <pluginManagement>
                     <plugins>
                         <plugin>
-                            <groupId>org.sonatype.plugins</groupId>
-                            <artifactId>nexus-staging-maven-plugin</artifactId>
-                            <version>${plugin.nexus.staging.ver}</version>
+                            <groupId>org.sonatype.central</groupId>
+                            <artifactId>central-publishing-maven-plugin</artifactId>
                             <extensions>true</extensions>
                             <configuration>
-                                <serverId>ossrh</serverId>
-                                <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                                <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                                <publishingServerId>central</publishingServerId>
+                                <autoPublish>true</autoPublish>
+                                <waitUntil>publish</waitUntil>
                             </configuration>
                         </plugin>
                         <plugin>
@@ -138,8 +137,8 @@
                 </pluginManagement>
                 <plugins>
                     <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
