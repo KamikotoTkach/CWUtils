@@ -1,4 +1,4 @@
-package ru.cwcode.cwutils.items;
+package ru.cwcode.cwutils.items.similar;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -7,7 +7,7 @@ import org.bukkit.inventory.meta.Damageable;
 
 import java.util.List;
 
-public enum SimilarMode {
+public enum SimilarModeImpl implements SimilarMode {
   MATERIAL {
     @Override
     public boolean compare(ItemStack item1, ItemStack item2) {
@@ -33,7 +33,7 @@ public enum SimilarMode {
       return false;
     }
   },
-  DISPLAYNAME {
+  DISPLAY_NAME {
     @Override
     public boolean compare(ItemStack item1, ItemStack item2) {
       if (super.compare(item1, item2)) {
@@ -86,6 +86,9 @@ public enum SimilarMode {
   };
   
   public boolean compare(ItemStack item1, ItemStack item2) {
-    return item1 != null && item2 != null;
+    if (item1 == null) return false;
+    if (item2 == null) return false;
+    
+    return true;
   }
 }
