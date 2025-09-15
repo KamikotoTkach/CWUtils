@@ -31,9 +31,12 @@ public class PersonalBossBar_v1_16_5 extends PersonalBossBar {
   @Override
   protected void remove(Player player) {
     BossBar bossBar = bossBars.get(player);
+    if (bossBar == null) return;
     
-    LegacyBossBarAdapter.remove(bars.get(bossBar));
-    bars.remove(bossBar);
+    UUID toRemove = bars.remove(bossBar);
+    if (toRemove == null) return;
+    
+    LegacyBossBarAdapter.remove(toRemove);
     
     super.remove(player);
   }
@@ -63,6 +66,7 @@ public class PersonalBossBar_v1_16_5 extends PersonalBossBar {
     
     UUID uuid = UUID.randomUUID();
     bars.put(bossBar, uuid);
+    
     LegacyBossBarAdapter.createBossBar(uuid, BarColor.WHITE, BarStyle.SEGMENTED_12);
     
     return bossBar;
