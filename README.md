@@ -1,4 +1,4 @@
-# CWUtils 2.7.1
+# CWUtils 2.7.2
 aka TkachUtils
 
 Набор утилсов и мини-либ для всех случаев жизни.
@@ -8,7 +8,7 @@ aka TkachUtils
 <dependency>
   <groupId>ru.cwcode.cwutils</groupId>
   <artifactId>CWUtils</artifactId>
-    <version>2.7.1</version>
+    <version>2.7.2</version>
 </dependency>
 ```
 
@@ -23,7 +23,7 @@ aka TkachUtils
 - Мини-либа Flow - Последовательные действия над чем-то с использованием шедулеров, условий, циклов
 - ItemBuilder - простое создание и модификация предмета через билдер
 - Мини-либа на бинд действий к предмету (items/activeItem)
-- NumberUtils и Rand - утилсы для работы с числами, рандом
+- NumbersUtils и Rand - утилсы для работы с числами, рандом
 - PersistentHelper для работы с Persistent датой
 - PlayerUtils с safeGive, подсчётом определённых предметов и удалением опр. кол-ва предметов с инвентаря, получения ближайших энтити без самого игрока
 - ReflectionUtils для работы с рефлексией
