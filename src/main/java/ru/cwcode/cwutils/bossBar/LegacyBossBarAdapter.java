@@ -3,13 +3,11 @@ package ru.cwcode.cwutils.bossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.jetbrains.annotations.NotNull;
-import ru.cwcode.cwutils.text.nanoid.NanoID;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -18,7 +16,6 @@ import java.util.stream.Collectors;
 
 public class LegacyBossBarAdapter {
   private static final HashMap<UUID, BossBar> cachedBossBars = new HashMap<>();
-  private static final HashMap<UUID, NamespacedKey> cachedBossBarsKeys = new HashMap<>();
   
   private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.builder()
                                                                                                         .hexColors()
@@ -29,10 +26,6 @@ public class LegacyBossBarAdapter {
   public static void remove(UUID uuid) {
     cachedBossBars.remove(uuid);
     
-    NamespacedKey key = cachedBossBarsKeys.remove(uuid);
-    if (key != null) {
-      Bukkit.removeBossBar(key);
-    }
   }
   
   public static BossBar get(UUID uuid) {
@@ -91,11 +84,8 @@ public class LegacyBossBarAdapter {
   }
   
   public static @NotNull BossBar createBossBar(UUID uuid, BarColor barColor, BarStyle barStyle, BarFlag... barFlags) {
-    NamespacedKey namespacedKey = NamespacedKey.fromString("cwutils:" + NanoID.randomNanoId().toLowerCase());
-    
-    BossBar bossBarLegacy = Bukkit.createBossBar(namespacedKey, "loading...", barColor, barStyle, barFlags);
+    BossBar bossBarLegacy = Bukkit.createBossBar("loading...", barColor, barStyle, barFlags);
     cachedBossBars.put(uuid, bossBarLegacy);
-    cachedBossBarsKeys.put(uuid, namespacedKey);
     return bossBarLegacy;
   }
 }
