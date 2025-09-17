@@ -18,13 +18,18 @@ public class PersistentHelper {
   
   static {
     for (Field field : PersistentDataType.class.getDeclaredFields()) {
-      if (!(Modifier.isStatic(field.getModifiers()) && Modifier.isPublic(field.getModifiers()))) continue;
-      if (!field.getType().isAssignableFrom(PersistentDataType.PrimitivePersistentDataType.class)) continue;
+      int m = field.getModifiers();
+      if (!Modifier.isPublic(m) || !Modifier.isStatic(m)) continue;
       
+      final Object value;
       try {
-        var type = (PersistentDataType.PrimitivePersistentDataType<?>) field.get(null);
-        persistentTypes.put(type.getPrimitiveType(), type);
-      } catch (IllegalAccessException ignored) {
+        value = field.get(null);
+      } catch (IllegalAccessException e) {
+        continue;
+      }
+      
+      if (value instanceof PersistentDataType.PrimitivePersistentDataType<?> primitive) {
+        persistentTypes.put(primitive.getPrimitiveType(), primitive);
       }
     }
   }
