@@ -44,14 +44,18 @@ public interface Craftable {
       String ingredient = recipe.get(character);
       
       ItemStack itemStack = ingredients.get(ingredient);
-      if (itemStack != null && !itemStack.getType().isAir()) {
-        shapedRecipe.setIngredient(character, itemStack.clone());
+      if (itemStack != null) {
+        boolean isAir = itemStack.getType().isAir();
+        if (!isAir) shapedRecipe.setIngredient(character, itemStack.clone());
+        
         continue;
       }
       
       Material material = Material.matchMaterial(ingredient);
-      if (material != null && !material.isAir() && material.isItem()) {
-        shapedRecipe.setIngredient(character, material);
+      if (material != null && material.isItem()) {
+        boolean isAir = material.isAir();
+        if (!isAir) shapedRecipe.setIngredient(character, material);
+        
         continue;
       }
       
