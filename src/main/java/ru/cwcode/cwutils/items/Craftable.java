@@ -44,7 +44,7 @@ public interface Craftable {
       String ingredient = recipe.get(character);
       
       ItemStack itemStack = ingredients.get(ingredient);
-      if (itemStack != null) {
+      if (itemStack != null && !itemStack.getType().isAir()) {
         shapedRecipe.setIngredient(character, itemStack.clone());
         continue;
       }
