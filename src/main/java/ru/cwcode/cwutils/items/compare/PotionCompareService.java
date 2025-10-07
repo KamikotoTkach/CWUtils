@@ -26,7 +26,9 @@ public class PotionCompareService implements CompareService {
     if (!(firstMeta instanceof PotionMeta firstPotionMeta)) return false;
     if (!(secondMeta instanceof PotionMeta secondPotionMeta)) return false;
     
+    if (!firstPotionMeta.getBasePotionData().equals(secondPotionMeta.getBasePotionData())) return false;
     if (!firstPotionMeta.getCustomEffects().equals(secondPotionMeta.getCustomEffects())) return false;
+    
     return CompareService.super.compare(first, second, modes);
   }
 }
