@@ -32,11 +32,10 @@ public interface Craftable {
     NamespacedKey namespacedKey = getCraftableKey();
     if (namespacedKey == null) return;
     
-    ShapedRecipe shapedRecipe = new ShapedRecipe(
-       namespacedKey,
-       this.getResult()
-    );
+    ItemStack result = getResult();
+    if (result == null || result.getType().isAir()) return;
     
+    ShapedRecipe shapedRecipe = new ShapedRecipe(namespacedKey, result);
     shapedRecipe.shape(shape);
     
     Map<String, ItemStack> ingredients = this.getCustomIngredients();
@@ -46,13 +45,17 @@ public interface Craftable {
       
       ItemStack itemStack = ingredients.get(ingredient);
       if (itemStack != null) {
-        shapedRecipe.setIngredient(character, itemStack.clone());
+        boolean isAir = itemStack.getType().isAir();
+        if (!isAir) shapedRecipe.setIngredient(character, itemStack.clone());
+        
         continue;
       }
       
       Material material = Material.matchMaterial(ingredient);
       if (material != null && material.isItem()) {
-        shapedRecipe.setIngredient(character, material);
+        boolean isAir = material.isAir();
+        if (!isAir) shapedRecipe.setIngredient(character, material);
+        
         continue;
       }
       
