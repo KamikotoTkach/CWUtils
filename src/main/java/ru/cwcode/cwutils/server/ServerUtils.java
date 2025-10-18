@@ -2,13 +2,14 @@ package ru.cwcode.cwutils.server;
 
 import ru.cwcode.cwutils.numbers.NumbersUtils;
 
-import java.util.WeakHashMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ServerUtils {
   private static final Pattern pattern = Pattern.compile("([\\d.]+)");
-  private static final WeakHashMap<String, Integer> weights = new WeakHashMap<>();
+  private static final Map<String, Integer> weights = new HashMap<>();
   
   public static int getVersionWeight(String version) {
     if (weights.containsKey(version)) return weights.get(version);
