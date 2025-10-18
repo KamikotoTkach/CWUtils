@@ -11,6 +11,21 @@ import java.util.stream.Collectors;
 
 public class CollectionUtils {
   
+  public static <K, V> @NotNull V getValueOrDefault(@Nullable Map<K, V> map, @Nullable K type, @NotNull V def) {
+    if (map == null || type == null) return def;
+    V v = map.get(type);
+    if (v == null) return def;
+    return v;
+  }
+  
+  public static <K extends Enum<K>, V> EnumMap<K, V> toEnumMap(Class<K> type, Map<K, V> map) {
+    if (map == null) return null;
+    
+    EnumMap<K, V> enumMap = new EnumMap<>(type);
+    enumMap.putAll(map);
+    return enumMap;
+  }
+  
   public static <K, V, tK, tV, M extends Map<tK, tV>> M transformMap(Map<K, V> map,
                                                                      Function<K, tK> keyTransformer,
                                                                      Function<V, tV> valueTransformer,
