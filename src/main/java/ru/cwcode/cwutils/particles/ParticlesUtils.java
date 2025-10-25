@@ -20,14 +20,14 @@ public class ParticlesUtils {
   }
   
   public static void drawLineParticles(Location start, Location end, ParticleBuilder particle, double particleSpacing) {
-    Vector direction = end.toVector().subtract(start.toVector()).normalize();
     double distance = start.distance(end);
     int numParticles = (int) Math.ceil(distance / particleSpacing);
     
-    for (int i = 0; i < numParticles; i++) {
-      Location particleLocation = start.clone().add(direction.clone().multiply(particleSpacing * i));
-      particle.location(particleLocation)
-              .spawn();
+    Vector direction = end.toVector().subtract(start.toVector()).normalize().multiply(distance / numParticles);
+    
+    for (int step = 0; step < numParticles; step++) {
+      Location particleLocation = start.clone().add(direction.clone().multiply(step));
+      particle.location(particleLocation).spawn();
     }
   }
   
@@ -46,7 +46,13 @@ public class ParticlesUtils {
     
     World world = corner1.getWorld();
     
-    for (double x = minX; x <= maxX; x += particleSpacing) {
+    double xDistance = maxX - minX;
+    double xStep = xDistance / Math.ceil(xDistance / particleSpacing);
+    
+    double zDistance = maxZ - minZ;
+    double zStep = zDistance / Math.ceil(zDistance / particleSpacing);
+    
+    for (double x = minX; x <= maxX; x += xStep) {
       drawLineParticles(new Location(world, x, minY, minZ), new Location(world, x, maxY, minZ), particle, particleSpacing);
       drawLineParticles(new Location(world, x, minY, maxZ), new Location(world, x, maxY, maxZ), particle, particleSpacing);
       
@@ -54,7 +60,7 @@ public class ParticlesUtils {
       drawLineParticles(new Location(world, x, maxY, minZ), new Location(world, x, maxY, maxZ), particle, particleSpacing);
     }
     
-    for (double z = minZ; z <= maxZ; z += particleSpacing) {
+    for (double z = minZ; z <= maxZ; z += zStep) {
       drawLineParticles(new Location(world, minX, minY, z), new Location(world, minX, maxY, z), particle, particleSpacing);
       drawLineParticles(new Location(world, maxX, minY, z), new Location(world, maxX, maxY, z), particle, particleSpacing);
     }

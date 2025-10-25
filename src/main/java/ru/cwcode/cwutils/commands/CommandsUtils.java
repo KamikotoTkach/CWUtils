@@ -1,5 +1,7 @@
 package ru.cwcode.cwutils.commands;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.Collection;
 import java.util.Optional;
 
@@ -27,7 +29,15 @@ public class CommandsUtils {
         continue;
       }
       
-      String cmd = message.split(" ")[0];
+      String[] splitMessage = message.split(" ");
+      String cmd = "";
+      
+      int length = StringUtils.countMatches(command, " ") + 1;
+      if (length > splitMessage.length) return Optional.empty();
+      
+      for (int i = 0; i < length; i++) {
+        cmd = cmd.concat(splitMessage[i]);
+      }
       
       if (cmd.equals(command) || cmd.equals("/" + command)) {
         return Optional.of(command);
