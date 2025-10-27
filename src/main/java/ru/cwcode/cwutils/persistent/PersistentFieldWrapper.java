@@ -75,7 +75,11 @@ public class PersistentFieldWrapper<Z> {
   public Optional<Z> edit(PersistentDataHolder holder, Function<Z, Z> edit) {
     return this.get(holder).map(z -> {
       Z edited = edit.apply(z);
-      this.set(holder, edited);
+      if (edited == null) {
+        this.remove(holder);
+      } else {
+        this.set(holder, edited);
+      }
       return edited;
     });
   }
@@ -85,7 +89,12 @@ public class PersistentFieldWrapper<Z> {
     if (old == null) defaultValue.get();
     
     Z edited = edit.apply(old);
-    this.set(holder, edited);
+    if (edited == null) {
+      this.remove(holder);
+    } else {
+      this.set(holder, edited);
+    }
+    
     return edited;
   }
   
