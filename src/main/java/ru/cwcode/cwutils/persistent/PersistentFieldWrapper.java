@@ -86,7 +86,7 @@ public class PersistentFieldWrapper<Z> {
   
   public Z edit(PersistentDataHolder holder, Supplier<Z> defaultValue, Function<Z, Z> edit) {
     Z old = this.get(holder).orElse(null);
-    if (old == null) defaultValue.get();
+    if (old == null) old = defaultValue.get();
     
     Z edited = edit.apply(old);
     if (edited == null) {
