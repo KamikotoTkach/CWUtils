@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 
 public class PastesDevClient {
   
@@ -13,6 +14,7 @@ public class PastesDevClient {
   
   private static final HttpClient SHARED_CLIENT = HttpClient.newBuilder()
                                                             .version(HttpClient.Version.HTTP_2)
+                                                            .connectTimeout(Duration.ofSeconds(10))
                                                             .build();
   
   /**
@@ -48,6 +50,7 @@ public class PastesDevClient {
                                      .header("Content-Type", "text/" + language)
                                      .header("User-Agent", "Shared Paste Client (github.com/KamikotoTkach)")
                                      .POST(HttpRequest.BodyPublishers.ofString(content))
+                                     .timeout(Duration.ofSeconds(10))
                                      .build();
     
     HttpResponse<String> response = SHARED_CLIENT.send(
