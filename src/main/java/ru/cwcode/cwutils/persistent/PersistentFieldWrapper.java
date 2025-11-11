@@ -6,6 +6,8 @@ import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class PersistentFieldWrapper<Z> {
   private final PersistentDataType<?, Z> type;
@@ -68,5 +70,39 @@ public class PersistentFieldWrapper<Z> {
    */
   public Optional<Z> remove(PersistentDataHolder holder) {
     return this.remove(holder.getPersistentDataContainer());
+  }
+  
+  public Optional<Z> edit(PersistentDataHolder holder, Function<Z, Z> edit) {
+    return this.get(holder).map(z -> {
+      Z edited = edit.apply(z);
+      if (edited == null) {
+        this.remove(holder);
+      } else {
+        this.set(holder, edited);
+      }
+      return edited;
+    });
+  }
+  
+  public Z edit(PersistentDataHolder holder, Supplier<Z> defaultValue, Function<Z, Z> edit) {
+    Z old = this.get(holder).orElse(null);
+    if (old == null) old = defaultValue.get();
+    
+    Z edited = edit.apply(old);
+    if (edited == null) {
+      this.remove(holder);
+    } else {
+      this.set(holder, edited);
+    }
+    
+    return edited;
+  }
+  
+  public Z editNullable(PersistentDataHolder holder, Function<Z, Z> edit) {
+    return edit(holder, () -> null, edit);
+  }
+  
+  public Z editThrowable(PersistentDataHolder holder, Function<Z, Z> edit) {
+    return edit(holder, edit).orElseThrow();
   }
 }

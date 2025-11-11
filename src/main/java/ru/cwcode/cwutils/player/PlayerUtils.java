@@ -67,16 +67,14 @@ public class PlayerUtils {
   public static void clearItemsForce(Player player, ItemStack itemStack, int amount) {
     for (int i = 0; i < player.getInventory().getSize(); i++) {
       ItemStack stack = player.getInventory().getItem(i);
-      if (stack == null)
-        continue;
+      if (stack == null) continue;
+      if (stack.getAmount() <= 0) continue;
+      
       if (itemStack.isSimilar(stack)) {
-        if (stack.getAmount() == 0)
-          break;
         if (stack.getAmount() <= amount) {
           amount = amount - stack.getAmount();
-          stack.setAmount(-1);
-        }
-        if (stack.getAmount() > amount) {
+          player.getInventory().setItem(i, null);
+        } else {
           stack.setAmount(stack.getAmount() - amount);
           amount = 0;
         }
@@ -117,16 +115,14 @@ public class PlayerUtils {
   public static void clearItemsForce(Player player, Material material, int amount) {
     for (int i = 0; i < player.getInventory().getSize(); i++) {
       ItemStack stack = player.getInventory().getItem(i);
-      if (stack == null)
-        continue;
+      if (stack == null) continue;
+      if (stack.getAmount() <= 0) continue;
+      
       if (material == stack.getType()) {
-        if (stack.getAmount() == 0)
-          break;
         if (stack.getAmount() <= amount) {
           amount = amount - stack.getAmount();
-          stack.setAmount(-1);
-        }
-        if (stack.getAmount() > amount) {
+          player.getInventory().setItem(i, null);
+        } else {
           stack.setAmount(stack.getAmount() - amount);
           amount = 0;
         }
