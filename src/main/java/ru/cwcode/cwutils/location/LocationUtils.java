@@ -196,6 +196,33 @@ public class LocationUtils {
           && z >= z1 && z <= z2;
   }
   
+  /**
+   * Проверяет пересечение двух регионов по четырём точками (параллелепипеды)
+   */
+  public static boolean isIntersecting(Location region1Pos1, Location region1Pos2, Location region2Pos1, Location region2Pos2) {
+    if (!region1Pos1.getWorld().equals(region2Pos1.getWorld())) return false;
+    
+    double minX1 = Math.min(region1Pos1.getX(), region1Pos2.getX());
+    double maxX1 = Math.max(region1Pos1.getX(), region1Pos2.getX());
+    double minY1 = Math.min(region1Pos1.getY(), region1Pos2.getY());
+    double maxY1 = Math.max(region1Pos1.getY(), region1Pos2.getY());
+    double minZ1 = Math.min(region1Pos1.getZ(), region1Pos2.getZ());
+    double maxZ1 = Math.max(region1Pos1.getZ(), region1Pos2.getZ());
+    
+    double minX2 = Math.min(region2Pos1.getX(), region2Pos2.getX());
+    double maxX2 = Math.max(region2Pos1.getX(), region2Pos2.getX());
+    double minY2 = Math.min(region2Pos1.getY(), region2Pos2.getY());
+    double maxY2 = Math.max(region2Pos1.getY(), region2Pos2.getY());
+    double minZ2 = Math.min(region2Pos1.getZ(), region2Pos2.getZ());
+    double maxZ2 = Math.max(region2Pos1.getZ(), region2Pos2.getZ());
+    
+    boolean xOverlap = maxX1 >= minX2 && maxX2 >= minX1;
+    boolean yOverlap = maxY1 >= minY2 && maxY2 >= minY1;
+    boolean zOverlap = maxZ1 >= minZ2 && maxZ2 >= minZ1;
+    
+    return xOverlap && yOverlap && zOverlap;
+  }
+  
   public static float getYawRotatedToGiven(float yaw) {
     return Location.normalizeYaw(Math.round(yaw / 90) * 90 - 180);
   }
