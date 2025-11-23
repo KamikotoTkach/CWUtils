@@ -3,8 +3,8 @@ package ru.cwcode.cwutils.datetime;
 import java.io.Serializable;
 
 public class Expireable implements Serializable {
-  long time = 0;
-  long expires = 0;
+  private volatile long time = 0;
+  private volatile long expires = 0;
   
   public Expireable() {
   }
@@ -28,7 +28,7 @@ public class Expireable implements Serializable {
   /**
    * isExpired() and reset()
    */
-  public boolean isExpiredAndReset() {
+  public synchronized boolean isExpiredAndReset() {
     if (isExpired()) {
       reset();
       return true;
@@ -40,11 +40,11 @@ public class Expireable implements Serializable {
     return time + expires < System.currentTimeMillis();
   }
   
-  public void reset() {
+  public synchronized void reset() {
     time = System.currentTimeMillis();
   }
   
-  public void expireAfter(long ms) {
+  public synchronized void expireAfter(long ms) {
     expires = ms;
   }
   
