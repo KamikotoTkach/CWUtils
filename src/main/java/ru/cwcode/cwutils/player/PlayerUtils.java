@@ -17,11 +17,15 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+import ru.cwcode.cwutils.comparators.Similarity;
 import ru.cwcode.cwutils.entity.DamageCalculator;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class PlayerUtils {
+  
+  public static final Similarity<ItemStack, ItemStack> DEFAULT_ITEMSTACK_SIMILARITY = new Similarity<>(Function.identity(), ItemStack::isSimilar);
   
   /**
    * Выдаёт предмет игроку. Если нет места - спавнит под ногами.
@@ -37,24 +41,31 @@ public class PlayerUtils {
   /**
    * Удаляет нужное количество предметов у игрока, если у него столько есть и возвращает true, иначе false и не удаляет.
    */
-  public static boolean removeItems(Player player, ItemStack itemStack, int amount) {
-    if (getItemAmount(player, itemStack) >= amount) {
-      clearItemsForce(player, itemStack, amount);
+  public static boolean removeItems(Player player, Similarity<ItemStack, ?> similarity, ItemStack itemStack, int amount) {
+    if (getItemAmount(player, similarity, itemStack) >= amount) {
+      clearItemsForce(player, similarity, itemStack, amount);
       return true;
     }
     return false;
   }
   
   /**
+   * Удаляет нужное количество предметов у игрока, если у него столько есть и возвращает true, иначе false и не удаляет.
+   */
+  public static boolean removeItems(Player player, ItemStack itemStack, int amount) {
+    return removeItems(player, DEFAULT_ITEMSTACK_SIMILARITY, itemStack, amount);
+  }
+  
+  /**
    * Считает количество предметов у игрока
    */
-  public static int getItemAmount(Player player, ItemStack itemStack) {
+  public static int getItemAmount(Player player, Similarity<ItemStack, ?> similarity, ItemStack itemStack) {
     int count = 0;
     for (int i = 0; i < player.getInventory().getSize(); i++) {
       ItemStack stack = player.getInventory().getItem(i);
       if (stack == null)
         continue;
-      if (itemStack.isSimilar(stack)) {
+      if (similarity.isSimilar(itemStack, stack)) {
         count += stack.getAmount();
       }
     }
@@ -62,15 +73,22 @@ public class PlayerUtils {
   }
   
   /**
+   * Считает количество предметов у игрока
+   */
+  public static int getItemAmount(Player player, ItemStack itemStack) {
+    return getItemAmount(player, DEFAULT_ITEMSTACK_SIMILARITY, itemStack);
+  }
+  
+  /**
    * Очищает определённое количество предметов у игрока, не взирая на наличие
    */
-  public static void clearItemsForce(Player player, ItemStack itemStack, int amount) {
+  public static void clearItemsForce(Player player, Similarity<ItemStack, ?> similarity, ItemStack itemStack, int amount) {
     for (int i = 0; i < player.getInventory().getSize(); i++) {
       ItemStack stack = player.getInventory().getItem(i);
       if (stack == null) continue;
       if (stack.getAmount() <= 0) continue;
       
-      if (itemStack.isSimilar(stack)) {
+      if (similarity.isSimilar(itemStack, stack)) {
         if (stack.getAmount() <= amount) {
           amount = amount - stack.getAmount();
           player.getInventory().setItem(i, null);
@@ -80,6 +98,13 @@ public class PlayerUtils {
         }
       }
     }
+  }
+  
+  /**
+   * Очищает определённое количество предметов у игрока, не взирая на наличие
+   */
+  public static void clearItemsForce(Player player, ItemStack itemStack, int amount) {
+    clearItemsForce(player, DEFAULT_ITEMSTACK_SIMILARITY, itemStack, amount);
   }
   
   /**
