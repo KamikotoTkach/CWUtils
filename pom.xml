@@ -269,12 +269,12 @@
         <dependency>
             <groupId>com.saicone.rtag</groupId>
             <artifactId>rtag</artifactId>
-            <version>1.5.8</version>
+            <version>1.5.13</version>
         </dependency>
         <dependency>
             <groupId>com.saicone.rtag</groupId>
             <artifactId>rtag-item</artifactId>
-            <version>1.5.8</version>
+            <version>1.5.13</version>
         </dependency>
         <dependency>
             <groupId>org.joml</groupId>
