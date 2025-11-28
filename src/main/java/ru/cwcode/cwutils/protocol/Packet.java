@@ -11,6 +11,7 @@ import com.comphenix.protocol.wrappers.WrappedRegistrable;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.destroystokyo.paper.profile.PlayerProfile;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -25,10 +26,27 @@ import ru.cwcode.cwutils.numbers.NumbersUtils;
 import ru.cwcode.cwutils.player.PlayerUtils;
 import ru.cwcode.cwutils.server.PaperServerUtils;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 public class Packet {
+  public static Object GAME_STATE_CHANGE_GAMEMODE;
+  
+  static {
+    try {
+      Field[] fields = PacketType.Play.Server.GAME_STATE_CHANGE.getPacketClass().getDeclaredFields();
+      if (fields[0].getType() != fields[1].getType())
+        GAME_STATE_CHANGE_GAMEMODE = fields[4].get(null);
+      else
+        GAME_STATE_CHANGE_GAMEMODE = fields[3].get(null);
+    } catch (IllegalAccessException e) {
+      System.err.println("Failed to load GAME_STATE_CHANGE storage field.");
+      e.printStackTrace();
+    }
+  }
+  
   public static void setSlot(Player player, int slot, ItemStack item) {
     setSlot(player, slot, item, 0);
   }
@@ -73,6 +91,20 @@ public class Packet {
     }
   }
   
+  public static void spectate(Player player, int entityId) {
+    PacketContainer packet = new PacketContainer(PacketType.Play.Server.CAMERA);
+    packet.getIntegers().write(0, entityId);
+    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+  }
+  
+  public static void sendGameModePacket(Player player, GameMode gameMode) {
+    PacketContainer packet = new PacketContainer(PacketType.Play.Server.GAME_STATE_CHANGE);
+    packet.getModifier().write(0, GAME_STATE_CHANGE_GAMEMODE);
+    packet.getFloat().write(0, (float) gameMode.getValue());
+    
+    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+  }
+  
   public static void spawnLivingEntity(Player player, int id, int entityId, Location loc) {
     PacketContainer packet = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
     
@@ -90,7 +122,8 @@ public class Packet {
   
   public static void destroyEntity(Player player, int id) {
     PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-    packet.getIntegerArrays().write(0, new int[]{id});
+    packet.getIntegerArrays().writeSafely(0, new int[]{id});
+    packet.getIntLists().writeSafely(0, List.of(id));
     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
   }
   
@@ -167,9 +200,9 @@ public class Packet {
     PacketContainer packet = manager.createPacket(PacketType.Play.Server.TILE_ENTITY_DATA);
     
     packet.getBlockPositionModifier().write(0, new BlockPosition(
-       location.getBlockX(),
-       location.getBlockY(),
-       location.getBlockZ())
+      location.getBlockX(),
+      location.getBlockY(),
+      location.getBlockZ())
     );
     
     if (PaperServerUtils.isVersionGreater("1.17.1")) {
