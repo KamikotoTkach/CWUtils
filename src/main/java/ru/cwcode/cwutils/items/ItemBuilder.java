@@ -17,7 +17,11 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class ItemBuilder {
@@ -44,6 +48,11 @@ public class ItemBuilder {
   
   public static ItemBuilder of(ItemStack item) {
     return new ItemBuilder(item);
+  }
+  
+  public ItemBuilder editMeta(Consumer<ItemMeta> metaConsumer) {
+    metaConsumer.accept(meta);
+    return this;
   }
   
   public ItemBuilder amount(int amount) {
