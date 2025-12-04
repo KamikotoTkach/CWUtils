@@ -1,39 +1,71 @@
 package ru.cwcode.cwutils.text;
 
+import org.bukkit.Location;
+import ru.cwcode.cwutils.text.converter.StringLocationConverter;
+import ru.cwcode.cwutils.text.converter.StringObjectConverter;
+import ru.cwcode.cwutils.text.converter.StringPrimitiveConverter;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.Optional;
+import java.util.Set;
 
 public class StringToObjectParser {
-  static Map<Class<?>, Function<String, Object>> parsers = new HashMap<>();
+  private static final Map<Class<?>, StringObjectConverter<?>> converters = new HashMap<>();
   
   static {
-    registerType(String.class, s -> s);
+    converters.put(Double.class, (StringPrimitiveConverter<Double>) Double::parseDouble);
+    converters.put(Long.class, (StringPrimitiveConverter<Long>) Long::parseLong);
+    converters.put(Integer.class, (StringPrimitiveConverter<Integer>) Integer::parseInt);
+    converters.put(Float.class, (StringPrimitiveConverter<Float>) Float::parseFloat);
+    converters.put(Byte.class, (StringPrimitiveConverter<Byte>) Byte::parseByte);
+    converters.put(Boolean.class, (StringPrimitiveConverter<Boolean>) Boolean::parseBoolean);
     
-    registerType(int.class, Integer::parseInt);
-    registerType(Integer.class, Integer::parseInt);
+    converters.put(double.class, (StringPrimitiveConverter<Double>) Double::parseDouble);
+    converters.put(long.class, (StringPrimitiveConverter<Long>) Long::parseLong);
+    converters.put(int.class, (StringPrimitiveConverter<Integer>) Integer::parseInt);
+    converters.put(float.class, (StringPrimitiveConverter<Float>) Float::parseFloat);
+    converters.put(byte.class, (StringPrimitiveConverter<Byte>) Byte::parseByte);
+    converters.put(boolean.class, (StringPrimitiveConverter<Boolean>) Boolean::parseBoolean);
     
-    registerType(long.class, Long::parseLong);
-    registerType(Long.class, Long::parseLong);
-    
-    registerType(float.class, Float::parseFloat);
-    registerType(Float.class, Float::parseFloat);
-    
-    registerType(double.class, Double::parseDouble);
-    registerType(Double.class, Double::parseDouble);
-    
-    registerType(boolean.class, Boolean::parseBoolean);
-    registerType(Boolean.class, Boolean::parseBoolean);
+    converters.put(Location.class, new StringLocationConverter());
+    converters.put(String.class, (StringPrimitiveConverter<String>) s -> s);
   }
   
-  public static <T> void registerType(Class<T> clazz, Function<String, T> parser) {
-    parsers.put(clazz, (Function<String, Object>) parser);
+  public static Set<Class<?>> supported() {
+    return converters.keySet();
+  }
+  
+  public static <T> Optional<T> tryParse(String input, Class<T> clazz) {
+    return Optional.ofNullable(parse(input, clazz));
+  }
+  
+  public static Optional<String> tryToString(Object o) {
+    return Optional.ofNullable(toString(o));
+  }
+  
+  public static Optional<String> tryToStringFancy(Object o) {
+    return Optional.ofNullable(toStringFancy(o));
   }
   
   public static <T> T parse(String input, Class<T> clazz) {
-    Function<String, Object> function = parsers.get(clazz);
-    if (function == null) return null;
+    var c = converters.get(clazz);
+    if (c == null) return null;
     
-    return (T) function.apply(input);
+    return clazz.cast(c.convertFromString(input));
+  }
+  
+  public static String toString(Object object) {
+    StringObjectConverter<Object> c = (StringObjectConverter<Object>) converters.get(object.getClass());
+    if (c == null) return null;
+    
+    return c.convertToString(object);
+  }
+  
+  public static String toStringFancy(Object object) {
+    StringObjectConverter<Object> c = (StringObjectConverter<Object>) converters.get(object.getClass());
+    if (c == null) return null;
+    
+    return c.convertToStringFancy(object);
   }
 }
