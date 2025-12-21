@@ -59,7 +59,7 @@ public interface Craftable {
         continue;
       }
       
-      Bukkit.getConsoleSender().sendMessage("Can't register craft for custom item " + this.getClass().getSimpleName());
+      Bukkit.getConsoleSender().sendMessage("Can't register craft for custom item " + getCraftableKey().getKey());
       Bukkit.getConsoleSender().sendMessage("Ingredient " + ingredient + " is not custom item or material");
       return;
     }
