@@ -3,9 +3,10 @@ package ru.cwcode.cwutils.text;
 import org.bukkit.Bukkit;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class Declinations {
-  static HashMap<String, HashMap<DeclinationsType, String>> wordlist = new HashMap<>();
+  private static final Map<String, HashMap<DeclinationsType, String>> wordlist = new HashMap<>();
   
   public static void registerForNumbers(String key, String _1, String _234, String _056789) {
     HashMap<DeclinationsType, String> map = getOrDefault(key);

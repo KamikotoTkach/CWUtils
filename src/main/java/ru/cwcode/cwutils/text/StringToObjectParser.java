@@ -52,10 +52,14 @@ public class StringToObjectParser {
     var c = converters.get(clazz);
     if (c == null) return null;
     
-    return clazz.cast(c.convertFromString(input));
+    @SuppressWarnings("unchecked")
+    T result = (T) c.convertFromString(input);
+    
+    return result;
   }
   
   public static String toString(Object object) {
+    @SuppressWarnings("unchecked")
     StringObjectConverter<Object> c = (StringObjectConverter<Object>) converters.get(object.getClass());
     if (c == null) return null;
     
@@ -63,6 +67,7 @@ public class StringToObjectParser {
   }
   
   public static String toStringFancy(Object object) {
+    @SuppressWarnings("unchecked")
     StringObjectConverter<Object> c = (StringObjectConverter<Object>) converters.get(object.getClass());
     if (c == null) return null;
     
