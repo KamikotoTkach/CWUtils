@@ -12,21 +12,21 @@ public class NumbersUtils {
    * Округляет в меньшую сторону, но с шагом 0.5
    */
   public static double evalToHalf(double value) {
-    return (int) value + (value - (int) value >= 0.5 ? 0.5 : 0.0);
+    return (int) value + (value - (int) value >= 0.5d ? 0.5d : 0.0d);
   }
   
   /**
    * Умножает на 100 и округляет в меньшую сторону
    */
   public static int toPercent(double value) {
-    return (int) (value * 100);
+    return (int) (value * 100d);
   }
   
   /**
    * @return умноженное на 100 и округлённое до нужного количества цифр (digits) после запятой
    */
   public static double toPercent(double value, int digits) {
-    return round(value * 100, digits);
+    return round(value * 100d, digits);
   }
   
   /**
@@ -108,8 +108,8 @@ public class NumbersUtils {
   public static String shortNumberFormat(double number) {
     int index = 0;
     
-    while (number >= 1000) {
-      number /= 1000;
+    while (number >= 1000d) {
+      number /= 1000d;
       index++;
     }
     
