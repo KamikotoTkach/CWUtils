@@ -28,7 +28,12 @@ public class StringToObjectParser {
     converters.put(byte.class, (StringPrimitiveConverter<Byte>) Byte::parseByte);
     converters.put(boolean.class, (StringPrimitiveConverter<Boolean>) Boolean::parseBoolean);
     
-    converters.put(Location.class, new StringLocationConverter());
+    try {
+      Class.forName("org.bukkit.Bukkit");
+      converters.put(Location.class, new StringLocationConverter());
+    } catch (ClassNotFoundException e) {
+    }
+    
     converters.put(String.class, (StringPrimitiveConverter<String>) s -> s);
   }
   
