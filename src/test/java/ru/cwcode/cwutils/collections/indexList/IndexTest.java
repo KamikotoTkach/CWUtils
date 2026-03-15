@@ -16,11 +16,11 @@ class IndexTest {
     list.add("a");
     list.add("bb");
     list.add("ccc");
-    list.add("ttt");
-    
     Assertions.assertEquals("a", lengthIndex.get(1));
     Assertions.assertEquals("bb", lengthIndex.get(2));
-    Assertions.assertEquals("ttt", lengthIndex.get(3));
+    Assertions.assertThrows(IllegalStateException.class, () -> {
+      list.add("ttt");
+    });
   }
   
   @Test
