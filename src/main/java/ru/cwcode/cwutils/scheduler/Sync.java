@@ -7,6 +7,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.function.Supplier;
 
 public class Sync {
+  public static void assertSync() {
+    if (!Bukkit.isPrimaryThread()) {
+      throw new ShouldBeSyncException();
+    }
+  }
+  
+  public static void assertAsync() {
+    if (Bukkit.isPrimaryThread()) {
+      throw new ShouldBeAsyncException();
+    }
+  }
+  
   @SneakyThrows
   public static <T> T get(JavaPlugin plugin, Supplier<T> runnable) {
     if (Bukkit.isPrimaryThread()) {
@@ -22,4 +34,8 @@ public class Sync {
       return null;
     });
   }
+  
+  public static class ShouldBeSyncException extends RuntimeException {}
+  
+  public static class ShouldBeAsyncException extends RuntimeException {}
 }
