@@ -16,7 +16,9 @@ public class Tasks {
     tasks.values()
          .stream()
          .filter(x -> plugin.equals(x.registrant))
-         .forEach(x -> cancelTask(x.taskId));
+         .map(x -> x.taskId)
+         .toList()
+         .forEach(Tasks::cancelTaskByBukkitId);
   }
   
   public static boolean cancelTask(int id) {
@@ -28,6 +30,24 @@ public class Tasks {
       return true;
     }
     return false;
+  }
+  
+  public static boolean cancelTaskByBukkitId(int taskId) {
+    boolean cancelled = false;
+    
+    for (var entry : tasks.entrySet()) {
+      AbstractScheduler abstractScheduler = entry.getValue();
+      
+      if (abstractScheduler.taskId == taskId) {
+        Bukkit.getScheduler().cancelTask(taskId);
+        tasks.remove(entry.getKey(), abstractScheduler);
+        cancelled = true;
+      }
+    }
+    
+    if (!cancelled) Bukkit.getScheduler().cancelTask(taskId);
+    
+    return cancelled;
   }
   
   public static AbstractScheduler get(int id) {
