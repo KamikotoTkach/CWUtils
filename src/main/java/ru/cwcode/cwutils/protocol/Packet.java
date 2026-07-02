@@ -1,16 +1,31 @@
 package ru.cwcode.cwutils.protocol;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.BlockPosition;
-import com.comphenix.protocol.wrappers.WrappedBlockData;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedRegistrable;
-import com.comphenix.protocol.wrappers.nbt.NbtCompound;
-import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.destroystokyo.paper.profile.PlayerProfile;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
+import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
+import com.github.retrooper.packetevents.protocol.entity.type.EntityType;
+import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
+import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
+import com.github.retrooper.packetevents.protocol.nbt.NBTInt;
+import com.github.retrooper.packetevents.protocol.nbt.NBTIntArray;
+import com.github.retrooper.packetevents.protocol.nbt.NBTList;
+import com.github.retrooper.packetevents.protocol.nbt.NBTString;
+import com.github.retrooper.packetevents.protocol.world.blockentity.BlockEntityTypes;
+import com.github.retrooper.packetevents.util.Vector3d;
+import com.github.retrooper.packetevents.util.Vector3i;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerBlockChange;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerBlockEntityData;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerCamera;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChangeGameState;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMove;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetSlot;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnLivingEntity;
+import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,65 +39,38 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import ru.cwcode.cwutils.numbers.NumbersUtils;
 import ru.cwcode.cwutils.player.PlayerUtils;
-import ru.cwcode.cwutils.server.PaperServerUtils;
 
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 public class Packet {
-  public static Object GAME_STATE_CHANGE_GAMEMODE;
-  
-  static {
-    try {
-      Field[] fields = PacketType.Play.Server.GAME_STATE_CHANGE.getPacketClass().getDeclaredFields();
-      if (fields[0].getType() != fields[1].getType())
-        GAME_STATE_CHANGE_GAMEMODE = fields[4].get(null);
-      else
-        GAME_STATE_CHANGE_GAMEMODE = fields[3].get(null);
-    } catch (IllegalAccessException e) {
-      System.err.println("Failed to load GAME_STATE_CHANGE storage field.");
-      e.printStackTrace();
-    }
-  }
-  
+
   public static void setSlot(Player player, int slot, ItemStack item) {
     setSlot(player, slot, item, 0);
   }
-  
+
   public static void setSlot(Player player, int slot, ItemStack item, int windowID) {
-    PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.SET_SLOT);
-    
-    packet.getIntegers().write(0, windowID);
-    
-    if (PaperServerUtils.isVersionGreater_1_16_5()) {
-      packet.getIntegers().write(1, 0); //state id
-      packet.getIntegers().write(2, slot);
-    } else {
-      packet.getIntegers().write(1, slot);
-    }
-    
-    packet.getItemModifier().write(0, item);
-    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+    // packetevents writes the state id only on versions that use it (1.17.1+) and normalizes the slot layout
+    send(player, new WrapperPlayServerSetSlot(windowID, 0, slot, toPacketItem(item)));
   }
-  
+
   public static void updateSlot(Player player, int slot) {
     updateSlot(player, slot, 0);
   }
-  
+
   public static void updateSlot(Player player, int slot, int windowID) {
     setSlot(player, slot, player.getInventory().getItem(slot), windowID);
   }
-  
+
   public static void clearInventory(Player player) {
     clearInventory(player, 0);
   }
-  
+
   public static void clearInventory(Player player, int windowID) {
     Inventory inventory = player.getInventory();
     ItemStack air = new ItemStack(Material.AIR);
-    
+
     for (int slot = 0; slot < 36; slot++) {
       ItemStack item = inventory.getItem(slot);
       if (item != null && item.getType().isItem()) {
@@ -90,172 +78,104 @@ public class Packet {
       }
     }
   }
-  
+
   public static void spectate(Player player, int entityId) {
-    PacketContainer packet = new PacketContainer(PacketType.Play.Server.CAMERA);
-    packet.getIntegers().write(0, entityId);
-    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+    send(player, new WrapperPlayServerCamera(entityId));
   }
-  
+
   public static void sendGameModePacket(Player player, GameMode gameMode) {
-    PacketContainer packet = new PacketContainer(PacketType.Play.Server.GAME_STATE_CHANGE);
-    packet.getModifier().write(0, GAME_STATE_CHANGE_GAMEMODE);
-    packet.getFloat().write(0, (float) gameMode.getValue());
-    
-    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+    send(player, new WrapperPlayServerChangeGameState(WrapperPlayServerChangeGameState.Reason.CHANGE_GAME_MODE, gameMode.getValue()));
   }
-  
+
   public static void spawnLivingEntity(Player player, int id, int entityId, Location loc) {
-    PacketContainer packet = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
-    
-    packet.getIntegers().write(0, id);
-    packet.getIntegers().write(1, entityId);
-    packet.getIntegers().write(2, 0);
-    packet.getUUIDs().write(0, UUID.randomUUID());
-    
-    packet.getDoubles().write(0, loc.getX());
-    packet.getDoubles().write(1, loc.getY());
-    packet.getDoubles().write(2, loc.getZ());
-    
-    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+    EntityType type = EntityTypes.getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(), entityId);
+
+    send(player, new WrapperPlayServerSpawnLivingEntity(
+      id, UUID.randomUUID(), type,
+      new Vector3d(loc.getX(), loc.getY(), loc.getZ()),
+      0f, 0f, 0f,
+      new Vector3d(0, 0, 0),
+      List.of()));
   }
-  
+
   public static void destroyEntity(Player player, int id) {
-    PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-    packet.getIntegerArrays().writeSafely(0, new int[]{id});
-    packet.getIntLists().writeSafely(0, List.of(id));
-    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+    send(player, new WrapperPlayServerDestroyEntities(id));
   }
-  
+
   public static void setEntityStatus(Player receiver, Entity entity, byte status) {
-    PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_METADATA);
-    packet.getIntegers().write(0, entity.getEntityId()); //Set packet's entity id
-    WrappedDataWatcher watcher = new WrappedDataWatcher(); //Create data watcher, the Entity Metadata packet requires this
-    WrappedDataWatcher.Serializer serializer = WrappedDataWatcher.Registry.get(Byte.class); //Found this through google, needed for some stupid reason
-    watcher.setEntity(entity); //Set the new data watcher's target
-    watcher.setObject(0, serializer, status); //Set status to glowing, found on protocol page
-    packet.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects()); //Make the packet's datawatcher the one we created
-    ProtocolLibrary.getProtocolManager().sendServerPacket(receiver, packet);
+    List<EntityData<?>> metadata = List.of(new EntityData<>(0, EntityDataTypes.BYTE, status));
+    send(receiver, new WrapperPlayServerEntityMetadata(entity.getEntityId(), metadata));
   }
-  
+
   public static void setEntityFrozen(Player receiver, Entity entity, int ticksFrozen) {
-    PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_METADATA);
-    packet.getIntegers().write(0, entity.getEntityId()); //Set packet's entity id
-    WrappedDataWatcher watcher = new WrappedDataWatcher(); //Create data watcher, the Entity Metadata packet requires this
-    WrappedDataWatcher.Serializer serializer = WrappedDataWatcher.Registry.get(Integer.class); //Found this through google, needed for some stupid reason
-    watcher.setEntity(entity); //Set the new data watcher's target
-    watcher.setObject(7, serializer, ticksFrozen); //Set status to glowing, found on protocol page
-    packet.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects()); //Make the packet's datawatcher the one we created
-    ProtocolLibrary.getProtocolManager().sendServerPacket(receiver, packet);
+    List<EntityData<?>> metadata = List.of(new EntityData<>(7, EntityDataTypes.INT, ticksFrozen));
+    send(receiver, new WrapperPlayServerEntityMetadata(entity.getEntityId(), metadata));
   }
-  
+
   public static void teleportEntity(Player receiver, int entityId, Location location) {
-    // Создать новый пакет телепортации сущности
-    ProtocolManager manager = ProtocolLibrary.getProtocolManager();
-    PacketContainer packet = manager.createPacket(PacketType.Play.Server.ENTITY_TELEPORT);
-    
-    // Установить ID сущности в пакете
-    packet.getIntegers().write(0, entityId);
-    
-    // Установить новые координаты в пакете
-    packet.getDoubles()
-          .write(0, location.getX())
-          .write(1, location.getY())
-          .write(2, location.getZ());
-    
-    // Отправить пакет игроку
-    manager.sendServerPacket(receiver, packet);
+    send(receiver, new WrapperPlayServerEntityTeleport(entityId,
+      new Vector3d(location.getX(), location.getY(), location.getZ()), 0f, 0f, false));
   }
-  
+
   public static void moveEntity(Player receiver, int entityId, Vector vector) {
-    // Создать новый пакет телепортации сущности
-    ProtocolManager manager = ProtocolLibrary.getProtocolManager();
-    PacketContainer packet = manager.createPacket(PacketType.Play.Server.REL_ENTITY_MOVE);
-    
-    // Установить ID сущности в пакете
-    packet.getIntegers().write(0, entityId);
-    
-    // Устанавливаем смещение по X, Y и Z в единицах 1/4096 блока
-    packet.getShorts()
-          .write(0, (short) (vector.getX() * 4096))
-          .write(1, (short) (vector.getY() * 4096))
-          .write(2, (short) (vector.getZ() * 4096));
-    
-    // Устанавливаем флаги для поворота головы и тела
-    packet.getBooleans().write(0, false);
-    packet.getBooleans().write(1, false);
-    
-    // Отправить пакет игроку
-    manager.sendServerPacket(receiver, packet);
+    // packetevents accepts the delta in blocks and encodes it into the 1/4096 units on the wire
+    send(receiver, new WrapperPlayServerEntityRelativeMove(entityId, vector.getX(), vector.getY(), vector.getZ(), false));
   }
-  
+
   public static void setHead(Player receiver, PlayerProfile playerProfile, Location location, BlockFace rotation) {
     receiver.sendBlockChange(location, Material.PLAYER_HEAD.createBlockData((blockData -> ((Rotatable) blockData).setRotation(rotation))));
     Packet.updateHead(receiver, playerProfile, location);
   }
-  
+
   public static void updateHead(Player receiver, PlayerProfile playerProfile, Location location) {
     if (playerProfile == null) return;
-    ProtocolManager manager = ProtocolLibrary.getProtocolManager();
-    PacketContainer packet = manager.createPacket(PacketType.Play.Server.TILE_ENTITY_DATA);
-    
-    packet.getBlockPositionModifier().write(0, new BlockPosition(
-      location.getBlockX(),
-      location.getBlockY(),
-      location.getBlockZ())
-    );
-    
-    if (PaperServerUtils.isVersionGreater("1.17.1")) {
-      packet.getBlockEntityTypeModifier().write(0, WrappedRegistrable.blockEntityType("skull"));
-    } else {
-      packet.getIntegers().write(0, 4);
-    }
-    
-    NbtCompound base = NbtFactory.ofCompound("");
-    base.put("x", location.getBlockX());
-    base.put("y", location.getBlockY());
-    base.put("z", location.getBlockZ());
-    base.put("id", "minecraft:skull");
-    
-    NbtCompound nbt = NbtFactory.ofCompound("SkullOwner");
-    
-    nbt.put("Id", NumbersUtils.convertToInts(playerProfile.getId()));
-    nbt.put("Name", "");
-    
-    NbtCompound properties = NbtFactory.ofCompound("Properties");
-    NbtCompound skin = NbtFactory.ofCompound("");
-    
-    skin.put("Value", PlayerUtils.getTextureValue(playerProfile));
-    properties.put("textures", NbtFactory.ofList("textures", skin));
-    
-    nbt.put("Properties", properties);
-    
-    base.put("SkullOwner", nbt);
-    
-    packet.getNbtModifier().write(0, base);
-    
-    try {
-      manager.sendServerPacket(receiver, packet);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+
+    NBTCompound base = new NBTCompound();
+    base.setTag("x", new NBTInt(location.getBlockX()));
+    base.setTag("y", new NBTInt(location.getBlockY()));
+    base.setTag("z", new NBTInt(location.getBlockZ()));
+    base.setTag("id", new NBTString("minecraft:skull"));
+
+    NBTCompound skullOwner = new NBTCompound();
+    skullOwner.setTag("Id", new NBTIntArray(NumbersUtils.convertToInts(playerProfile.getId())));
+    skullOwner.setTag("Name", new NBTString(""));
+
+    NBTCompound skin = new NBTCompound();
+    skin.setTag("Value", new NBTString(PlayerUtils.getTextureValue(playerProfile)));
+
+    NBTList<NBTCompound> textures = NBTList.createCompoundList();
+    textures.addTag(skin);
+
+    NBTCompound properties = new NBTCompound();
+    properties.setTag("textures", textures);
+
+    skullOwner.setTag("Properties", properties);
+    base.setTag("SkullOwner", skullOwner);
+
+    Vector3i position = new Vector3i(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    send(receiver, new WrapperPlayServerBlockEntityData(position, BlockEntityTypes.SKULL, base));
   }
-  
+
   public static void blockUpdate(Collection<? extends Player> players, Location location, BlockData blockData) {
-    ProtocolManager manager = ProtocolLibrary.getProtocolManager();
-    
-    PacketContainer blockUpdatePacket = getBlockUpdatePacket(location, blockData);
-    
-    manager.broadcastServerPacket(blockUpdatePacket, players);
+    WrapperPlayServerBlockChange packet = getBlockUpdatePacket(location, blockData);
+
+    for (Player player : players) {
+      send(player, packet);
+    }
   }
-  
-  public static PacketContainer getBlockUpdatePacket(Location location, BlockData blockData) {
-    ProtocolManager manager = ProtocolLibrary.getProtocolManager();
-    PacketContainer packet = manager.createPacket(PacketType.Play.Server.BLOCK_CHANGE);
-    
-    packet.getBlockPositionModifier().write(0, new BlockPosition(location.toVector()));
-    packet.getBlockData().write(0, WrappedBlockData.createData(blockData));
-    
-    return packet;
+
+  public static WrapperPlayServerBlockChange getBlockUpdatePacket(Location location, BlockData blockData) {
+    Vector3i position = new Vector3i(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    return new WrapperPlayServerBlockChange(position, SpigotConversionUtil.fromBukkitBlockData(blockData));
+  }
+
+  private static com.github.retrooper.packetevents.protocol.item.ItemStack toPacketItem(ItemStack item) {
+    return item == null
+           ? com.github.retrooper.packetevents.protocol.item.ItemStack.EMPTY
+           : SpigotConversionUtil.fromBukkitItemStack(item);
+  }
+
+  private static void send(Player player, PacketWrapper<?> packet) {
+    PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
   }
 }

@@ -219,6 +219,10 @@
             <id>Jitpack</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>codemc-releases</id>
+            <url>https://repo.codemc.io/repository/maven-releases/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -241,9 +245,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.dmulloy2</groupId>
-            <artifactId>ProtocolLib</artifactId>
-            <version>5.4.0</version>
+            <groupId>com.github.retrooper</groupId>
+            <artifactId>packetevents-spigot</artifactId>
+            <version>2.13.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
