@@ -253,24 +253,24 @@
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>
             <artifactId>worldguard-bukkit</artifactId>
-            <version>7.0.8</version>
+            <version>7.0.17</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
-            <version>7.2.12</version>
+            <version>7.4.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.saicone.rtag</groupId>
             <artifactId>rtag</artifactId>
-            <version>1.5.13</version>
+            <version>1.5.17</version>
         </dependency>
         <dependency>
             <groupId>com.saicone.rtag</groupId>
             <artifactId>rtag-item</artifactId>
-            <version>1.5.13</version>
+            <version>1.5.17</version>
         </dependency>
         <dependency>
             <groupId>org.joml</groupId>
